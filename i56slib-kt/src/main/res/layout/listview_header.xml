@@ -8,7 +8,7 @@
         android:id="@+id/listview_header_content"
         android:layout_width="fill_parent"
         android:layout_height="80dp"
-        android:paddingTop="10dip">
+        android:paddingTop="10dp">
 
         <LinearLayout
             android:id="@+id/listview_header_text"
@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:minWidth="100dip"
+            android:minWidth="100dp"
             android:orientation="vertical">
 
             <TextView
@@ -29,8 +29,7 @@
                 android:id="@+id/header_refresh_time_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:visibility="gone">
+                android:layout_marginTop="3dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -58,8 +57,8 @@
 
         <com.jcodecraeer.xrecyclerview.SimpleViewSwitcher
             android:id="@+id/listview_header_progressbar"
-            android:layout_width="30dip"
-            android:layout_height="30dip"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="40dp"
             android:layout_marginRight="10dp"

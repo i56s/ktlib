@@ -15,8 +15,8 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import com.i56s.ktlib.R
 import com.i56s.ktlib.databinding.ListviewHeaderBinding
+import com.i56s.ktlib.utils.LogUtils
 import com.jcodecraeer.xrecyclerview.progressindicator.AVLoadingIndicatorView
-import java.util.*
 import kotlin.math.max
 
 /**
@@ -29,32 +29,15 @@ class ArrowRefreshHeader(context: Context, attrs: AttributeSet?) : LinearLayout(
 
     constructor(context: Context) : this(context, null)
 
-    private val XR_REFRESH_KEY = "XR_REFRESH_KEY"
-    private val XR_REFRESH_TIME_KEY = "XR_REFRESH_TIME_KEY"
-    private val ROTATE_ANIM_DURATION = 180L
+    private val cXrRefreshKey = "XR_REFRESH_KEY"
+    private val cXrRefreshTimeKey = "XR_REFRESH_TIME_KEY"
+    private val cRotateAnimDuration = 180L
 
-    var state: Int = BaseRefreshHeader.STATE_NORMAL
+     var state: Int = BaseRefreshHeader.STATE_NORMAL
         set(value) {
             if (value == field) return
-            when (value) { // 显示进度
-                BaseRefreshHeader.STATE_REFRESHING -> {
-                    mBinding.listviewHeaderArrow.clearAnimation()
-                    mBinding.listviewHeaderArrow.visibility = View.INVISIBLE
-                    mBinding.listviewHeaderProgressbar.visibility = View.VISIBLE
-                    smoothScrollTo(mMeasuredHeight)
-                }
-                BaseRefreshHeader.STATE_DONE -> {
-                    mBinding.listviewHeaderArrow.visibility = View.INVISIBLE
-                    mBinding.listviewHeaderProgressbar.visibility = View.INVISIBLE
-                }
-                else -> { // 显示箭头图片
-                    mBinding.listviewHeaderArrow.visibility = View.VISIBLE
-                    mBinding.listviewHeaderProgressbar.visibility = View.INVISIBLE
-                }
-            }
-            mBinding.lastRefreshTime.text = friendlyTime(getLastRefreshTime())
             when (value) {
-                BaseRefreshHeader.STATE_NORMAL -> {
+                BaseRefreshHeader.STATE_NORMAL -> { //正常状态
                     if (field == BaseRefreshHeader.STATE_RELEASE_TO_REFRESH) {
                         mBinding.listviewHeaderArrow.startAnimation(mRotateDownAnim)
                     }
@@ -63,25 +46,48 @@ class ArrowRefreshHeader(context: Context, attrs: AttributeSet?) : LinearLayout(
                     }
                     mBinding.refreshStatusTextview.setText(R.string.listview_header_hint_normal)
                 }
-                BaseRefreshHeader.STATE_RELEASE_TO_REFRESH -> {
+                BaseRefreshHeader.STATE_RELEASE_TO_REFRESH -> { // 准备刷新
                     if (field != BaseRefreshHeader.STATE_RELEASE_TO_REFRESH) {
                         mBinding.listviewHeaderArrow.clearAnimation()
                         mBinding.listviewHeaderArrow.startAnimation(mRotateUpAnim)
                         mBinding.refreshStatusTextview.setText(R.string.listview_header_hint_release)
                     }
                 }
-                BaseRefreshHeader.STATE_REFRESHING -> mBinding.refreshStatusTextview.setText(R.string.refreshing)
-                BaseRefreshHeader.STATE_DONE -> mBinding.refreshStatusTextview.setText(R.string.refresh_done)
+                BaseRefreshHeader.STATE_REFRESHING -> { // 刷新中
+                    mBinding.listviewHeaderArrow.clearAnimation()
+                    mBinding.listviewHeaderArrow.visibility = View.INVISIBLE
+                    mBinding.listviewHeaderProgressbar.visibility = View.VISIBLE
+                    mBinding.refreshStatusTextview.setText(R.string.refreshing)
+                    smoothScrollTo(mMeasuredHeight)
+                }
+                BaseRefreshHeader.STATE_DONE -> { // 刷新完成
+                    mBinding.lastRefreshTime.text = friendlyTime(getLastRefreshTime())
+                    mBinding.refreshStatusTextview.setText(R.string.refresh_done)
+                    mBinding.listviewHeaderArrow.visibility = View.INVISIBLE
+                    mBinding.listviewHeaderProgressbar.visibility = View.INVISIBLE
+                }
+                else -> { // 显示箭头图片
+                    mBinding.listviewHeaderArrow.visibility = View.VISIBLE
+                    mBinding.listviewHeaderProgressbar.visibility = View.INVISIBLE
+                }
             }
             field = value
         }
 
+    /** 展示控件的高度 */
+    var visibleHeight: Int = 0
+        set(value) {
+            val lp = mBinding.root.layoutParams
+            lp.height = if (value < 0) 0 else value
+            mBinding.root.layoutParams = lp
+            field = value
+        }
 
     private var progressView: AVLoadingIndicatorView
     private var mRotateUpAnim: Animation
     private var mRotateDownAnim: Animation
     private var mMeasuredHeight = 0
-    private var customRefreshPsKey: String = XR_REFRESH_KEY
+    private var customRefreshPsKey: String = cXrRefreshKey
 
     private val mBinding = ListviewHeaderBinding.inflate(LayoutInflater.from(context))
 
@@ -92,6 +98,7 @@ class ArrowRefreshHeader(context: Context, attrs: AttributeSet?) : LinearLayout(
         layoutParams = lp
         setPadding(0, 0, 0, 0)
 
+        //添加刷新控件并设置高度为 0
         addView(mBinding.root, LayoutParams(LayoutParams.MATCH_PARENT, 0))
         gravity = Gravity.BOTTOM
 
@@ -109,17 +116,19 @@ class ArrowRefreshHeader(context: Context, attrs: AttributeSet?) : LinearLayout(
             Animation.RELATIVE_TO_SELF,
             0.5f
         )
-        mRotateUpAnim.duration = ROTATE_ANIM_DURATION
+        mRotateUpAnim.duration = cRotateAnimDuration
         mRotateUpAnim.fillAfter = true
         mRotateDownAnim = RotateAnimation(
             -180.0f, 0.0f,
             Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f
         )
-        mRotateDownAnim.duration = ROTATE_ANIM_DURATION
+        mRotateDownAnim.duration = cRotateAnimDuration
         mRotateDownAnim.fillAfter = true
 
+        //测量实际高度
         measure(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         mMeasuredHeight = measuredHeight
+        LogUtils.d("测试", "测量结果$mMeasuredHeight")
     }
 
     fun destroy() {
@@ -128,10 +137,12 @@ class ArrowRefreshHeader(context: Context, attrs: AttributeSet?) : LinearLayout(
         mRotateDownAnim.cancel()
     }
 
+    /**设置是否显示刷新时间*/
     fun setRefreshTimeVisible(show: Boolean) {
         mBinding.headerRefreshTimeContainer.visibility = if (show) VISIBLE else GONE
     }
 
+    /**设置刷新时间的 KEY（避免所有显示相同时间）*/
     fun setXrRefreshTimeKey(keyName: String) {
         customRefreshPsKey = keyName
     }
@@ -155,14 +166,6 @@ class ArrowRefreshHeader(context: Context, attrs: AttributeSet?) : LinearLayout(
 
     fun setArrowImageView(resId: Int) = mBinding.listviewHeaderArrow.setImageResource(resId)
 
-    fun setVisibleHeight(height: Int) {
-        val lp = mBinding.root.layoutParams
-        lp.height = if (height < 0) 0 else height
-        mBinding.root.layoutParams = lp
-    }
-
-    fun getVisibleHeight(): Int = mBinding.root.layoutParams.height
-
     fun reset() {
         smoothScrollTo(0)
         Handler(Looper.getMainLooper()).postDelayed(
@@ -171,9 +174,8 @@ class ArrowRefreshHeader(context: Context, attrs: AttributeSet?) : LinearLayout(
         )
     }
 
-    fun friendlyTime(time: Date): String = friendlyTime(time.time)
-
-    fun friendlyTime(time: Long): String {
+    /** 计算刷新时间 */
+    private fun friendlyTime(time: Long): String {
         //获取time距离当前的秒数
         val ct = ((System.currentTimeMillis() - time) / 1000).toInt()
         if (ct == 0) return "刚刚"
@@ -185,6 +187,7 @@ class ArrowRefreshHeader(context: Context, attrs: AttributeSet?) : LinearLayout(
         return "${ct / 31104000}年前"
     }
 
+    /** 刷新完成主动调用 */
     override fun refreshComplete() {
         mBinding.lastRefreshTime.text = friendlyTime(getLastRefreshTime())
         saveLastRefreshTime(System.currentTimeMillis())
@@ -193,50 +196,52 @@ class ArrowRefreshHeader(context: Context, attrs: AttributeSet?) : LinearLayout(
     }
 
     override fun onMove(delta: Float) {
-        if (getVisibleHeight() > 0 || delta > 0) {
-            setVisibleHeight((delta + getVisibleHeight()).toInt())
+        if (visibleHeight > 0 || delta > 0) {
+            //val height = (delta + visibleHeight).toInt()
+            visibleHeight += delta.toInt()
             if (state <= BaseRefreshHeader.STATE_RELEASE_TO_REFRESH) { // 未处于刷新状态，更新箭头
-                if (getVisibleHeight() > mMeasuredHeight) {
-                    state = BaseRefreshHeader.STATE_RELEASE_TO_REFRESH
-                } else {
-                    state = BaseRefreshHeader.STATE_NORMAL
-                }
+                state = if (visibleHeight > mMeasuredHeight)
+                    BaseRefreshHeader.STATE_RELEASE_TO_REFRESH
+                else
+                    BaseRefreshHeader.STATE_NORMAL
             }
         }
     }
 
+    /** 释放刷新(动作) */
     override fun releaseAction(): Boolean {
         var isOnRefresh = false
-        val height = getVisibleHeight()
-        if (getVisibleHeight() > mMeasuredHeight && state < BaseRefreshHeader.STATE_REFRESHING) {
+        //滑动的高度>实际高度 并且 当前状态为 正常 或 待刷新 时变更状态为刷新中
+        if (visibleHeight > mMeasuredHeight && state < BaseRefreshHeader.STATE_REFRESHING) {
             state = BaseRefreshHeader.STATE_REFRESHING
+            //拉出刷新控件，完全显示控件
+            smoothScrollTo(mMeasuredHeight)
             isOnRefresh = true
+        } else {
+            //并非刷新状态-复位
+            smoothScrollTo(0)
         }
-        // refreshing and header isn't shown fully. do nothing.
-        if (state == BaseRefreshHeader.STATE_REFRESHING && height <= mMeasuredHeight) {
-            //return
-        }
-        if (state != BaseRefreshHeader.STATE_REFRESHING) smoothScrollTo(0)
-        if (state == BaseRefreshHeader.STATE_REFRESHING) smoothScrollTo(mMeasuredHeight)
         return isOnRefresh
     }
 
+    /**获取最后的刷新时间*/
     private fun getLastRefreshTime(): Long {
         val s = context.getSharedPreferences(customRefreshPsKey, Context.MODE_PRIVATE)
-        return s.getLong(XR_REFRESH_TIME_KEY, System.currentTimeMillis())
+        return s.getLong(cXrRefreshTimeKey, System.currentTimeMillis())
     }
 
+    /**保存最后的刷新时间*/
     private fun saveLastRefreshTime(refreshTime: Long) {
         val s = context.getSharedPreferences(customRefreshPsKey, Context.MODE_PRIVATE)
-        s.edit().putLong(XR_REFRESH_TIME_KEY, refreshTime).apply()
+        s.edit().putLong(cXrRefreshTimeKey, refreshTime).apply()
     }
 
     private fun smoothScrollTo(destHeight: Int) {
-        val animator = ValueAnimator.ofInt(getVisibleHeight(), destHeight)
+        val animator = ValueAnimator.ofInt(visibleHeight, destHeight)
         animator.duration = 300
         //animator.start()
         animator.addUpdateListener {
-            setVisibleHeight(it.animatedValue as Int)
+            visibleHeight = it.animatedValue as Int
         }
         animator.start()
     }

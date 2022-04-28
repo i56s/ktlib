@@ -129,7 +129,7 @@ public class StickyScrollLinearLayout
     @Override
     public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed) {
 
-        if(!(target instanceof XRecyclerView3))
+        if(!(target instanceof XRecyclerView))
             // todo 2017-12-31，make it more general
             throw new UnsupportedOperationException("insert your content must is XRecyclerView!");
 

@@ -8,9 +8,16 @@ package com.jcodecraeer.xrecyclerview
 interface BaseRefreshHeader {
 
     companion object {
+        /** 正常状态 */
         const val STATE_NORMAL = 0
+
+        /** 准备刷新 */
         const val STATE_RELEASE_TO_REFRESH = 1
+
+        /** 刷新中 */
         const val STATE_REFRESHING = 2
+
+        /** 刷新完成 */
         const val STATE_DONE = 3
     }
 
