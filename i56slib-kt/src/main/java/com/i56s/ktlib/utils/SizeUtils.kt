@@ -43,14 +43,12 @@ object SizeUtils {
     @JvmStatic
     fun sp2px(spValue: Float): Float = spValue * scaledDensity()
 
+    /***/
     @JvmStatic
-    fun limitValue(a: Float, b: Float): Float {//-1,-2
-        var valve = 0f
-        val min = min(a, b)//-2
-        val max = max(a, b)//-1
-        valve = max(valve, min)//0
-        valve = min(valve, max)//-1
-        return valve
+    fun limitValue(a: Float, b: Float): Float = when {
+        b >= a -> a
+        b <= 0f -> 0f
+        else -> b
     }
 
     /**获取density*/

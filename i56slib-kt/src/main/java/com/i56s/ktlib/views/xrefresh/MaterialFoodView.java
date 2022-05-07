@@ -6,23 +6,25 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import androidx.annotation.NonNull;
-import androidx.core.view.ViewCompat;
-
 import com.i56s.ktlib.utils.SizeUtils;
 
-public class MaterialFoodView extends FrameLayout implements BaseMaterialView {
-    private MaterialWaveView materialWaveView;
+import androidx.annotation.NonNull;
+
+public class MaterialFoodView
+        extends FrameLayout
+        implements BaseMaterialView
+{
+    private MaterialWaveView  mMaterialWaveView;
     private CircleProgressBar circleProgressBar;
-    private int waveColor;
-    private int progressTextColor;
-    private int[] progress_colors;
-    private int progressStokeWidth;
-    private boolean isShowArrow, isShowProgressBg;
+    private int               waveColor;
+    private int               progressTextColor;
+    private int[]             progress_colors;
+    private int               progressStokeWidth;
+    private boolean           isShowArrow, isShowProgressBg;
     private int progressValue, progressValueMax;
-    private int textType;
-    private int progressBg;
-    private int progressSize;
+    private int              textType;
+    private int              progressBg;
+    private int              progressSize;
     private BaseMaterialView listener;
 
 
@@ -41,7 +43,7 @@ public class MaterialFoodView extends FrameLayout implements BaseMaterialView {
 
 
     protected void init(AttributeSet attrs, int defStyle) {
-        if (isInEditMode()) return;
+        if (isInEditMode()) { return; }
         setClipToPadding(false);
         setWillNotDraw(false);
     }
@@ -52,8 +54,8 @@ public class MaterialFoodView extends FrameLayout implements BaseMaterialView {
 
     public void setWaveColor(int waveColor) {
         this.waveColor = waveColor;
-        if (null != materialWaveView) {
-            materialWaveView.setColor(this.waveColor);
+        if (null != mMaterialWaveView) {
+            mMaterialWaveView.setColor(this.waveColor);
         }
     }
 
@@ -109,13 +111,14 @@ public class MaterialFoodView extends FrameLayout implements BaseMaterialView {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        materialWaveView = new MaterialWaveView(getContext());
-        materialWaveView.setColor(waveColor);
-        addView(materialWaveView);
+        mMaterialWaveView = new MaterialWaveView(getContext());
+        mMaterialWaveView.setColor(waveColor);
+        addView(mMaterialWaveView);
 
         circleProgressBar = new CircleProgressBar(getContext());
 
-        LayoutParams layoutParams = new LayoutParams((int) SizeUtils.dp2px(progressSize), (int) SizeUtils.dp2px(progressSize));
+        LayoutParams layoutParams = new LayoutParams((int) SizeUtils.dp2px(progressSize),
+                                                     (int) SizeUtils.dp2px(progressSize));
         layoutParams.gravity = Gravity.CENTER;
         circleProgressBar.setLayoutParams(layoutParams);
         circleProgressBar.setColorSchemeColors(progress_colors);
@@ -132,14 +135,14 @@ public class MaterialFoodView extends FrameLayout implements BaseMaterialView {
 
     @Override
     public void onComlete() {
-        if (materialWaveView != null) {
-            materialWaveView.onComlete();
+        if (mMaterialWaveView != null) {
+            mMaterialWaveView.onComlete();
         }
         if (circleProgressBar != null) {
             circleProgressBar.onComlete();
-            ViewCompat.setTranslationY(circleProgressBar, 0);
-            ViewCompat.setScaleX(circleProgressBar, 0);
-            ViewCompat.setScaleY(circleProgressBar, 0);
+            circleProgressBar.setTranslationY(0);
+            circleProgressBar.setScaleX(0);
+            circleProgressBar.setScaleY(0);
         }
 
 
@@ -147,34 +150,34 @@ public class MaterialFoodView extends FrameLayout implements BaseMaterialView {
 
     @Override
     public void onBegin() {
-        if (materialWaveView != null) {
-            materialWaveView.onBegin();
+        if (mMaterialWaveView != null) {
+            mMaterialWaveView.onBegin();
         }
         if (circleProgressBar != null) {
             circleProgressBar.onBegin();
-            ViewCompat.setScaleX(circleProgressBar, 1);
-            ViewCompat.setScaleY(circleProgressBar, 1);
+            circleProgressBar.setScaleX(1);
+            circleProgressBar.setScaleY(1);
         }
     }
 
     @Override
     public void onSlide(float fraction) {
-        if (materialWaveView != null) {
-            materialWaveView.onSlide(fraction);
+        if (mMaterialWaveView != null) {
+            mMaterialWaveView.onSlide(fraction);
         }
         if (circleProgressBar != null) {
             circleProgressBar.onSlide(fraction);
             float a = SizeUtils.limitValue(1, fraction);
-            ViewCompat.setScaleX(circleProgressBar, 1);
-            ViewCompat.setScaleY(circleProgressBar, 1);
-            ViewCompat.setAlpha(circleProgressBar, a);
+            circleProgressBar.setScaleX(1);
+            circleProgressBar.setScaleY(1);
+            circleProgressBar.setAlpha(a);
         }
     }
 
     @Override
     public void onRefreshing() {
-        if (materialWaveView != null) {
-            materialWaveView.onRefreshing();
+        if (mMaterialWaveView != null) {
+            mMaterialWaveView.onRefreshing();
         }
         if (circleProgressBar != null) {
             circleProgressBar.onRefreshing();

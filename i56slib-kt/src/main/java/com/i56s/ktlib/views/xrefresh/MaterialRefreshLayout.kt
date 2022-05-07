@@ -1,7 +1,6 @@
 package com.i56s.ktlib.views.xrefresh
 
 import android.content.Context
-import android.graphics.Color
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent
@@ -11,10 +10,9 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
 import com.i56s.ktlib.R
+import com.i56s.ktlib.utils.LogUtils
 import com.i56s.ktlib.utils.SizeUtils
 import java.lang.RuntimeException
-import kotlin.math.max
-import kotlin.math.min
 
 /**
  * ### 创建者：wxr
@@ -29,27 +27,35 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
     constructor(context: Context) : this(context, null)
 
     companion object {
+        /**拖动的最大高度*/
         private const val DEFAULT_WAVE_HEIGHT = 140
-        private const val HIGHER_WAVE_HEIGHT = 180
+
+        /**触发刷新的高度*/
         private const val DEFAULT_HEAD_HEIGHT = 70
+
+        /**刷新控件的高度*/
         private const val HIGHER_HEAD_HEIGHT = 100
     }
 
-    private var mMaterialHeaderView: BaseMaterialView? = null
-    private var mMaterialFooterView: BaseMaterialView? = null
+    private lateinit var mMaterialHeaderView: BaseMaterialView
+    private lateinit var mMaterialFooterView: BaseMaterialView
+    private lateinit var mInterpolator: DecelerateInterpolator//减速插值器
+
     private var mChildView: View? = null
-    private var decelerateInterpolator: DecelerateInterpolator? = null//动画减速器
     private var refreshListener: MaterialRefreshListener? = null
 
     private var isOverlay = false
     private var isRefreshing = false
     private var isLoadMoreing = false
     private var isLoadMore = false
-    private var isSunStyle = false
-    private var mWaveHeight = 0f
-    private var mHeadHeight = 0f
+    private var isSunStyle = false //是否是太阳刷新
+
+    /**拖动的最大高度*/
+    private var mWaveHeight = DEFAULT_WAVE_HEIGHT.toFloat()
+
+    /**触发刷新的高度*/
+    private var mHeadHeight = DEFAULT_HEAD_HEIGHT.toFloat()
     private var mTouchY = 0f
-    private var mCurrentY = 0f
 
     init {
         //是否是xml编辑状态
@@ -57,7 +63,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
             //只允许有一个子控件
             if (childCount > 1) throw RuntimeException("只允许有一个子控件")
 
-            decelerateInterpolator = DecelerateInterpolator(10f)
+            mInterpolator = DecelerateInterpolator(10f)
 
             val t = context.obtainStyledAttributes(
                 attrs,
@@ -66,8 +72,6 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
                 0
             )
             isOverlay = t.getBoolean(R.styleable.MaterialRefreshLayout_overlay, false)
-            mHeadHeight = DEFAULT_HEAD_HEIGHT.toFloat()
-            mWaveHeight = DEFAULT_WAVE_HEIGHT.toFloat()
             MaterialWaveView.DefaulHeadHeight = DEFAULT_HEAD_HEIGHT
             MaterialWaveView.DefaulWaveHeight = DEFAULT_WAVE_HEIGHT
             isLoadMore = t.getBoolean(R.styleable.MaterialRefreshLayout_isLoadMore, false)
@@ -89,14 +93,15 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
                 //添加刷新圆圈
                 mMaterialHeaderView = MaterialHeaderView(context)
             }
+
             val layoutParams = LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 SizeUtils.dp2px(HIGHER_HEAD_HEIGHT.toFloat()).toInt()
             )
             layoutParams.gravity = Gravity.TOP
-            mMaterialHeaderView?.getView()?.layoutParams = layoutParams
-            mMaterialHeaderView?.getView()?.visibility = View.GONE
-            setHeaderView(mMaterialHeaderView!!.getView())
+            mMaterialHeaderView.view.layoutParams = layoutParams
+            mMaterialHeaderView.view.visibility = View.GONE
+            addView(mMaterialHeaderView.view)
             //添加底部加载
             mMaterialFooterView = MaterialFooterView(context)
             val layoutParams2 = LayoutParams(
@@ -104,9 +109,9 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
                 SizeUtils.dp2px(HIGHER_HEAD_HEIGHT.toFloat()).toInt()
             )
             layoutParams2.gravity = Gravity.BOTTOM
-            mMaterialFooterView?.getView()?.layoutParams = layoutParams2
-            mMaterialFooterView?.getView()?.visibility = View.GONE
-            setFooderView(mMaterialFooterView!!.getView())
+            mMaterialFooterView.view.layoutParams = layoutParams2
+            mMaterialFooterView.view.visibility = View.GONE
+            addView(mMaterialFooterView.view)
         }
     }
 
@@ -117,20 +122,20 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
             when (it.action) {
                 MotionEvent.ACTION_DOWN -> {
                     mTouchY = it.y
-                    mCurrentY = mTouchY
                 }
                 MotionEvent.ACTION_MOVE -> {
                     val currentY = it.y
                     val dy = currentY - mTouchY
                     //如果滑动距离大于0 并且非向上滚动操作（也就是下拉）
                     if (dy > 0 && !canChildScrollUp()) {
-                        if (mMaterialHeaderView != null) {
-                            mMaterialHeaderView?.getView()?.visibility = View.VISIBLE
-                            mMaterialHeaderView?.onBegin()
-                        }
+                        isMore = false
+                        mMaterialHeaderView.view.visibility = View.VISIBLE
+                        mMaterialHeaderView.onBegin()
                         return true
+                        //上拉操作
                     } else if (dy < 0 && !canChildScrollDown() && isLoadMore) {
-                        if (mMaterialFooterView != null && !isLoadMoreing) {
+                        isMore = true
+                        if (!isLoadMoreing) {
                             soveLoadMoreLogic()
                         }
                         return super.onInterceptTouchEvent(it)
@@ -141,68 +146,68 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
         return super.onInterceptTouchEvent(ev)
     }
 
-    /** 触发加载更多 */
-    private fun soveLoadMoreLogic() {
-        isLoadMoreing = true
-        mMaterialFooterView?.getView()?.visibility = View.VISIBLE
-        mMaterialFooterView?.onBegin()
-        mMaterialFooterView?.onRefreshing()
-        refreshListener?.onRefreshLoadMore(this)
-    }
+    var isMore = false
 
     /** 滑动事件处理 */
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (isRefreshing) return super.onTouchEvent(event)
+        if (isRefreshing) return true
 
         event?.let {
             when (it.action) {
                 MotionEvent.ACTION_MOVE -> {
-                    mCurrentY = it.y
-                    var dy = mCurrentY - mTouchY
-                    dy = min(mWaveHeight * 2, dy)
-                    dy = max(0f, dy)
-                    if (mChildView != null) {
-                        val offsetY =
-                            decelerateInterpolator!!.getInterpolation(dy / mWaveHeight / 2) * dy / 2
-                        val fraction = offsetY / mHeadHeight
-                        if (mMaterialHeaderView != null) {
-                            mMaterialHeaderView?.getView()?.layoutParams?.height = offsetY.toInt()
-                            //更新控件
-                            mMaterialHeaderView?.getView()?.requestLayout()
-                            mMaterialHeaderView?.onSlide(fraction)
+                    val dy = (it.y - mTouchY).let { y ->
+                        //最大值和最小值范围控制
+                        when {
+                            y >= mWaveHeight * 2f -> mWaveHeight * 2f
+                            y <= 0 -> 0f
+                            else -> y
                         }
-                        if (!isOverlay) ViewCompat.setTranslationY(mChildView, offsetY)
                     }
+                    //计算滑动的高度
+                    val offsetY = mInterpolator.getInterpolation(dy / mWaveHeight / 2) * dy / 2
+                    //修改刷新控件的高度
+                    mMaterialHeaderView.view.layoutParams?.height = offsetY.toInt()
+                    //更新控件
+                    mMaterialHeaderView.view.requestLayout()
+                    mChildView?.let { child ->
+                        if (!isOverlay) child.translationY = offsetY
+                    }
+                    //0f-2f
+                    val fraction = offsetY / mHeadHeight
+                    LogUtils.d("测试", "计算后滑动的值：$fraction")
+                    //触发控件的滑动事件
+                    mMaterialHeaderView.onSlide(fraction)
                     return@onTouchEvent true
                 }
                 MotionEvent.ACTION_CANCEL,
-                MotionEvent.ACTION_UP -> {
-                    if (mChildView != null) {
-                        mMaterialHeaderView?.let { v ->
-                            if (isOverlay) {
-                                if (v.getView().layoutParams.height > mHeadHeight) {
+                MotionEvent.ACTION_UP -> { //松开手指
+                    if (isOverlay) {
+                        //当滑动高度大于触发高度
+                        if (mMaterialHeaderView.view.layoutParams.height >= mHeadHeight) {
+                            //触发下拉刷新
+                            updateListener()
 
-                                    updateListener()
+                            //修改刷新控件高度为触发刷新的高度
+                            mMaterialHeaderView.view.layoutParams.height = mHeadHeight.toInt()
+                            mMaterialHeaderView.view.requestLayout()
 
-                                    v.getView().layoutParams.height =
-                                        mHeadHeight.toInt()
-                                    v.getView().requestLayout()
+                        } else {
+                            //重置刷新控件的高度
+                            mMaterialHeaderView.view.layoutParams.height = 0
+                            mMaterialHeaderView.view.requestLayout()
+                        }
 
-                                } else {
-                                    v.getView().layoutParams.height = 0
-                                    v.getView().requestLayout()
-                                }
-
+                    } else {
+                        mChildView?.let { child ->
+                            if (child.translationY >= mHeadHeight) {
+                                createAnimatorTranslationY(
+                                    child,
+                                    mHeadHeight,
+                                    mMaterialHeaderView.view
+                                )
+                                updateListener()
                             } else {
-                                if (ViewCompat.getTranslationY(mChildView) >= mHeadHeight) {
-                                    createAnimatorTranslationY(
-                                        mChildView!!, mHeadHeight,
-                                        v.getView()
-                                    )
-                                    updateListener()
-                                } else {
-                                    createAnimatorTranslationY(mChildView!!, 0f, v.getView())
-                                }
+                                createAnimatorTranslationY(child, 0f, mMaterialHeaderView.view)
                             }
                         }
                     }
@@ -215,6 +220,16 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
         return super.onTouchEvent(event)
     }
 
+    /** 触发加载更多 */
+    private fun soveLoadMoreLogic() {
+        isLoadMoreing = true
+        mMaterialFooterView.view.visibility = View.VISIBLE
+        mMaterialFooterView.onBegin()
+        mMaterialFooterView.onRefreshing()
+        refreshListener?.onRefreshLoadMore(this)
+    }
+
+    /**设置是否是刷新太阳*/
     fun setSunStyle(isSunStyle: Boolean) {
         this.isSunStyle = isSunStyle
     }
@@ -223,19 +238,17 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
     fun autoRefresh() {
         postDelayed({
             if (!isRefreshing) {
-                mMaterialHeaderView?.let {
-                    it.getView().visibility = View.VISIBLE
+                mMaterialHeaderView.view.visibility = View.VISIBLE
 
-                    if (isOverlay) {
-                        it.getView().layoutParams.height = mHeadHeight.toInt()
-                        it.getView().requestLayout()
-                    } else {
-                        createAnimatorTranslationY(
-                            mChildView!!,
-                            mHeadHeight,
-                            it.getView()
-                        )
-                    }
+                if (isOverlay) {
+                    mMaterialHeaderView.view.layoutParams.height = mHeadHeight.toInt()
+                    mMaterialHeaderView.view.requestLayout()
+                } else {
+                    createAnimatorTranslationY(
+                        mChildView!!,
+                        mHeadHeight,
+                        mMaterialHeaderView.view
+                    )
                 }
                 updateListener()
             }
@@ -253,9 +266,10 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
         }
     }
 
-    fun updateListener() {
+    /**触发下拉刷新*/
+    private fun updateListener() {
         isRefreshing = true
-        mMaterialHeaderView?.onRefreshing()
+        mMaterialHeaderView.onRefreshing()
         refreshListener?.onRefresh(this)
     }
 
@@ -264,76 +278,63 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
         this.isLoadMore = isLoadMore
     }
 
-    fun createAnimatorTranslationY(v: View, h: Float, fl: View) {
-        val viewPropertyAnimatorCompat = ViewCompat.animate(v)
-        viewPropertyAnimatorCompat.duration = 250
-        viewPropertyAnimatorCompat.interpolator = DecelerateInterpolator()
-        viewPropertyAnimatorCompat.translationY(h)
-        viewPropertyAnimatorCompat.start()
-        viewPropertyAnimatorCompat.setUpdateListener {
-            val height = ViewCompat.getTranslationY(v)
-            fl.layoutParams.height = height.toInt()
+    /**创建动画*/
+    private fun createAnimatorTranslationY(v: View, h: Float, fl: View) {
+        val compatAnimte = ViewCompat.animate(v)
+        compatAnimte.duration = 250
+        compatAnimte.interpolator = DecelerateInterpolator()
+        compatAnimte.translationY(h)
+        compatAnimte.start()
+        compatAnimte.setUpdateListener {
+            fl.layoutParams.height = it.translationY.toInt()
             fl.requestLayout()
         }
     }
 
     /** 此布局的子视图是否可以向上滚动。如果子视图是自定义视图，请覆盖此选项。 */
-    fun canChildScrollUp(): Boolean {
+    private fun canChildScrollUp(): Boolean {
         mChildView?.let {
-            return ViewCompat.canScrollVertically(it, -1)
+            return@canChildScrollUp it.canScrollVertically(-1)
         }
         return false
     }
 
     /** 此布局的子视图是否可以向下滚动。如果子视图是自定义视图，请覆盖此选项。 */
-    fun canChildScrollDown(): Boolean {
+    private fun canChildScrollDown(): Boolean {
         mChildView?.let {
-            return ViewCompat.canScrollVertically(it, 1)
+            return@canChildScrollDown it.canScrollVertically(1)
         }
         return false
     }
 
-    fun setWaveHigher() {
-        mHeadHeight = HIGHER_HEAD_HEIGHT.toFloat()
-        mWaveHeight = HIGHER_WAVE_HEIGHT.toFloat()
-        MaterialWaveView.DefaulHeadHeight = HIGHER_HEAD_HEIGHT
-        MaterialWaveView.DefaulWaveHeight = HIGHER_WAVE_HEIGHT
-    }
-
-    fun finishRefreshing() {
-        mChildView?.let {
-            val viewPropertyAnimatorCompat = ViewCompat.animate(it)
-            viewPropertyAnimatorCompat.duration = 200
-            viewPropertyAnimatorCompat.y(ViewCompat.getTranslationY(mChildView))
-            viewPropertyAnimatorCompat.translationY(0f)
-            viewPropertyAnimatorCompat.interpolator = DecelerateInterpolator()
-            viewPropertyAnimatorCompat.start()
-
-            mMaterialHeaderView?.onComlete()
-            refreshListener?.onfinish()
-        }
-        isRefreshing = false
-    }
-
+    /**刷新完成*/
     fun finishRefresh() {
         post {
-            finishRefreshing()
+            mChildView?.let {
+                val compatAnimte = ViewCompat.animate(it)
+                compatAnimte.duration = 200
+                compatAnimte.y(it.translationY)
+                compatAnimte.translationY(0f)
+                compatAnimte.interpolator = DecelerateInterpolator()
+                compatAnimte.start()
+            }
+            mMaterialHeaderView.onComlete()
+            refreshListener?.onfinish()
+            isRefreshing = false
         }
     }
 
-    fun finishRefreshLoadMore() {
+    /**上拉加载完成*/
+    fun finishLoadMore() {
         post {
-            if (mMaterialFooterView != null && isLoadMoreing) {
+            if (isLoadMoreing) {
                 isLoadMoreing = false
-                mMaterialFooterView?.onComlete()
+                mMaterialFooterView.onComlete()
             }
         }
     }
 
-    private fun setHeaderView(headerView: View) = addView(headerView)
-
-    private fun setFooderView(fooderView: View) = addView(fooderView)
-
+    /**设置刷新监听事件*/
     fun setMaterialRefreshListener(refreshListener: MaterialRefreshListener) {
         this.refreshListener = refreshListener
     }

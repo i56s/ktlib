@@ -194,7 +194,7 @@ public class CircleProgressBar extends ImageView implements BaseMaterialView {
             } else {
                 OvalShape oval = new OvalShadow(mShadowRadius, mDiameter - mShadowRadius * 2);
                 mBgCircle = new ShapeDrawable(oval);
-                ViewCompat.setLayerType(this, ViewCompat.LAYER_TYPE_SOFTWARE, mBgCircle.getPaint());
+               setLayerType(LAYER_TYPE_SOFTWARE, mBgCircle.getPaint());
                 mBgCircle.getPaint().setShadowLayer(mShadowRadius, shadowXOffset, shadowYOffset,
                         KEY_SHADOW_COLOR);
                 final int padding = (int) mShadowRadius;

@@ -29,7 +29,7 @@ class LoadMoreActivity : BaseActivity<ActivityLoadMoreBinding>() {
             override fun onRefresh(materialRefreshLayout: MaterialRefreshLayout?) {
                 mBinding.refresh.postDelayed({
                     mBinding.refresh.finishRefresh()
-                }, 3000)
+                }, 1500)
             }
 
             override fun onfinish() {
@@ -39,8 +39,8 @@ class LoadMoreActivity : BaseActivity<ActivityLoadMoreBinding>() {
             override fun onRefreshLoadMore(materialRefreshLayout: MaterialRefreshLayout?) {
                 Toast.makeText(this@LoadMoreActivity, "加载更多", Toast.LENGTH_SHORT).show()
                 mBinding.refresh.postDelayed({
-                    mBinding.refresh.finishRefreshLoadMore()
-                }, 3000)
+                    mBinding.refresh.finishLoadMore()
+                }, 1500)
             }
         })
 

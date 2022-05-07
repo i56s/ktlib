@@ -7,26 +7,32 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import androidx.annotation.NonNull;
-import androidx.core.view.ViewCompat;
-
 import com.i56s.ktlib.R;
+import com.i56s.ktlib.utils.LogUtils;
 import com.i56s.ktlib.utils.SizeUtils;
 
-public class MaterialHeaderView extends FrameLayout implements BaseMaterialView {
+import androidx.annotation.NonNull;
 
-    private final static String Tag = MaterialHeaderView.class.getSimpleName();
-    private MaterialWaveView materialWaveView;
-    private CircleProgressBar circleProgressBar;
-    private int waveColor = 0x90ffffff;
-    private int progressTextColor = Color.BLACK;
-    private int[] progress_colors = {R.color.material_red, R.color.material_green, R.color.material_blue, R.color.material_yellow};
-    private int progressStokeWidth = 3;
-    private boolean isShowArrow = true, isShowProgressBg = true;
+public class MaterialHeaderView
+        extends FrameLayout
+        implements BaseMaterialView
+{
+
+    private final static String            Tag                = MaterialHeaderView.class.getSimpleName();
+    private              MaterialWaveView  materialWaveView;
+    private              CircleProgressBar circleProgressBar;
+    private              int               waveColor          = 0x90ffffff;
+    private              int               progressTextColor  = Color.BLACK;
+    private              int[]             progress_colors    = {R.color.material_red,
+                                                                 R.color.material_green,
+                                                                 R.color.material_blue,
+                                                                 R.color.material_yellow};
+    private              int               progressStokeWidth = 3;
+    private              boolean           isShowArrow        = true, isShowProgressBg = true;
     private int progressValue = 0, progressValueMax = 100;
-    private int textType = 1;
-    private int progressBg = CircleProgressBar.DEFAULT_CIRCLE_BG_LIGHT;
-    private int progressSize = 50;
+    private        int   textType     = 1;
+    private        int   progressBg   = CircleProgressBar.DEFAULT_CIRCLE_BG_LIGHT;
+    private        int   progressSize = 50;
     private static float density;
 
     public MaterialHeaderView(Context context) {
@@ -39,12 +45,12 @@ public class MaterialHeaderView extends FrameLayout implements BaseMaterialView 
 
     public MaterialHeaderView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(attrs, defStyle);
+        init();
     }
 
 
-    protected void init(AttributeSet attrs, int defStyle) {
-        if (isInEditMode()) return;
+    protected void init() {
+        if (isInEditMode()) { return; }
         setClipToPadding(false);
         setWillNotDraw(false);
     }
@@ -62,22 +68,22 @@ public class MaterialHeaderView extends FrameLayout implements BaseMaterialView 
 
     public void setProgressSize(int progressSize) {
         this.progressSize = progressSize;
-        LayoutParams layoutParams = new LayoutParams((int) density * progressSize, (int) density * progressSize);
+        LayoutParams layoutParams = new LayoutParams((int) density * progressSize,
+                                                     (int) density * progressSize);
         layoutParams.gravity = Gravity.CENTER;
-        if (circleProgressBar != null)
-            circleProgressBar.setLayoutParams(layoutParams);
+        if (circleProgressBar != null) { circleProgressBar.setLayoutParams(layoutParams); }
     }
 
     public void setProgressBg(int progressBg) {
         this.progressBg = progressBg;
-        if (circleProgressBar != null)
-            circleProgressBar.setProgressBackGroundColor(progressBg);
+        if (circleProgressBar != null) { circleProgressBar.setProgressBackGroundColor(progressBg); }
     }
 
     public void setIsProgressBg(boolean isShowProgressBg) {
         this.isShowProgressBg = isShowProgressBg;
-        if (circleProgressBar != null)
+        if (circleProgressBar != null) {
             circleProgressBar.setCircleBackgroundEnabled(isShowProgressBg);
+        }
     }
 
     public void setProgressTextColor(int textColor) {
@@ -86,8 +92,7 @@ public class MaterialHeaderView extends FrameLayout implements BaseMaterialView 
 
     public void setProgressColors(int[] colors) {
         this.progress_colors = colors;
-        if (circleProgressBar != null)
-            circleProgressBar.setColorSchemeColors(progress_colors);
+        if (circleProgressBar != null) { circleProgressBar.setColorSchemeColors(progress_colors); }
     }
 
     public void setTextType(int textType) {
@@ -113,14 +118,14 @@ public class MaterialHeaderView extends FrameLayout implements BaseMaterialView 
 
     public void setProgressStokeWidth(int w) {
         this.progressStokeWidth = w;
-        if (circleProgressBar != null)
+        if (circleProgressBar != null) {
             circleProgressBar.setProgressStokeWidth(progressStokeWidth);
+        }
     }
 
     public void showProgressArrow(boolean isShowArrow) {
         this.isShowArrow = isShowArrow;
-        if (circleProgressBar != null)
-            circleProgressBar.setShowArrow(isShowArrow);
+        if (circleProgressBar != null) { circleProgressBar.setShowArrow(isShowArrow); }
     }
 
     @Override
@@ -132,7 +137,8 @@ public class MaterialHeaderView extends FrameLayout implements BaseMaterialView 
         addView(materialWaveView);
 
         circleProgressBar = new CircleProgressBar(getContext());
-        LayoutParams layoutParams = new LayoutParams((int) density * progressSize, (int) density * progressSize);
+        LayoutParams layoutParams = new LayoutParams((int) density * progressSize,
+                                                     (int) density * progressSize);
         layoutParams.gravity = Gravity.CENTER;
         circleProgressBar.setLayoutParams(layoutParams);
         circleProgressBar.setColorSchemeColors(progress_colors);
@@ -154,9 +160,9 @@ public class MaterialHeaderView extends FrameLayout implements BaseMaterialView 
         }
         if (circleProgressBar != null) {
             circleProgressBar.onComlete();
-            ViewCompat.setTranslationY(circleProgressBar, 0);
-            ViewCompat.setScaleX(circleProgressBar, 0);
-            ViewCompat.setScaleY(circleProgressBar, 0);
+            circleProgressBar.setTranslationY(0);
+            circleProgressBar.setScaleX(0);
+            circleProgressBar.setScaleY(0);
         }
 
     }
@@ -167,8 +173,8 @@ public class MaterialHeaderView extends FrameLayout implements BaseMaterialView 
             materialWaveView.onBegin();
         }
         if (circleProgressBar != null) {
-            ViewCompat.setScaleX(circleProgressBar, 0.001f);
-            ViewCompat.setScaleY(circleProgressBar, 0.001f);
+            circleProgressBar.setScaleX(0.001f);
+            circleProgressBar.setScaleY(0.001f);
             circleProgressBar.onBegin();
         }
     }
@@ -181,9 +187,10 @@ public class MaterialHeaderView extends FrameLayout implements BaseMaterialView 
         if (circleProgressBar != null) {
             circleProgressBar.onSlide(fraction);
             float a = SizeUtils.limitValue(1, fraction);
-            ViewCompat.setScaleX(circleProgressBar, a);
-            ViewCompat.setScaleY(circleProgressBar, a);
-            ViewCompat.setAlpha(circleProgressBar, a);
+            LogUtils.d("测试", "控件内部值：" + a);
+            circleProgressBar.setScaleX(a);
+            circleProgressBar.setScaleY(a);
+            circleProgressBar.setAlpha(a);
         }
     }
 

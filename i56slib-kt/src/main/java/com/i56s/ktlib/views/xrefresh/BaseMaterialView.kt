@@ -9,7 +9,7 @@ import android.view.View
  */
 interface BaseMaterialView {
 
-    fun getView(): View
+    val view:View
 
     /** 开始触发 */
     fun onBegin()

@@ -6,10 +6,9 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import androidx.annotation.NonNull;
-import androidx.core.view.ViewCompat;
-
 import com.i56s.ktlib.utils.SizeUtils;
+
+import androidx.annotation.NonNull;
 
 public class MaterialHeadView extends FrameLayout implements BaseMaterialView {
     private MaterialWaveView materialWaveView;
@@ -149,9 +148,9 @@ public class MaterialHeadView extends FrameLayout implements BaseMaterialView {
         if(circleProgressBar != null)
         {
             circleProgressBar.onComlete();
-            ViewCompat.setTranslationY(circleProgressBar,0);
-            ViewCompat.setScaleX(circleProgressBar, 0);
-            ViewCompat.setScaleY(circleProgressBar,0);
+            circleProgressBar.setTranslationY(0);
+            circleProgressBar.setScaleX( 0);
+            circleProgressBar.setScaleY(0);
         }
 
     }
@@ -178,9 +177,9 @@ public class MaterialHeadView extends FrameLayout implements BaseMaterialView {
         {
             circleProgressBar.onSlide( fraction);
             float a = SizeUtils.limitValue(1,fraction);
-            ViewCompat.setScaleX(circleProgressBar, 1);
-            ViewCompat.setScaleY(circleProgressBar, 1);
-            ViewCompat.setAlpha(circleProgressBar, a);
+            circleProgressBar.setScaleX( 1);
+            circleProgressBar.setScaleY( 1);
+            circleProgressBar.setAlpha( a);
         }
     }
 

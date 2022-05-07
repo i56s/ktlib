@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:isLoadMore="true"
-    app:overlay="true"
+    app:overlay="false"
     app:progress_colors="@array/material_colors"
     app:progress_size_type="normal"
     app:wave_color="#90ffffff"

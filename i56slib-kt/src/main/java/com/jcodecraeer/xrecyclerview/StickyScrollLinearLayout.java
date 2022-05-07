@@ -161,7 +161,7 @@ public class StickyScrollLinearLayout
                     && (scrollY >= 0)
                     &&
                     (
-                            !ViewCompat.canScrollVertically(target, -1)
+                            !target.canScrollVertically( -1)
                                     ||
                             firstVisiblePosition==targetFirstVisiblePosition
                     );

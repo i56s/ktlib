@@ -7,7 +7,7 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "I56sLib"
-//include ':kt-test'
+include ':kt-test'
 include ':i56slib-java'
 include ':i56slib-kt'
 include ':app'

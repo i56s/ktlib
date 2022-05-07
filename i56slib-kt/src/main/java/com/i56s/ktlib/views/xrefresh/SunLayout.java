@@ -9,34 +9,36 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 
-import androidx.annotation.NonNull;
-import androidx.core.view.ViewCompat;
-
 import com.i56s.ktlib.utils.SizeUtils;
+
+import androidx.annotation.NonNull;
 
 /**
  * Created by cjj on 2016/2/22.
  */
-public class SunLayout extends FrameLayout implements BaseMaterialView {
+public class SunLayout
+        extends FrameLayout
+        implements BaseMaterialView
+{
 
-    private final static String Tag = SunLayout.class.getSimpleName();
-    protected static final int DEFAULT_SUN_RADIUS = 12;//太阳的半径
-    private static final int DEFAULT_SUN_COLOR = Color.RED;
-    private static final int DEFAULT_SUN_EYES_SIZE = 2;
-    private static final int DEFAULT_LINE_HEIGHT = 3;
-    private static final int DEFAULT_LINE_WIDTH = 1;
-    private static final int DEFAULT_LINE_LEVEL = 30;
-    private static final int DEFAULT_MOUTH_WIDTH = 3;
-    private static final int DEFAULT_LINE_COLOR = Color.RED;
+    private final static   String Tag                   = SunLayout.class.getSimpleName();
+    protected static final int    DEFAULT_SUN_RADIUS    = 12;//太阳的半径
+    private static final   int    DEFAULT_SUN_COLOR     = Color.RED;
+    private static final   int    DEFAULT_SUN_EYES_SIZE = 2;
+    private static final   int    DEFAULT_LINE_HEIGHT   = 3;
+    private static final   int    DEFAULT_LINE_WIDTH    = 1;
+    private static final   int    DEFAULT_LINE_LEVEL    = 30;
+    private static final   int    DEFAULT_MOUTH_WIDTH   = 3;
+    private static final   int    DEFAULT_LINE_COLOR    = Color.RED;
 
     protected SunFaceView mSunView;
     protected SunLineView mLineView;
-    private int mSunRadius;
-    private int mSunColor;
-    private int mEyesSize;
-    private int mLineLevel;
-    private int mMouthStro;
-    private int mLineColor, mLineWidth, mLineHeight;
+    private   int         mSunRadius;
+    private   int         mSunColor;
+    private   int         mEyesSize;
+    private   int         mLineLevel;
+    private   int         mMouthStro;
+    private   int         mLineColor, mLineWidth, mLineHeight;
 
     private ObjectAnimator mAnimator;
 
@@ -179,8 +181,7 @@ public class SunLayout extends FrameLayout implements BaseMaterialView {
             mAnimator.setInterpolator(new LinearInterpolator());
             mAnimator.setRepeatCount(ValueAnimator.INFINITE);
         }
-        if (!mAnimator.isRunning())
-            mAnimator.start();
+        if (!mAnimator.isRunning()) { mAnimator.start(); }
     }
 
     /**
@@ -195,15 +196,15 @@ public class SunLayout extends FrameLayout implements BaseMaterialView {
     @Override
     public void onComlete() {
         cancelSunLineAnim();
-        ViewCompat.setScaleX(this, 0);
-        ViewCompat.setScaleY(this, 0);
+        setScaleX(0);
+        setScaleY(0);
     }
 
     @Override
     public void onBegin() {
 
-        ViewCompat.setScaleX(this, 0.001f);
-        ViewCompat.setScaleY(this, 0.001f);
+        setScaleX(0.001f);
+        setScaleY(0.001f);
     }
 
     @Override
@@ -215,9 +216,9 @@ public class SunLayout extends FrameLayout implements BaseMaterialView {
             mLineView.setVisibility(View.GONE);
         }
         mSunView.setPerView(mSunRadius, a);
-        ViewCompat.setScaleX(this, a);
-        ViewCompat.setScaleY(this, a);
-        ViewCompat.setAlpha(this, a);
+        setScaleX(a);
+        setScaleY(a);
+        setAlpha(a);
     }
 
     @Override
