@@ -128,7 +128,7 @@ class ArrowRefreshHeader(context: Context, attrs: AttributeSet?) : LinearLayout(
         //测量实际高度
         measure(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         mMeasuredHeight = measuredHeight
-        LogUtils.d("测试", "测量结果$mMeasuredHeight")
+        //LogUtils.d("测试", "测量结果$mMeasuredHeight")
     }
 
     fun destroy() {

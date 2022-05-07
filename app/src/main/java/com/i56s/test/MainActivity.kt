@@ -1,12 +1,14 @@
 package com.i56s.test
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
@@ -18,15 +20,7 @@ import com.i56s.test.databinding.ItemTestBinding
 import com.i56s.test.databinding.ViewHeaderBinding
 import com.jcodecraeer.xrecyclerview.XRecyclerView
 
-class MainActivity : LibBaseActivity<ActivityMainBinding>(), XRecyclerView.LoadingListener {
-
-    override fun isRemoveStatusBar(): Boolean = false
-
-    override fun isOverstepStatusBar(): Boolean = false
-
-    override fun onCreateBefore() = Unit
-
-    override fun onCreateAfter() = Unit
+class MainActivity : BaseActivity<ActivityMainBinding>(), XRecyclerView.LoadingListener {
 
     override fun getViewBinding(): ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
 
@@ -57,7 +51,8 @@ class MainActivity : LibBaseActivity<ActivityMainBinding>(), XRecyclerView.Loadi
         }
         mBinding.recycler.setLoadingListener(this)
         mBinding.itemCount.setOnClickListener {
-            LogUtils.d("测试", "总数 = ${mAdapter.itemCount}")
+            //LogUtils.d("测试", "总数 = ${mAdapter.itemCount}")
+            startActivity(Intent(this,SecondActivity::class.java))
         }
     }
 
