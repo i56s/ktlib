@@ -17,7 +17,7 @@ import com.i56s.ktlib.utils.LogUtils
  */
 abstract class LibBaseDialog<T : ViewBinding> : LibDialogFragment() {
 
-    private val TAG = "LibDialog基类"
+    private val cTag = "LibDialog基类"
 
     /**数据开始加载的时间*/
     private var mLoadTime: Long = 0
@@ -32,7 +32,7 @@ abstract class LibBaseDialog<T : ViewBinding> : LibDialogFragment() {
     protected lateinit var mBinding: T
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
-        Dialog(activity!!, R.style.Dialog)
+        Dialog(requireActivity(), R.style.Dialog)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,15 +61,15 @@ abstract class LibBaseDialog<T : ViewBinding> : LibDialogFragment() {
         //设置宽度
         if (width != 0f && windowWidth != null) {
             dialog?.window?.attributes?.width = (windowWidth * width).toInt()
-        }else{
+        } else {
             dialog?.window?.attributes?.width = ViewGroup.LayoutParams.MATCH_PARENT
         }
         //设置高度
         if (height != 0f && windowHeight != null) {
-            dialog?.window?.attributes?.width = (windowHeight * height).toInt()
+            dialog?.window?.attributes?.height = (windowHeight * height).toInt()
         }
         dialog?.window?.attributes?.gravity = Gravity.CENTER
-        dialog?.setOnKeyListener { dialog, keyCode, event ->
+        dialog?.setOnKeyListener { _, keyCode, event ->
             //点击返回键关闭
             if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
                 mBackDismissListener?.invoke()
@@ -106,7 +106,7 @@ abstract class LibBaseDialog<T : ViewBinding> : LibDialogFragment() {
     /**加载数据*/
     private fun loadData() {
         if (System.currentTimeMillis() - mLoadTime > mFragmentLoadDataTime) {
-            LogUtils.e(TAG, "定时加载数据${javaClass.name}")
+            LogUtils.e(cTag, "定时加载数据${javaClass.name}")
             this.refreshLoadTime()
             this.loadDataOfTimer()
         }
