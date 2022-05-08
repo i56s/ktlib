@@ -51,11 +51,11 @@ class LoadMoreActivity : BaseActivity<ActivityLoadMoreBinding>() {
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
         recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
-        recyclerView.adapter = SimpleStringRecyclerViewAdapter(this@LoadMoreActivity)
+        recyclerView.adapter = SimpleStringRecyclerViewAdapter()
         recyclerView.itemAnimator = DefaultItemAnimator()
     }
 
-    class SimpleStringRecyclerViewAdapter constructor(context: Context) :
+    class SimpleStringRecyclerViewAdapter constructor() :
         RecyclerView.Adapter<SimpleStringRecyclerViewAdapter.ViewHolder>() {
 
 
@@ -78,6 +78,6 @@ class LoadMoreActivity : BaseActivity<ActivityLoadMoreBinding>() {
             }
         }
 
-        override fun getItemCount(): Int = 3
+        override fun getItemCount(): Int = 4
     }
 }

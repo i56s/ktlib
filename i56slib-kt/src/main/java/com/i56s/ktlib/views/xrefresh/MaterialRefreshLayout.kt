@@ -45,6 +45,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
     private var mListener: MaterialRefreshListener? = null
 
     private var isOverlay = false
+    private var isMore = false
     private var isRefreshing = false
     private var isLoadMoreing = false
     private var isLoadMore = false
@@ -146,8 +147,6 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
         return super.onInterceptTouchEvent(ev)
     }
 
-    var isMore = false
-
     /** 滑动事件处理 */
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (isRefreshing || isLoadMoreing) return true
@@ -155,6 +154,11 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
         event?.let {
             when (it.action) {
                 MotionEvent.ACTION_MOVE -> {
+                    if(isMore){
+                        if(it.y - mTouchY>0f)return true
+                    }else {
+                        if(it.y - mTouchY<0f)return true
+                    }
                     val dy = abs(it.y - mTouchY).let { y ->
                         //最大值和最小值范围控制
                         when {
@@ -188,15 +192,6 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
             }
         }
         return super.onTouchEvent(event)
-    }
-
-    /** 触发加载更多 */
-    fun soveLoadMoreLogic() {
-        isLoadMoreing = true
-        mMaterialFooterView.view.visibility = View.VISIBLE
-        mMaterialFooterView.onBegin()
-        mMaterialFooterView.onRefreshing()
-        mListener?.onLoadMore(this)
     }
 
     /**设置是否是刷新太阳*/
