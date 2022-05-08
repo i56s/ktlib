@@ -13,6 +13,7 @@ import com.i56s.ktlib.R
 import com.i56s.ktlib.utils.LogUtils
 import com.i56s.ktlib.utils.SizeUtils
 import java.lang.RuntimeException
+import kotlin.math.abs
 
 /**
  * ### 创建者：wxr
@@ -42,7 +43,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
     private lateinit var mInterpolator: DecelerateInterpolator//减速插值器
 
     private var mChildView: View? = null
-    private var refreshListener: MaterialRefreshListener? = null
+    private var mListener: MaterialRefreshListener? = null
 
     private var isOverlay = false
     private var isRefreshing = false
@@ -103,7 +104,8 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
             mMaterialHeaderView.view.visibility = View.GONE
             addView(mMaterialHeaderView.view)
             //添加底部加载
-            mMaterialFooterView = MaterialFooterView(context)
+            //mMaterialFooterView = MaterialFooterView(context)
+            mMaterialFooterView = MaterialHeaderView(context)
             val layoutParams2 = LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 SizeUtils.dp2px(HIGHER_HEAD_HEIGHT.toFloat()).toInt()
@@ -117,7 +119,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
         //刷新中-拦截事件
-        if (isRefreshing) return true
+        if (isRefreshing || isLoadMoreing) return true
         ev?.let {
             when (it.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -135,10 +137,9 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
                         //上拉操作
                     } else if (dy < 0 && !canChildScrollDown() && isLoadMore) {
                         isMore = true
-                        if (!isLoadMoreing) {
-                            soveLoadMoreLogic()
-                        }
-                        return super.onInterceptTouchEvent(it)
+                        mMaterialFooterView.view.visibility = View.VISIBLE
+                        mMaterialFooterView.onBegin()
+                        return true
                     }
                 }
             }
@@ -150,12 +151,12 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
 
     /** 滑动事件处理 */
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (isRefreshing) return true
+        if (isRefreshing || isLoadMoreing) return true
 
         event?.let {
             when (it.action) {
                 MotionEvent.ACTION_MOVE -> {
-                    val dy = (it.y - mTouchY).let { y ->
+                    val dy = abs(it.y - mTouchY).let { y ->
                         //最大值和最小值范围控制
                         when {
                             y >= mWaveHeight * 2f -> mWaveHeight * 2f
@@ -165,68 +166,38 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
                     }
                     //计算滑动的高度
                     val offsetY = mInterpolator.getInterpolation(dy / mWaveHeight / 2) * dy / 2
-                    //修改刷新控件的高度
-                    mMaterialHeaderView.view.layoutParams?.height = offsetY.toInt()
-                    //更新控件
-                    mMaterialHeaderView.view.requestLayout()
-                    mChildView?.let { child ->
-                        if (!isOverlay) child.translationY = offsetY
-                    }
                     //0f-2f
                     val fraction = offsetY / mHeadHeight
-                    LogUtils.d("测试", "计算后滑动的值：$fraction")
-                    //触发控件的滑动事件
-                    mMaterialHeaderView.onSlide(fraction)
+                    //LogUtils.d("测试", "计算后滑动的值：$fraction")
+
+                    onMove(
+                        if (isMore) mMaterialFooterView else mMaterialHeaderView,
+                        offsetY,
+                        fraction
+                    )
+                    mChildView?.let { child ->
+                        if (!isOverlay) child.translationY = if (isMore) -offsetY else offsetY
+                    }
                     return@onTouchEvent true
                 }
                 MotionEvent.ACTION_CANCEL,
                 MotionEvent.ACTION_UP -> { //松开手指
-                    if (isOverlay) {
-                        //当滑动高度大于触发高度
-                        if (mMaterialHeaderView.view.layoutParams.height >= mHeadHeight) {
-                            //触发下拉刷新
-                            updateListener()
-
-                            //修改刷新控件高度为触发刷新的高度
-                            mMaterialHeaderView.view.layoutParams.height = mHeadHeight.toInt()
-                            mMaterialHeaderView.view.requestLayout()
-
-                        } else {
-                            //重置刷新控件的高度
-                            mMaterialHeaderView.view.layoutParams.height = 0
-                            mMaterialHeaderView.view.requestLayout()
-                        }
-
-                    } else {
-                        mChildView?.let { child ->
-                            if (child.translationY >= mHeadHeight) {
-                                createAnimatorTranslationY(
-                                    child,
-                                    mHeadHeight,
-                                    mMaterialHeaderView.view
-                                )
-                                updateListener()
-                            } else {
-                                createAnimatorTranslationY(child, 0f, mMaterialHeaderView.view)
-                            }
-                        }
-                    }
+                    onUp(if (isMore) mMaterialFooterView else mMaterialHeaderView)
                     return@onTouchEvent true
                 }
                 else -> return@onTouchEvent super.onTouchEvent(event)
             }
         }
-
         return super.onTouchEvent(event)
     }
 
     /** 触发加载更多 */
-    private fun soveLoadMoreLogic() {
+     fun soveLoadMoreLogic() {
         isLoadMoreing = true
         mMaterialFooterView.view.visibility = View.VISIBLE
         mMaterialFooterView.onBegin()
         mMaterialFooterView.onRefreshing()
-        refreshListener?.onRefreshLoadMore(this)
+        mListener?.onRefreshLoadMore(this)
     }
 
     /**设置是否是刷新太阳*/
@@ -250,27 +221,47 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
                         mMaterialHeaderView.view
                     )
                 }
-                updateListener()
+                refreshListener()
             }
         }, 50)
     }
 
     /** 自动加载更多 */
-    fun autoRefreshLoadMore() {
-        this.post {
-            if (isLoadMore) {
-                soveLoadMoreLogic()
-            } else {
-                throw  RuntimeException("加载更多没有开启")
+    fun autoLoadMore() {
+        if(!isLoadMore)throw  RuntimeException("加载更多没有开启")
+        postDelayed({
+            if (!isRefreshing) {
+                mMaterialFooterView.view.visibility = View.VISIBLE
+
+                if (isOverlay) {
+                    mMaterialFooterView.view.layoutParams.height = mHeadHeight.toInt()
+                    mMaterialFooterView.view.requestLayout()
+                } else {
+                    createAnimatorTranslationY(
+                        mChildView!!,
+                        -mHeadHeight,
+                        mMaterialFooterView.view
+                    )
+                }
+                loadmoreListener()
             }
-        }
+        }, 50)
+
+
     }
 
     /**触发下拉刷新*/
-    private fun updateListener() {
+    private fun refreshListener() {
         isRefreshing = true
         mMaterialHeaderView.onRefreshing()
-        refreshListener?.onRefresh(this)
+        mListener?.onRefresh(this)
+    }
+
+    /**触发上拉加载*/
+    private fun loadmoreListener() {
+        isLoadMoreing = true
+        mMaterialFooterView.onRefreshing()
+        mListener?.onRefreshLoadMore(this)
     }
 
     /** 是否允许加载更多 */
@@ -310,16 +301,8 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
     /**刷新完成*/
     fun finishRefresh() {
         post {
-            mChildView?.let {
-                val compatAnimte = ViewCompat.animate(it)
-                compatAnimte.duration = 200
-                compatAnimte.y(it.translationY)
-                compatAnimte.translationY(0f)
-                compatAnimte.interpolator = DecelerateInterpolator()
-                compatAnimte.start()
-            }
+            resetChildView()
             mMaterialHeaderView.onComlete()
-            refreshListener?.onfinish()
             isRefreshing = false
         }
     }
@@ -327,15 +310,64 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
     /**上拉加载完成*/
     fun finishLoadMore() {
         post {
-            if (isLoadMoreing) {
-                isLoadMoreing = false
-                mMaterialFooterView.onComlete()
-            }
+            resetChildView()
+            mMaterialFooterView.onComlete()
+            isLoadMoreing = false
         }
     }
 
     /**设置刷新监听事件*/
-    fun setMaterialRefreshListener(refreshListener: MaterialRefreshListener) {
-        this.refreshListener = refreshListener
+    fun setMaterialRefreshListener(listener: MaterialRefreshListener) {
+        this.mListener = listener
+    }
+
+    /**滑动状态*/
+    private fun onMove(baaseMaterial: BaseMaterialView, offsetY: Float, fraction: Float) {
+        //修改刷新控件的高度
+        baaseMaterial.view.layoutParams?.height = offsetY.toInt()
+        //更新控件
+        baaseMaterial.view.requestLayout()
+        //触发控件的滑动事件
+        baaseMaterial.onSlide(fraction)
+    }
+
+    /**手指抬起状态*/
+    private fun onUp(baaseMaterial: BaseMaterialView) {
+        //当滑动高度大于触发高度
+        if (isOverlay) {
+            if (baaseMaterial.view.layoutParams.height >= mHeadHeight) {
+                //触发加载事件
+                if (isMore) loadmoreListener() else refreshListener()
+                //修改刷新控件高度为触发刷新的高度
+                baaseMaterial.view.layoutParams.height = mHeadHeight.toInt()
+                baaseMaterial.view.requestLayout()
+            } else {
+                //重置刷新控件的高度
+                baaseMaterial.view.layoutParams.height = 0
+                baaseMaterial.view.requestLayout()
+            }
+        } else {
+            mChildView?.let { child ->
+                if (abs(child.translationY) >= mHeadHeight) {
+                    createAnimatorTranslationY(child,  if (isMore)-mHeadHeight else mHeadHeight, baaseMaterial.view)
+                    //触发加载事件
+                    if (isMore) loadmoreListener() else refreshListener()
+                } else {
+                    createAnimatorTranslationY(child, 0f, baaseMaterial.view)
+                }
+            }
+        }
+    }
+
+    /**重置子控件*/
+    private fun resetChildView(){
+        mChildView?.let {
+            val compatAnimte = ViewCompat.animate(it)
+            compatAnimte.duration = 200
+            compatAnimte.y(it.translationY)
+            compatAnimte.translationY(0f)
+            compatAnimte.interpolator = DecelerateInterpolator()
+            compatAnimte.start()
+        }
     }
 }

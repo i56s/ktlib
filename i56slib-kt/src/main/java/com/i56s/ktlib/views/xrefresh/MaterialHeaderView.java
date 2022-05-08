@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.i56s.ktlib.R;
-import com.i56s.ktlib.utils.LogUtils;
 import com.i56s.ktlib.utils.SizeUtils;
 
 import androidx.annotation.NonNull;
@@ -187,7 +186,7 @@ public class MaterialHeaderView
         if (circleProgressBar != null) {
             circleProgressBar.onSlide(fraction);
             float a = SizeUtils.limitValue(1, fraction);
-            LogUtils.d("测试", "控件内部值：" + a);
+            //LogUtils.d("测试", "控件内部值：" + a);
             circleProgressBar.setScaleX(a);
             circleProgressBar.setScaleY(a);
             circleProgressBar.setAlpha(a);
