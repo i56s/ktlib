@@ -10,7 +10,6 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
 import com.i56s.ktlib.R
-import com.i56s.ktlib.utils.LogUtils
 import com.i56s.ktlib.utils.SizeUtils
 import java.lang.RuntimeException
 import kotlin.math.abs
@@ -192,12 +191,12 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
     }
 
     /** 触发加载更多 */
-     fun soveLoadMoreLogic() {
+    fun soveLoadMoreLogic() {
         isLoadMoreing = true
         mMaterialFooterView.view.visibility = View.VISIBLE
         mMaterialFooterView.onBegin()
         mMaterialFooterView.onRefreshing()
-        mListener?.onRefreshLoadMore(this)
+        mListener?.onLoadMore(this)
     }
 
     /**设置是否是刷新太阳*/
@@ -213,13 +212,10 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
 
                 if (isOverlay) {
                     mMaterialHeaderView.view.layoutParams.height = mHeadHeight.toInt()
+                    mMaterialHeaderView.onSlide(1f)
                     mMaterialHeaderView.view.requestLayout()
                 } else {
-                    createAnimatorTranslationY(
-                        mChildView!!,
-                        mHeadHeight,
-                        mMaterialHeaderView.view
-                    )
+                    createTranslationY(mChildView!!, mHeadHeight, mMaterialHeaderView.view)
                 }
                 refreshListener()
             }
@@ -228,20 +224,17 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
 
     /** 自动加载更多 */
     fun autoLoadMore() {
-        if(!isLoadMore)throw  RuntimeException("加载更多没有开启")
+        if (!isLoadMore) throw  RuntimeException("加载更多没有开启")
         postDelayed({
             if (!isRefreshing) {
                 mMaterialFooterView.view.visibility = View.VISIBLE
 
                 if (isOverlay) {
                     mMaterialFooterView.view.layoutParams.height = mHeadHeight.toInt()
+                    mMaterialFooterView.onSlide(1f)
                     mMaterialFooterView.view.requestLayout()
                 } else {
-                    createAnimatorTranslationY(
-                        mChildView!!,
-                        -mHeadHeight,
-                        mMaterialFooterView.view
-                    )
+                    createTranslationY(mChildView!!, -mHeadHeight, mMaterialFooterView.view)
                 }
                 loadmoreListener()
             }
@@ -261,7 +254,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
     private fun loadmoreListener() {
         isLoadMoreing = true
         mMaterialFooterView.onRefreshing()
-        mListener?.onRefreshLoadMore(this)
+        mListener?.onLoadMore(this)
     }
 
     /** 是否允许加载更多 */
@@ -270,7 +263,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
     }
 
     /**创建动画*/
-    private fun createAnimatorTranslationY(v: View, h: Float, fl: View) {
+    private fun createTranslationY(v: View, h: Float, fl: View) {
         val compatAnimte = ViewCompat.animate(v)
         compatAnimte.duration = 250
         compatAnimte.interpolator = DecelerateInterpolator()
@@ -349,18 +342,22 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
         } else {
             mChildView?.let { child ->
                 if (abs(child.translationY) >= mHeadHeight) {
-                    createAnimatorTranslationY(child,  if (isMore)-mHeadHeight else mHeadHeight, baaseMaterial.view)
+                    createTranslationY(
+                        child,
+                        if (isMore) -mHeadHeight else mHeadHeight,
+                        baaseMaterial.view
+                    )
                     //触发加载事件
                     if (isMore) loadmoreListener() else refreshListener()
                 } else {
-                    createAnimatorTranslationY(child, 0f, baaseMaterial.view)
+                    createTranslationY(child, 0f, baaseMaterial.view)
                 }
             }
         }
     }
 
     /**重置子控件*/
-    private fun resetChildView(){
+    private fun resetChildView() {
         mChildView?.let {
             val compatAnimte = ViewCompat.animate(it)
             compatAnimte.duration = 200

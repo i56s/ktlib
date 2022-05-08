@@ -409,7 +409,7 @@ public class CircleProgressBar extends ImageView implements BaseMaterialView {
     @Override
     public void onBegin( ) {
         setVisibility(View.VISIBLE);
-//        mProgressDrawable.setStartEndTrim(0, (float) 0.75);
+        //mProgressDrawable.setStartEndTrim(0, (float) 0.75);
     }
 
     @Override

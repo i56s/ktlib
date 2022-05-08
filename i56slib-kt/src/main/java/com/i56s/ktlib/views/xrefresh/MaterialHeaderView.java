@@ -7,7 +7,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.i56s.ktlib.R;
 import com.i56s.ktlib.utils.SizeUtils;
 
 import androidx.annotation.NonNull;
@@ -20,19 +19,16 @@ public class MaterialHeaderView
     private final static String            Tag                = MaterialHeaderView.class.getSimpleName();
     private              MaterialWaveView  materialWaveView;
     private              CircleProgressBar circleProgressBar;
-    private              int               waveColor          = 0x90ffffff;
+    private              int               waveColor          = 0x90000000;
     private              int               progressTextColor  = Color.BLACK;
-    private              int[]             progress_colors    = {R.color.material_red,
-                                                                 R.color.material_green,
-                                                                 R.color.material_blue,
-                                                                 R.color.material_yellow};
+    private              int[]             progress_colors    = {0xffF44336, 0xff4CAF50, 0xff03A9F4,
+                                                                 0xffFFEB3B};
     private              int               progressStokeWidth = 3;
     private              boolean           isShowArrow        = true, isShowProgressBg = true;
     private int progressValue = 0, progressValueMax = 100;
-    private        int   textType     = 1;
-    private        int   progressBg   = CircleProgressBar.DEFAULT_CIRCLE_BG_LIGHT;
-    private        int   progressSize = 50;
-    private static float density;
+    private int textType     = 1;
+    private int progressBg   = CircleProgressBar.DEFAULT_CIRCLE_BG_LIGHT;
+    private int progressSize = 50;
 
     public MaterialHeaderView(Context context) {
         this(context, null);
@@ -67,8 +63,8 @@ public class MaterialHeaderView
 
     public void setProgressSize(int progressSize) {
         this.progressSize = progressSize;
-        LayoutParams layoutParams = new LayoutParams((int) density * progressSize,
-                                                     (int) density * progressSize);
+        LayoutParams layoutParams = new LayoutParams((int) SizeUtils.dp2px(progressSize),
+                                                     (int) SizeUtils.dp2px(progressSize));
         layoutParams.gravity = Gravity.CENTER;
         if (circleProgressBar != null) { circleProgressBar.setLayoutParams(layoutParams); }
     }
@@ -130,14 +126,14 @@ public class MaterialHeaderView
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        density = getContext().getResources().getDisplayMetrics().density;
         materialWaveView = new MaterialWaveView(getContext());
         materialWaveView.setColor(waveColor);
         addView(materialWaveView);
 
         circleProgressBar = new CircleProgressBar(getContext());
-        LayoutParams layoutParams = new LayoutParams((int) density * progressSize,
-                                                     (int) density * progressSize);
+
+        LayoutParams layoutParams = new LayoutParams((int) SizeUtils.dp2px(progressSize),
+                                                     (int) SizeUtils.dp2px(progressSize));
         layoutParams.gravity = Gravity.CENTER;
         circleProgressBar.setLayoutParams(layoutParams);
         circleProgressBar.setColorSchemeColors(progress_colors);
