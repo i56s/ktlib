@@ -1,5 +1,6 @@
 package com.i56s.ktlib.views.xrefresh
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
@@ -10,6 +11,7 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
 import com.i56s.ktlib.R
+import com.i56s.ktlib.utils.LogUtils
 import com.i56s.ktlib.utils.SizeUtils
 import java.lang.RuntimeException
 import kotlin.math.abs
@@ -148,16 +150,17 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
     }
 
     /** 滑动事件处理 */
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (isRefreshing || isLoadMoreing) return true
 
         event?.let {
             when (it.action) {
                 MotionEvent.ACTION_MOVE -> {
-                    if(isMore){
-                        if(it.y - mTouchY>0f)return true
-                    }else {
-                        if(it.y - mTouchY<0f)return true
+                    if (isMore) {
+                        if (it.y - mTouchY > 0f) return true
+                    } else {
+                        if (it.y - mTouchY < 0f) return true
                     }
                     val dy = abs(it.y - mTouchY).let { y ->
                         //最大值和最小值范围控制
@@ -204,13 +207,15 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
         postDelayed({
             if (!isRefreshing) {
                 mMaterialHeaderView.view.visibility = View.VISIBLE
+                mMaterialHeaderView.onSlide(1f)
 
                 if (isOverlay) {
                     mMaterialHeaderView.view.layoutParams.height = mHeadHeight.toInt()
-                    mMaterialHeaderView.onSlide(1f)
                     mMaterialHeaderView.view.requestLayout()
                 } else {
-                    createTranslationY(mChildView!!, mHeadHeight, mMaterialHeaderView.view)
+                    mChildView?.let {
+                        createTranslationY(it, mHeadHeight, mMaterialHeaderView.view)
+                    }
                 }
                 refreshListener()
             }
@@ -221,15 +226,17 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
     fun autoLoadMore() {
         if (!isLoadMore) throw  RuntimeException("加载更多没有开启")
         postDelayed({
-            if (!isRefreshing) {
+            if (!isLoadMoreing) {
                 mMaterialFooterView.view.visibility = View.VISIBLE
+                mMaterialFooterView.onSlide(1f)
 
                 if (isOverlay) {
                     mMaterialFooterView.view.layoutParams.height = mHeadHeight.toInt()
-                    mMaterialFooterView.onSlide(1f)
                     mMaterialFooterView.view.requestLayout()
                 } else {
-                    createTranslationY(mChildView!!, -mHeadHeight, mMaterialFooterView.view)
+                    mChildView?.let {
+                        createTranslationY(it, -mHeadHeight, mMaterialFooterView.view)
+                    }
                 }
                 loadmoreListener()
             }
@@ -265,7 +272,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
         compatAnimte.translationY(h)
         compatAnimte.start()
         compatAnimte.setUpdateListener {
-            fl.layoutParams.height = it.translationY.toInt()
+            fl.layoutParams.height = abs(it.translationY.toInt())
             fl.requestLayout()
         }
     }
