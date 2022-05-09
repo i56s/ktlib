@@ -43,7 +43,6 @@ public class MaterialHeaderView
         init();
     }
 
-
     protected void init() {
         if (isInEditMode()) { return; }
         setClipToPadding(false);

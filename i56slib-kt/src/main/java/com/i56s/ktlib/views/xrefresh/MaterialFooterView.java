@@ -21,7 +21,7 @@ public class MaterialFooterView extends FrameLayout implements BaseMaterialView 
     private boolean isShowArrow=true, isShowProgressBg=true;
     private int progressValue=0, progressValueMax=100;
     private int textType=1;
-    private int progressBg=CircleProgressBar.DEFAULT_CIRCLE_BG_LIGHT;
+    private int progressBg=0xFFFAFAFA;
     private int progressSize=50;
     private BaseMaterialView listener;
 
@@ -79,7 +79,7 @@ public class MaterialFooterView extends FrameLayout implements BaseMaterialView 
     public void setProgressColors(int[] colors) {
         this.progress_colors = colors;
         if(circleProgressBar!=null)
-        circleProgressBar.setColorSchemeColors(progress_colors);
+        circleProgressBar.setColors(progress_colors);
     }
 
     public void setTextType(int textType) {
@@ -92,7 +92,6 @@ public class MaterialFooterView extends FrameLayout implements BaseMaterialView 
             @Override
             public void run() {
                 if (circleProgressBar != null) {
-                    circleProgressBar.setProgress(progressValue);
                 }
             }
         });
@@ -129,13 +128,9 @@ public class MaterialFooterView extends FrameLayout implements BaseMaterialView 
         LayoutParams layoutParams = new LayoutParams((int) density * progressSize, (int) density * progressSize);
         layoutParams.gravity = Gravity.CENTER;
         circleProgressBar.setLayoutParams(layoutParams);
-        circleProgressBar.setColorSchemeColors(progress_colors);
+        circleProgressBar.setColors(progress_colors);
         circleProgressBar.setProgressStokeWidth(progressStokeWidth);
         circleProgressBar.setShowArrow(isShowArrow);
-        circleProgressBar.setShowProgressText(textType == 0);
-        circleProgressBar.setTextColor(progressTextColor);
-        circleProgressBar.setProgress(progressValue);
-        circleProgressBar.setMax(progressValueMax);
         circleProgressBar.setCircleBackgroundEnabled(isShowProgressBg);
         circleProgressBar.setProgressBackGroundColor(progressBg);
         addView(circleProgressBar);

@@ -153,7 +153,7 @@ public class CircleProgressBar extends ImageView implements BaseMaterialView {
     }
 
     private boolean elevationSupported() {
-        return android.os.Build.VERSION.SDK_INT >= 21;
+        return true;
     }
 
     @Override
@@ -304,7 +304,7 @@ public class CircleProgressBar extends ImageView implements BaseMaterialView {
      *
      * @param colors
      */
-    public void setColorSchemeColors(int... colors) {
+    public void setColorSchemeColors(int[] colors) {
         mColors = colors;
         if (mProgressDrawable != null) {
             mProgressDrawable.setColorSchemeColors(colors);
@@ -357,27 +357,6 @@ public class CircleProgressBar extends ImageView implements BaseMaterialView {
     public void setCircleBackgroundEnabled(boolean enableCircleBackground) {
         this.mCircleBackgroundEnabled = enableCircleBackground;
         invalidate();
-    }
-
-    @Override
-    public int getVisibility() {
-        return super.getVisibility();
-    }
-
-    @Override
-    public void setVisibility(int visibility) {
-        super.setVisibility(visibility);
-//        if (mProgressDrawable != null) {
-//            mProgressDrawable.setVisible(visibility == VISIBLE, false);
-//            if (visibility != VISIBLE) {
-//                mProgressDrawable.stop();
-//            } else {
-//                if (mProgressDrawable.isRunning()) {
-//                    mProgressDrawable.stop();
-//                }
-//                mProgressDrawable.start();
-//            }
-//        }
     }
 
     @Override

@@ -24,9 +24,11 @@
         android:layout_height="wrap_content"
         android:text="数量" />
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <com.i56s.ktlib.views.xrefresh.CircleProgressBar
+        android:id="@+id/progress"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:mlpb_enable_circle_background="true"
+        app:mlpb_show_arrow="true" />
 </LinearLayout>

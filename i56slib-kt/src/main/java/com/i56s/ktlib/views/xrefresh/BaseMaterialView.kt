@@ -1,6 +1,7 @@
 package com.i56s.ktlib.views.xrefresh
 
 import android.view.View
+import com.i56s.ktlib.utils.SizeUtils
 
 /**
  * ### 创建者：wxr
@@ -9,7 +10,10 @@ import android.view.View
  */
 interface BaseMaterialView {
 
-    val view:View
+    val view: View
+
+    /**加载中的高度(px)*/
+    //fun loadingHeight():Float= SizeUtils.dp2px(70f)
 
     /** 开始触发 */
     fun onBegin()

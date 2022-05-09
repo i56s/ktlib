@@ -38,6 +38,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), XRecyclerView.LoadingL
         //mBinding.recycler.addHeaderView(ViewHeaderBinding.inflate(layoutInflater).root)
         //mBinding.recycler.setFootView(ViewHeaderBinding.inflate(layoutInflater).root)
         mBinding.recycler.setFootViewText("加载中...","没有更多了亲")
+        mBinding.progress.onBegin()
+        mBinding.progress.onRefreshing()
     }
 
     override fun initEvent() {

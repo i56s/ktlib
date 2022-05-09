@@ -75,8 +75,6 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
                 0
             )
             isOverlay = t.getBoolean(R.styleable.MaterialRefreshLayout_overlay, false)
-            MaterialWaveView.DefaulHeadHeight = DEFAULT_HEAD_HEIGHT
-            MaterialWaveView.DefaulWaveHeight = DEFAULT_WAVE_HEIGHT
             isLoadMore = t.getBoolean(R.styleable.MaterialRefreshLayout_isLoadMore, false)
             t.recycle()
         }
@@ -172,8 +170,8 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
                     }
                     //计算滑动的高度
                     val offsetY = mInterpolator.getInterpolation(dy / mWaveHeight / 2) * dy / 2
-                    //0f-2f
-                    val fraction = offsetY / mHeadHeight
+                    //0f-1f
+                    val fraction = SizeUtils.limitValue(1f, offsetY / mHeadHeight)
                     //LogUtils.d("测试", "计算后滑动的值：$fraction")
 
                     onMove(

@@ -94,7 +94,6 @@ public class MaterialHeadView extends FrameLayout implements BaseMaterialView {
             @Override
             public void run() {
                 if (circleProgressBar != null) {
-                    circleProgressBar.setProgress(progressValue);
                 }
             }
         });
@@ -127,13 +126,9 @@ public class MaterialHeadView extends FrameLayout implements BaseMaterialView {
         LayoutParams layoutParams = new LayoutParams((int)SizeUtils.dp2px(progressSize), (int)SizeUtils.dp2px(progressSize));
         layoutParams.gravity = Gravity.CENTER;
         circleProgressBar.setLayoutParams(layoutParams);
-        circleProgressBar.setColorSchemeColors(progress_colors);
+        circleProgressBar.setColors(progress_colors);
         circleProgressBar.setProgressStokeWidth(progressStokeWidth);
         circleProgressBar.setShowArrow(isShowArrow);
-        circleProgressBar.setShowProgressText(textType == 0);
-        circleProgressBar.setTextColor(progressTextColor);
-        circleProgressBar.setProgress(progressValue);
-        circleProgressBar.setMax(progressValueMax);
         circleProgressBar.setCircleBackgroundEnabled(isShowProgressBg);
         circleProgressBar.setProgressBackGroundColor(progressBg);
         addView(circleProgressBar);
