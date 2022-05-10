@@ -29,7 +29,7 @@ class CircleProgressBar constructor(context: Context, attrs: AttributeSet?, defs
         setStartEndTrim(0f, 0.75f)
     }
     private var mBgCircle: ShapeDrawable? = null
-    private var mShadowRadius = 0
+    private var mShadowRadius = SizeUtils.dp2px(3.5f).toInt()
     var progressBackGroundColor = 0
         set(value) {
             invalidate()
@@ -101,15 +101,11 @@ class CircleProgressBar constructor(context: Context, attrs: AttributeSet?, defs
         }
 
         if (background == null && circleBackgroundEnabled) {
-            val shadowYOffset = SizeUtils.dp2px(1.75f).toInt()
-            val shadowXOffset = 0
-            mShadowRadius = SizeUtils.dp2px(3.5f).toInt()
-
             val mBgCircle = ShapeDrawable(OvalShadow(mShadowRadius, mDiameter - mShadowRadius * 2))
             setLayerType(LAYER_TYPE_SOFTWARE, mBgCircle.paint)
             //设置阴影，模糊半径（越大越模糊），阴影离开文字的x横向距离，阴影离开文字的Y横向距离，阴影颜色
             mBgCircle.paint?.setShadowLayer(
-                mShadowRadius.toFloat(), shadowXOffset.toFloat(), shadowYOffset.toFloat(),
+                mShadowRadius.toFloat(), 0f, SizeUtils.dp2px(1.75f),
                 0x1E000000
             )
             val padding = mShadowRadius
