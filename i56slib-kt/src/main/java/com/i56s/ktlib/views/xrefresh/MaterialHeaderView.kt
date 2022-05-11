@@ -1,7 +1,6 @@
 package com.i56s.ktlib.views.xrefresh
 
 import android.content.Context
-import android.graphics.Color
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
@@ -106,6 +105,7 @@ class MaterialHeaderView constructor(context: Context, attrs: AttributeSet?, def
     override val view: View = this
 
     override fun onBegin() {
+        visibility = View.VISIBLE
         materialWaveView?.onBegin()
         circleProgressBar?.apply {
             scaleX = 0.001f
@@ -115,11 +115,11 @@ class MaterialHeaderView constructor(context: Context, attrs: AttributeSet?, def
 
     }
 
-    override fun onSlide(moveX: Float,fraction: Float) {
-        materialWaveView?.onSlide(moveX,fraction)
+    override fun onSlide(moveX: Float, fractionY: Float) {
+        materialWaveView?.onSlide(moveX, fractionY)
         circleProgressBar?.apply {
-            onSlide(moveX,fraction)
-            val a = SizeUtils.limitValue(1f, fraction)
+            onSlide(moveX, fractionY)
+            val a = SizeUtils.limitValue(1f, fractionY)
             scaleX = a
             scaleY = a
             alpha = a

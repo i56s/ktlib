@@ -62,7 +62,7 @@
 
     <!-- 刷新布局  -->
     <declare-styleable name="MaterialRefreshLayout">
-        <!--是否覆盖子控件(浮在子控件上层)-->
+        <!--是否覆盖子控件(浮在子控件上层) 默认覆盖-->
         <attr name="isOverlay" format="boolean" />
         <!--是否启用下拉刷新 默认启用-->
         <attr name="refreshEnable" format="boolean" />

@@ -21,8 +21,8 @@
         android:id="@+id/refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:isLoadMore="true"
-        app:overlay="false">
+        app:loadMoreEnable="true"
+        app:isOverlay="false">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview"
