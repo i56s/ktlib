@@ -46,12 +46,12 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
     private var mChildView: View? = null
     private var mListener: MaterialRefreshListener? = null
 
-    private var isOverlay = false
+    /**是否覆盖子控件(浮在子控件上层)*/
+    var isOverlay = false
     private var isMore = false
     private var isRefreshing = false
     private var isLoadMoreing = false
     private var isLoadMore = false
-    private var isSunStyle = false //是否是太阳刷新
 
     /**拖动的最大高度*/
     private var mWaveHeight = DEFAULT_WAVE_HEIGHT.toFloat()
@@ -74,8 +74,8 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
                 defstyleAttr,
                 0
             )
-            isOverlay = t.getBoolean(R.styleable.MaterialRefreshLayout_overlay, false)
-            isLoadMore = t.getBoolean(R.styleable.MaterialRefreshLayout_isLoadMore, false)
+            isOverlay = t.getBoolean(R.styleable.MaterialRefreshLayout_isOverlay, false)
+            isLoadMore = t.getBoolean(R.styleable.MaterialRefreshLayout_loadMoreEnable, false)
             t.recycle()
         }
     }
@@ -87,13 +87,8 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
             mWaveHeight = SizeUtils.dp2px(mWaveHeight)
             mHeadHeight = SizeUtils.dp2px(mHeadHeight)
 
-            if (isSunStyle) {
-                //添加刷新太阳
-                mMaterialHeaderView = SunLayout(context)
-            } else {
-                //添加刷新圆圈
-                mMaterialHeaderView = MaterialHeaderView(context)
-            }
+            //添加刷新圆圈
+            mMaterialHeaderView = MaterialHeaderView(context)
 
             val layoutParams = LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -104,7 +99,6 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
             mMaterialHeaderView.view.visibility = View.GONE
             addView(mMaterialHeaderView.view)
             //添加底部加载
-            //mMaterialFooterView = MaterialFooterView(context)
             mMaterialFooterView = MaterialHeaderView(context)
             val layoutParams2 = LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -172,7 +166,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
                     val offsetY = mInterpolator.getInterpolation(dy / mWaveHeight / 2) * dy / 2
                     //0f-1f
                     val fraction = offsetY / mHeadHeight
-                    LogUtils.d("测试", "计算后滑动的值：$fraction")
+                    //LogUtils.d("测试", "计算后滑动的值：$fraction")
 
                     onMove(
                         if (isMore) mMaterialFooterView else mMaterialHeaderView,
@@ -194,11 +188,6 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
             }
         }
         return super.onTouchEvent(event)
-    }
-
-    /**设置是否是刷新太阳*/
-    fun setSunStyle(isSunStyle: Boolean) {
-        this.isSunStyle = isSunStyle
     }
 
     /** 自动刷新 */
