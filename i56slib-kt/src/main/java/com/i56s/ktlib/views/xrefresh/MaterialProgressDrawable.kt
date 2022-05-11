@@ -5,14 +5,9 @@ import android.graphics.*
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.Animation
+import android.view.animation.*
 import android.view.animation.Interpolator
-import android.view.animation.LinearInterpolator
-import kotlin.math.ceil
-import kotlin.math.cos
-import kotlin.math.min
-import kotlin.math.sin
+import kotlin.math.*
 
 /**
  * ### 创建者：wxr
@@ -56,29 +51,37 @@ class MaterialProgressDrawable(context: Context, animExcutor: View) : Drawable()
         /**Layout info for the arrowhead for the large spinner in dp*/
         private const val ARROW_WIDTH_LARGE = 12
         private const val ARROW_HEIGHT_LARGE = 6
-        private const val MAX_PROGRESS_ARC = .8f
+        private const val MAX_PROGRESS_ARC = .8
         private val COLORS = intArrayOf(Color.BLACK)
     }
 
-    /**The list of animators operating on this drawable.*/
-    private val mAnimators = mutableListOf<Animation>()
-
     /**The indicator ring, used to manage animation state.*/
-    private val mCallback = Callback()
-    private val mRing = Ring(mCallback).apply {
+    private val mCallback = object : Callback {
+        override fun invalidateDrawable(p0: Drawable) = invalidateSelf()
+
+        override fun scheduleDrawable(d: Drawable, what: Runnable, p2: Long) =
+            scheduleSelf(what, p2)
+
+        override fun unscheduleDrawable(p0: Drawable, p1: Runnable) = unscheduleSelf(p1)
+    }
+    private val mRing = Ring(this, mCallback).apply {
         colors = COLORS
     }
 
     /**Canvas rotation in degrees.*/
     private var mFinishing = false
-    private var mRotation = 0f
+    var rotation = 0f
+        set(value) {
+            field = value
+            invalidateSelf()
+        }
     private val mResources = context.resources
     private val mAnimExcutor = animExcutor
     private var mAnimation: Animation? = null
     private var mRotationCount = 0f
     private var mWidth = 0.0
     private var mHeight = 0.0
-    private var mShowArrowOnFirstStart = false
+    var isShowArrowOnFirstStart = false
 
     init {
         updateSizes(DEFAULT)
@@ -184,11 +187,145 @@ class MaterialProgressDrawable(context: Context, animExcutor: View) : Drawable()
 
     override fun getIntrinsicWidth(): Int = mWidth.toInt()
 
-    override fun draw(p0: Canvas) {
-        TODO("Not yet implemented")
+    override fun draw(c: Canvas) {
+        val bounds = getBounds()
+        val saveCount = c.save()
+        c.rotate(rotation, bounds.exactCenterX(), bounds.exactCenterY())
+        mRing.draw(c, bounds)
+        c.restoreToCount(saveCount)
     }
 
-    private class Ring constructor(callback: Callback) {
+    override fun getAlpha(): Int = mRing.alpha
+
+    override fun setAlpha(alpha: Int) {
+        mRing.alpha = alpha
+    }
+
+    override fun setColorFilter(colorFilter: ColorFilter?) {
+        colorFilter?.let { mRing.setColorFilter(it) }
+    }
+
+    override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
+
+    override fun isRunning(): Boolean = !(mAnimation?.hasEnded() ?: true)
+
+    override fun start() {
+        mAnimation?.reset()
+        mRing.storeOriginals()
+        mRing.isShowArrow = isShowArrowOnFirstStart
+
+        // Already showing some part of the ring
+        if (mRing.endTrim != mRing.startTrim) {
+            mFinishing = true;
+            mAnimation?.duration = ANIMATION_DURATION / 2L
+            mAnimExcutor.startAnimation(mAnimation)
+        } else {
+            mRing.colorIndex = 0
+            mRing.resetOriginals()
+            mAnimation?.duration = ANIMATION_DURATION.toLong()
+            mAnimExcutor.startAnimation(mAnimation)
+        }
+    }
+
+    override fun stop() {
+        mAnimExcutor?.clearAnimation()
+        rotation = 0f
+        mRing.isShowArrow = false
+        mRing.colorIndex = 0
+        mRing.resetOriginals()
+    }
+
+    private fun applyFinishTranslation(interpolatedTime: Float, ring: Ring) {
+        // shrink back down and complete a full rotation before
+        // starting other circles
+        // Rotation goes between [0..1].
+        val targetRotation = (Math.floor(ring.startingRotation / MAX_PROGRESS_ARC)
+                + 1f).toFloat()
+        val startTrim =
+            ring.startingStartTrim + (ring.startingEndTrim - ring.startingStartTrim) * interpolatedTime
+        ring.startTrim = startTrim
+        val rotation =
+            ring.startingRotation + (targetRotation - ring.startingRotation) * interpolatedTime
+        ring.rotation = rotation
+    }
+
+    private fun setupAnimators() {
+        val ring = mRing
+        val animation = object : Animation() {
+            override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
+                if (mFinishing) {
+                    applyFinishTranslation(interpolatedTime, mRing)
+                } else {
+                    // The minProgressArc is calculated from 0 to create an
+                    // angle that
+                    // matches the stroke width.
+                    val minProgressArc = Math.toRadians(
+                        mRing.strokeWidth / (2 * Math.PI * mRing.getCenterRadius())
+                    ).toFloat()
+                    val startingEndTrim = mRing.startingEndTrim
+                    val startingTrim = mRing.startingStartTrim
+                    val startingRotation = mRing.startingRotation
+
+                    // Offset the minProgressArc to where the endTrim is
+                    // located.
+                    val minArc = MAX_PROGRESS_ARC - minProgressArc
+                    var endTrim = startingEndTrim + (minArc
+                            * START_CURVE_INTERPOLATOR.getInterpolation(interpolatedTime)).toFloat()
+                    val startTrim = startingTrim + (MAX_PROGRESS_ARC
+                            * END_CURVE_INTERPOLATOR.getInterpolation(interpolatedTime))
+
+                    val sweepTrim = endTrim - startTrim
+                    //Avoid the ring to be a full circle
+                    if (Math.abs(sweepTrim) >= 1) {
+                        endTrim = startTrim.toFloat() + 0.5f
+                    }
+
+                    mRing.endTrim = endTrim
+
+                    mRing.startTrim = startTrim.toFloat()
+
+                    val rotation = startingRotation + (0.25f * interpolatedTime)
+                    mRing.rotation = rotation
+
+                    val groupRotation =
+                        (720.0f / NUM_POINTS) * interpolatedTime + 720.0f * (mRotationCount / NUM_POINTS)
+                    this@MaterialProgressDrawable.rotation = groupRotation
+                }
+            }
+        };
+        animation.repeatCount = Animation.INFINITE
+        animation.repeatMode = Animation.RESTART
+        animation.interpolator = LINEAR_INTERPOLATOR
+        animation.setAnimationListener(object : Animation.AnimationListener {
+
+            override fun onAnimationStart(animation: Animation?) {
+                mRotationCount = 0f
+            }
+
+            override fun onAnimationEnd(animation: Animation?) = Unit
+
+            override fun onAnimationRepeat(animation: Animation) {
+                mRing.storeOriginals()
+                mRing.goToNextColor()
+                mRing.startTrim = mRing.endTrim
+                if (mFinishing) {
+                    // finished closing the last ring from the swipe gesture; go
+                    // into progress mode
+                    mFinishing = false
+                    animation.duration = ANIMATION_DURATION.toLong()
+                    mRing.isShowArrow = false
+                } else {
+                    mRotationCount = (mRotationCount + 1) % (NUM_POINTS)
+                }
+            }
+        })
+        mAnimation = animation
+    }
+
+    annotation class ProgressDrawableSize
+
+    private class Ring constructor(drawable: Drawable, callback: Callback) {
+        private val mDrawable = drawable
         private val mTempBounds = RectF()
         private val mPaint = Paint().apply {
             strokeCap = Paint.Cap.SQUARE
@@ -242,7 +379,7 @@ class MaterialProgressDrawable(context: Context, animExcutor: View) : Drawable()
         // animating, the mColorIndex moves by one to the next available color.
         var colorIndex = 0
         var startingStartTrim = 0f
-        private var mStartingEndTrim = 0f
+        var startingEndTrim = 0f
         var startingRotation = 0f
         var isShowArrow = false
             set(value) {
@@ -350,7 +487,7 @@ class MaterialProgressDrawable(context: Context, animExcutor: View) : Drawable()
 
         fun setInsets(width: Int, height: Int) {
             val minEdge = min(width, height).toFloat()
-            var insets = if (mRingCenterRadius <= 0 || minEdge < 0) {
+            val insets = if (mRingCenterRadius <= 0 || minEdge < 0) {
                 ceil(strokeWidth / 2.0).toFloat()
             } else {
                 (minEdge / 2.0f - mRingCenterRadius).toFloat()
@@ -372,7 +509,7 @@ class MaterialProgressDrawable(context: Context, animExcutor: View) : Drawable()
          */
         fun storeOriginals() {
             startingStartTrim = startTrim
-            mStartingEndTrim = endTrim
+            startingEndTrim = endTrim
             startingRotation = rotation
         }
 
@@ -381,13 +518,25 @@ class MaterialProgressDrawable(context: Context, animExcutor: View) : Drawable()
          */
         fun resetOriginals() {
             startingStartTrim = 0f
-            mStartingEndTrim = 0f
+            startingEndTrim = 0f
             startingRotation = 0f
             startTrim = 0f
             endTrim = 0f
             rotation = 0f
         }
 
-        private fun invalidateSelf() = mCallback.invalidateDrawable(null!!)
+        private fun invalidateSelf() = mCallback.invalidateDrawable(mDrawable)
+    }
+
+    /** Squishes the interpolation curve into the second half of the animation. */
+    private class EndCurveInterpolator : AccelerateDecelerateInterpolator() {
+        override fun getInterpolation(input: Float): Float =
+            super.getInterpolation(max(0f, (input - 0.5f) * 2f))
+    }
+
+    /** Squishes the interpolation curve into the first half of the animation. */
+    private class StartCurveInterpolator : AccelerateDecelerateInterpolator() {
+        override fun getInterpolation(input: Float): Float =
+            super.getInterpolation(min(1f, input * 2f))
     }
 }

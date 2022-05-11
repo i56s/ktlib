@@ -156,12 +156,12 @@ public class MaterialFoodView
     }
 
     @Override
-    public void onSlide(float fraction) {
+    public void onSlide(float moveX,float fraction) {
         if (mMaterialWaveView != null) {
-            mMaterialWaveView.onSlide(fraction);
+            mMaterialWaveView.onSlide(moveX,fraction);
         }
         if (circleProgressBar != null) {
-            circleProgressBar.onSlide(fraction);
+            circleProgressBar.onSlide(moveX,fraction);
             float a = SizeUtils.limitValue(1, fraction);
             circleProgressBar.setScaleX(1);
             circleProgressBar.setScaleY(1);

@@ -115,13 +115,14 @@ class MaterialHeaderView constructor(context: Context, attrs: AttributeSet?, def
 
     }
 
-    override fun onSlide(fraction: Float) {
-        materialWaveView?.onSlide(fraction)
+    override fun onSlide(moveX: Float,fraction: Float) {
+        materialWaveView?.onSlide(moveX,fraction)
         circleProgressBar?.apply {
-            onSlide(fraction)
-            scaleX = fraction
-            scaleY = fraction
-            alpha = fraction
+            onSlide(moveX,fraction)
+            val a = SizeUtils.limitValue(1f, fraction)
+            scaleX = a
+            scaleY = a
+            alpha = a
         }
     }
 

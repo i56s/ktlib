@@ -208,7 +208,7 @@ public class SunLayout
     }
 
     @Override
-    public void onSlide(float fraction) {
+    public void onSlide(float moveX,float fraction) {
         float a = SizeUtils.limitValue(1, fraction);
         if (a >= 0.7) {
             mLineView.setVisibility(View.VISIBLE);

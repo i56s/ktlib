@@ -171,11 +171,12 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
                     //计算滑动的高度
                     val offsetY = mInterpolator.getInterpolation(dy / mWaveHeight / 2) * dy / 2
                     //0f-1f
-                    val fraction = SizeUtils.limitValue(1f, offsetY / mHeadHeight)
-                    //LogUtils.d("测试", "计算后滑动的值：$fraction")
+                    val fraction = offsetY / mHeadHeight
+                    LogUtils.d("测试", "计算后滑动的值：$fraction")
 
                     onMove(
                         if (isMore) mMaterialFooterView else mMaterialHeaderView,
+                        it.x,
                         offsetY,
                         fraction
                     )
@@ -205,7 +206,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
         postDelayed({
             if (!isRefreshing) {
                 mMaterialHeaderView.view.visibility = View.VISIBLE
-                mMaterialHeaderView.onSlide(1f)
+                mMaterialHeaderView.onSlide(0f, 1f)
 
                 if (isOverlay) {
                     mMaterialHeaderView.view.layoutParams.height = mHeadHeight.toInt()
@@ -226,7 +227,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
         postDelayed({
             if (!isLoadMoreing) {
                 mMaterialFooterView.view.visibility = View.VISIBLE
-                mMaterialFooterView.onSlide(1f)
+                mMaterialFooterView.onSlide(0f, 1f)
 
                 if (isOverlay) {
                     mMaterialFooterView.view.layoutParams.height = mHeadHeight.toInt()
@@ -315,13 +316,18 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
     }
 
     /**滑动状态*/
-    private fun onMove(baaseMaterial: BaseMaterialView, offsetY: Float, fraction: Float) {
+    private fun onMove(
+        baaseMaterial: BaseMaterialView,
+        offsetX: Float,
+        offsetY: Float,
+        fraction: Float
+    ) {
         //修改刷新控件的高度
         baaseMaterial.view.layoutParams?.height = offsetY.toInt()
         //更新控件
         baaseMaterial.view.requestLayout()
         //触发控件的滑动事件
-        baaseMaterial.onSlide(fraction)
+        baaseMaterial.onSlide(offsetX, fraction)
     }
 
     /**手指抬起状态*/

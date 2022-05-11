@@ -15,7 +15,7 @@ import kotlin.math.max
 /**
  * ### 创建者：wxr
  * ### 创建时间：2022-05-09 11:45
- * ### 描述：
+ * ### 描述：下拉刷新滑动背景
  */
 class MaterialWaveView constructor(context: Context, attrs: AttributeSet?, defstyleAttr: Int) :
     View(context, attrs, defstyleAttr), BaseMaterialView {
@@ -36,8 +36,8 @@ class MaterialWaveView constructor(context: Context, attrs: AttributeSet?, defst
             field = SizeUtils.dp2px(value)
         }
 
-    var waveHeight = 0
-    var headHeight = 0
+    var waveHeight = 0f
+    var headHeight = 0f
     var color = 0
     private var path = Path()
     private var paint = Paint().apply {
@@ -52,12 +52,13 @@ class MaterialWaveView constructor(context: Context, attrs: AttributeSet?, defst
         super.onDraw(canvas)
         path.reset()
         paint.color = color
-        path.lineTo(0f, headHeight.toFloat())
+        path.lineTo(0f, headHeight)
+        //贝塞尔曲线
         path.quadTo(
-            measuredWidth / 2f,
-            (headHeight + waveHeight).toFloat(),
-            measuredWidth.toFloat(),
-            headHeight.toFloat()
+            measuredWidth / 2f,  //起点x坐标
+            headHeight + waveHeight, //起点y坐标
+            measuredWidth.toFloat(), //终点x坐标
+            headHeight //终点y坐标
         )
         path.lineTo(measuredWidth.toFloat(), 0f)
         canvas?.drawPath(path, paint)
@@ -67,17 +68,17 @@ class MaterialWaveView constructor(context: Context, attrs: AttributeSet?, defst
 
     override fun onBegin() = Unit
 
-    override fun onSlide(fraction: Float) {
-        headHeight = (defaulHeadHeight * fraction).toInt()
-        waveHeight = (defaulWaveHeight * max(0f, fraction - 1f)).toInt()
+    override fun onSlide(moveX: Float, fractionY: Float) {
+        headHeight = defaulHeadHeight * SizeUtils.limitValue(1f, fractionY)
+        waveHeight = defaulWaveHeight * max(0f, fractionY - 1)
         invalidate()
     }
 
     override fun onRefreshing() {
-        headHeight = defaulHeadHeight.toInt()
-        val animator = ValueAnimator.ofInt(waveHeight, 0)
+        headHeight = defaulHeadHeight
+        val animator = ValueAnimator.ofFloat(waveHeight, 0f)
         animator.addUpdateListener {
-            waveHeight = it.animatedValue as Int
+            waveHeight = it.animatedValue as Float
             invalidate()
         }
         animator.interpolator = BounceInterpolator()
@@ -86,13 +87,13 @@ class MaterialWaveView constructor(context: Context, attrs: AttributeSet?, defst
     }
 
     override fun onComlete() {
-        waveHeight = 0
-        val animator = ValueAnimator.ofInt(headHeight, 0)
+        waveHeight = 0f
+        val animator = ValueAnimator.ofFloat(headHeight, 0f)
         animator.duration = 200
         animator.interpolator = DecelerateInterpolator()
         animator.start()
         animator.addUpdateListener {
-            headHeight = it.animatedValue as Int
+            headHeight = it.animatedValue as Float
             invalidate()
         }
     }

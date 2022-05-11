@@ -125,7 +125,7 @@ class CircleProgressBar constructor(context: Context, attrs: AttributeSet?, defs
             if (mArrowHeight < 0) progressStokeWidth * 2f else mArrowHeight.toFloat()
         )
         if (isShowArrow) {
-            mProgressDrawable.showArrowOnFirstStart(true)
+            mProgressDrawable.isShowArrowOnFirstStart = true
             mProgressDrawable.setArrowScale(1f)
             mProgressDrawable.showArrow(true)
         }
@@ -164,7 +164,7 @@ class CircleProgressBar constructor(context: Context, attrs: AttributeSet?, defs
         visibility = View.VISIBLE
     }
 
-    override fun onSlide(fraction: Float) {
+    override fun onSlide(moveX: Float,fraction: Float) {
         mProgressDrawable.setProgressRotation(fraction)
     }
 

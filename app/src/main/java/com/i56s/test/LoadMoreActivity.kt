@@ -24,16 +24,16 @@ class LoadMoreActivity : BaseActivity<ActivityLoadMoreBinding>() {
         ActivityLoadMoreBinding.inflate(layoutInflater)
 
     override fun initCreate() {
-        mBinding.refresh.setMaterialRefreshListener(object : MaterialRefreshListener() {
+        mBinding.refresh.setMaterialRefreshListener(object : MaterialRefreshListener {
 
-            override fun onRefresh(materialRefreshLayout: MaterialRefreshLayout?) {
+            override fun onRefresh(materialRefreshLayout: MaterialRefreshLayout) {
                 Toast.makeText(this@LoadMoreActivity, "下拉刷新", Toast.LENGTH_SHORT).show()
                 mBinding.refresh.postDelayed({
                     mBinding.refresh.finishRefresh()
                 }, 1500)
             }
 
-            override fun onLoadMore(materialRefreshLayout: MaterialRefreshLayout?) {
+            override fun onLoadMore(materialRefreshLayout: MaterialRefreshLayout) {
                 Toast.makeText(this@LoadMoreActivity, "加载更多", Toast.LENGTH_SHORT).show()
                 mBinding.refresh.postDelayed({
                     mBinding.refresh.finishLoadMore()

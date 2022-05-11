@@ -18,8 +18,10 @@ interface BaseMaterialView {
     /** 开始触发 */
     fun onBegin()
 
-    /** 滑动 */
-    fun onSlide(fraction: Float)
+    /** 滑动
+     * @param moveX 滑动的x坐标
+     * @param fractionY 滑动的y坐标比例*/
+    fun onSlide(moveX: Float, fractionY: Float)
 
     /** 刷新中 */
     fun onRefreshing()
