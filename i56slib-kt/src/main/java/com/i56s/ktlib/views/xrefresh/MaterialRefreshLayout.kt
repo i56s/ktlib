@@ -3,6 +3,7 @@ package com.i56s.ktlib.views.xrefresh
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -127,14 +128,14 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
                     mTouchY = it.y
                     //如果滑动距离大于0 并且非向上滚动操作（也就是下拉）
                     if (dy > 0 && !canChildScrollUp() && isRefreshEnable) {
-                        LogUtils.d("测试", "111111111-->$dy")
                         isMore = false
+                        mMaterialFooterView?.view?.visibility = View.GONE
                         mMaterialHeaderView?.onBegin()
                         return true
                         //上拉操作
                     } else if (dy < 0 && !canChildScrollDown() && isLoadMoreEnable) {
-                        LogUtils.d("测试", "22-->$dy")
                         isMore = true
+                        mMaterialHeaderView?.view?.visibility = View.GONE
                         mMaterialFooterView?.onBegin()
                         return true
                     }
@@ -196,7 +197,10 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
 
     /** 自动刷新 */
     fun autoRefresh() {
-        if (!isRefreshEnable) throw  RuntimeException("下拉刷新没有开启")
+        if (!isRefreshEnable) {
+            Log.d("MaterialRefreshLayout", "下拉刷新没有开启")
+            return
+        }
         mMaterialHeaderView?.view?.let {
             this@MaterialRefreshLayout.postDelayed({
                 if (!isRefreshing) {
@@ -219,8 +223,11 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
 
     /** 自动加载更多 */
     fun autoLoadMore() {
-        if (!isLoadMoreEnable) throw  RuntimeException("上拉加载没有开启")
-        mMaterialHeaderView?.view?.let {
+        if (!isLoadMoreEnable) {
+            Log.d("MaterialRefreshLayout", "上拉加载没有开启")
+            return
+        }
+        mMaterialFooterView?.view?.let {
             this@MaterialRefreshLayout.postDelayed({
                 if (!isLoadMoreing) {
                     mMaterialFooterView?.onBegin()

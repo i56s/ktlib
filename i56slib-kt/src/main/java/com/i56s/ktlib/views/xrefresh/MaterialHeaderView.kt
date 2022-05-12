@@ -112,7 +112,6 @@ class MaterialHeaderView constructor(context: Context, attrs: AttributeSet?, def
             scaleY = 0.001f
             onBegin()
         }
-
     }
 
     override fun onSlide(moveX: Float, fractionY: Float) {
@@ -137,5 +136,6 @@ class MaterialHeaderView constructor(context: Context, attrs: AttributeSet?, def
         circleProgressBar?.translationY = 0f
         circleProgressBar?.scaleX = 0f
         circleProgressBar?.scaleY = 0f
+        visibility = View.GONE
     }
 }
