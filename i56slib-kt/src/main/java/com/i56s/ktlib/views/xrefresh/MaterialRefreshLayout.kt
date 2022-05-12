@@ -29,20 +29,8 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
 
     constructor(context: Context) : this(context, null)
 
-    companion object {
-        /**拖动的最大高度*/
-        private const val DEFAULT_WAVE_HEIGHT = 140
-
-        /**触发刷新的高度*/
-        private const val DEFAULT_HEAD_HEIGHT = 70
-
-        /**刷新控件的高度*/
-        private const val HIGHER_HEAD_HEIGHT = 100
-    }
-
     private var mMaterialHeaderView: BaseMaterialView? = null
     private var mMaterialFooterView: BaseMaterialView? = null
-
     private var mChildView: View? = null
     private var mListener: MaterialRefreshListener? = null
 
@@ -61,10 +49,16 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
     private var isLoadMoreing = false
 
     /**拖动的最大高度*/
-    private var mWaveHeight = SizeUtils.dp2px(DEFAULT_WAVE_HEIGHT.toFloat())
+    private var mWaveHeight = SizeUtils.dp2px(140f)
+        set(value) {
+            if (value > 0) field = value
+        }
 
     /**触发刷新的高度*/
-    private var mHeadHeight = SizeUtils.dp2px(DEFAULT_HEAD_HEIGHT.toFloat())
+    private var mHeadHeight = SizeUtils.dp2px(70f)
+        set(value) {
+            if (value > 0) field = value
+        }
     private var mTouchY = 0f
 
     init {
@@ -93,7 +87,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
             mMaterialHeaderView = MaterialHeaderView(context).apply {
                 layoutParams = LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    SizeUtils.dp2px(HIGHER_HEAD_HEIGHT.toFloat()).toInt()
+                    ViewGroup.LayoutParams.WRAP_CONTENT
                 ).apply { gravity = Gravity.TOP }
                 visibility = View.GONE
                 LogUtils.d("测试", "对象1打印：${this.parent?.hashCode()}")
@@ -106,7 +100,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
             mMaterialFooterView = MaterialHeaderView(context).apply {
                 layoutParams = LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    SizeUtils.dp2px(HIGHER_HEAD_HEIGHT.toFloat()).toInt()
+                    ViewGroup.LayoutParams.WRAP_CONTENT
                 ).apply { gravity = Gravity.BOTTOM }
                 visibility = View.GONE
                 this@MaterialRefreshLayout.addView(this)
@@ -129,12 +123,20 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
                     //如果滑动距离大于0 并且非向上滚动操作（也就是下拉）
                     if (dy > 0 && !canChildScrollUp() && isRefreshEnable) {
                         isMore = false
+                        mMaterialHeaderView?.let { base ->
+                            mWaveHeight = SizeUtils.dp2px(base.slideMaxHeight())
+                            mHeadHeight = SizeUtils.dp2px(base.triggerHeight())
+                        }
                         mMaterialFooterView?.view?.visibility = View.GONE
                         mMaterialHeaderView?.onBegin()
                         return true
                         //上拉操作
                     } else if (dy < 0 && !canChildScrollDown() && isLoadMoreEnable) {
                         isMore = true
+                        mMaterialFooterView?.let { base ->
+                            mWaveHeight = SizeUtils.dp2px(base.slideMaxHeight())
+                            mHeadHeight = SizeUtils.dp2px(base.triggerHeight())
+                        }
                         mMaterialHeaderView?.view?.visibility = View.GONE
                         mMaterialFooterView?.onBegin()
                         return true
@@ -201,18 +203,21 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
             Log.d("MaterialRefreshLayout", "下拉刷新没有开启")
             return
         }
-        mMaterialHeaderView?.view?.let {
+        mMaterialHeaderView?.let { base ->
+            mWaveHeight = SizeUtils.dp2px(base.slideMaxHeight())
+            mHeadHeight = SizeUtils.dp2px(base.triggerHeight())
+
             this@MaterialRefreshLayout.postDelayed({
                 if (!isRefreshing) {
                     mMaterialHeaderView?.onBegin()
                     mMaterialHeaderView?.onSlide(0f, 1f)
 
                     if (isOverlay) {
-                        it.layoutParams.height = mHeadHeight.toInt()
-                        it.requestLayout()
+                        base.view.layoutParams.height = mHeadHeight.toInt()
+                        base.view.requestLayout()
                     } else {
                         mChildView?.let { child ->
-                            createTranslationY(child, mHeadHeight, it)
+                            createTranslationY(child, mHeadHeight, base.view)
                         }
                     }
                     refreshListener()
@@ -227,18 +232,21 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
             Log.d("MaterialRefreshLayout", "上拉加载没有开启")
             return
         }
-        mMaterialFooterView?.view?.let {
+        mMaterialFooterView?.let { base ->
+            mWaveHeight = SizeUtils.dp2px(base.slideMaxHeight())
+            mHeadHeight = SizeUtils.dp2px(base.triggerHeight())
+
             this@MaterialRefreshLayout.postDelayed({
                 if (!isLoadMoreing) {
                     mMaterialFooterView?.onBegin()
                     mMaterialFooterView?.onSlide(0f, 1f)
 
                     if (isOverlay) {
-                        it.layoutParams.height = mHeadHeight.toInt()
-                        it.requestLayout()
+                        base.view.layoutParams.height = mHeadHeight.toInt()
+                        base.view.requestLayout()
                     } else {
                         mChildView?.let { child ->
-                            createTranslationY(child, -mHeadHeight, it)
+                            createTranslationY(child, -mHeadHeight, base.view)
                         }
                     }
                     loadmoreListener()
@@ -247,23 +255,41 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
         }
     }
 
+    /**刷新完成*/
+    fun finishRefresh() {
+        post {
+            resetChildView()
+            mMaterialHeaderView?.onComlete()
+            isRefreshing = false
+        }
+    }
+
+    /**上拉加载完成*/
+    fun finishLoadMore() {
+        post {
+            resetChildView()
+            mMaterialFooterView?.onComlete()
+            isLoadMoreing = false
+        }
+    }
+
+    /**设置刷新监听事件*/
+    fun setMaterialRefreshListener(listener: MaterialRefreshListener.() -> Unit) {
+        mListener = MaterialRefreshListener().apply { listener() }
+    }
+
     /**触发下拉刷新*/
     private fun refreshListener() {
         isRefreshing = true
         mMaterialHeaderView?.onRefreshing()
-        mListener?.onRefresh(this)
+        mListener?.onRefresh?.invoke(this)
     }
 
     /**触发上拉加载*/
     private fun loadmoreListener() {
         isLoadMoreing = true
         mMaterialFooterView?.onRefreshing()
-        mListener?.onLoadMore(this)
-    }
-
-    /** 是否允许加载更多 */
-    fun setLoadMore(isLoadMore: Boolean) {
-        this.isLoadMoreEnable = isLoadMore
+        mListener?.onLoadMore?.invoke(this)
     }
 
     /**创建动画*/
@@ -293,29 +319,6 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
             return@canChildScrollDown it.canScrollVertically(1)
         }
         return false
-    }
-
-    /**刷新完成*/
-    fun finishRefresh() {
-        post {
-            resetChildView()
-            mMaterialHeaderView?.onComlete()
-            isRefreshing = false
-        }
-    }
-
-    /**上拉加载完成*/
-    fun finishLoadMore() {
-        post {
-            resetChildView()
-            mMaterialFooterView?.onComlete()
-            isLoadMoreing = false
-        }
-    }
-
-    /**设置刷新监听事件*/
-    fun setMaterialRefreshListener(listener: MaterialRefreshListener) {
-        this.mListener = listener
     }
 
     /**滑动状态*/

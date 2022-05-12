@@ -10,10 +10,16 @@ import com.i56s.ktlib.utils.SizeUtils
  */
 interface BaseMaterialView {
 
+    /**当前控件*/
     val view: View
 
-    /**加载中的高度(px)*/
-    //fun loadingHeight():Float= SizeUtils.dp2px(70f)
+    /**滑动的最大高度(dp)
+     * @return 必需>0*/
+    fun slideMaxHeight(): Float = 140f
+
+    /**触发事件的高度(dp)
+     * @return 必需>0*/
+    fun triggerHeight(): Float = 70f
 
     /** 开始触发 */
     fun onBegin()

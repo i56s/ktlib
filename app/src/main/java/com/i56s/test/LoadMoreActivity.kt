@@ -24,22 +24,22 @@ class LoadMoreActivity : BaseActivity<ActivityLoadMoreBinding>() {
         ActivityLoadMoreBinding.inflate(layoutInflater)
 
     override fun initCreate() {
-        mBinding.refresh.setMaterialRefreshListener(object : MaterialRefreshListener {
+        mBinding.refresh.setMaterialRefreshListener {
 
-            override fun onRefresh(materialRefreshLayout: MaterialRefreshLayout) {
+            onRefresh = {
                 Toast.makeText(this@LoadMoreActivity, "下拉刷新", Toast.LENGTH_SHORT).show()
                 mBinding.refresh.postDelayed({
                     mBinding.refresh.finishRefresh()
                 }, 1500)
             }
 
-            override fun onLoadMore(materialRefreshLayout: MaterialRefreshLayout) {
+            onLoadMore = {
                 Toast.makeText(this@LoadMoreActivity, "加载更多", Toast.LENGTH_SHORT).show()
                 mBinding.refresh.postDelayed({
                     mBinding.refresh.finishLoadMore()
                 }, 1500)
             }
-        })
+        }
 
         setupRecyclerView(mBinding.recyclerview)
     }
@@ -55,7 +55,7 @@ class LoadMoreActivity : BaseActivity<ActivityLoadMoreBinding>() {
         recyclerView.itemAnimator = DefaultItemAnimator()
     }
 
-    class SimpleStringRecyclerViewAdapter constructor() :
+    class SimpleStringRecyclerViewAdapter :
         RecyclerView.Adapter<SimpleStringRecyclerViewAdapter.ViewHolder>() {
 
 
