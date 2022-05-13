@@ -29,8 +29,11 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
 
     constructor(context: Context) : this(context, null)
 
-    private var mMaterialHeaderView: BaseMaterialView? = null
-    private var mMaterialFooterView: BaseMaterialView? = null
+    /**下拉控件*/
+    var headerView: BaseMaterialView? = null
+
+    /**上拉控件*/
+    var footerView: BaseMaterialView? = null
     private var mChildView: View? = null
     private var mListener: MaterialRefreshListener? = null
 
@@ -84,7 +87,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
 
         //初始化刷新布局
         if (isRefreshEnable) {
-            mMaterialHeaderView = MaterialHeaderView(context).apply {
+            headerView = MaterialLoaderView(context).apply {
                 layoutParams = LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
@@ -97,7 +100,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
 
         //初始化上拉加载
         if (isLoadMoreEnable) {
-            mMaterialFooterView = MaterialHeaderView(context).apply {
+            footerView = MaterialLoaderView(context).apply {
                 layoutParams = LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
@@ -123,22 +126,22 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
                     //如果滑动距离大于0 并且非向上滚动操作（也就是下拉）
                     if (dy > 0 && !canChildScrollUp() && isRefreshEnable) {
                         isMore = false
-                        mMaterialHeaderView?.let { base ->
+                        footerView?.view?.visibility = View.GONE
+                        headerView?.let { base ->
                             mWaveHeight = SizeUtils.dp2px(base.slideMaxHeight())
                             mHeadHeight = SizeUtils.dp2px(base.triggerHeight())
+                            base.onBegin()
                         }
-                        mMaterialFooterView?.view?.visibility = View.GONE
-                        mMaterialHeaderView?.onBegin()
                         return true
                         //上拉操作
                     } else if (dy < 0 && !canChildScrollDown() && isLoadMoreEnable) {
                         isMore = true
-                        mMaterialFooterView?.let { base ->
+                        headerView?.view?.visibility = View.GONE
+                        footerView?.let { base ->
                             mWaveHeight = SizeUtils.dp2px(base.slideMaxHeight())
                             mHeadHeight = SizeUtils.dp2px(base.triggerHeight())
+                            base.onBegin()
                         }
-                        mMaterialHeaderView?.view?.visibility = View.GONE
-                        mMaterialFooterView?.onBegin()
                         return true
                     }
                 }
@@ -175,7 +178,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
                     //LogUtils.d("测试", "计算后滑动的值：$fraction")
 
                     onMove(
-                        if (isMore) mMaterialFooterView else if (isRefreshEnable) mMaterialHeaderView else null,
+                        if (isMore) footerView else if (isRefreshEnable) headerView else null,
                         it.x,
                         offsetY,
                         fraction
@@ -188,7 +191,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
                 }
                 MotionEvent.ACTION_CANCEL,
                 MotionEvent.ACTION_UP -> { //松开手指
-                    onUp(if (isMore) mMaterialFooterView else if (isRefreshEnable) mMaterialHeaderView else null)
+                    onUp(if (isMore) footerView else if (isRefreshEnable) headerView else null)
                     return@onTouchEvent true
                 }
                 else -> return@onTouchEvent super.onTouchEvent(event)
@@ -203,14 +206,14 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
             Log.d("MaterialRefreshLayout", "下拉刷新没有开启")
             return
         }
-        mMaterialHeaderView?.let { base ->
+        headerView?.let { base ->
             mWaveHeight = SizeUtils.dp2px(base.slideMaxHeight())
             mHeadHeight = SizeUtils.dp2px(base.triggerHeight())
 
             this@MaterialRefreshLayout.postDelayed({
                 if (!isRefreshing) {
-                    mMaterialHeaderView?.onBegin()
-                    mMaterialHeaderView?.onSlide(0f, 1f)
+                    headerView?.onBegin()
+                    headerView?.onSlide(0f, 1f)
 
                     if (isOverlay) {
                         base.view.layoutParams.height = mHeadHeight.toInt()
@@ -232,14 +235,14 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
             Log.d("MaterialRefreshLayout", "上拉加载没有开启")
             return
         }
-        mMaterialFooterView?.let { base ->
+        footerView?.let { base ->
             mWaveHeight = SizeUtils.dp2px(base.slideMaxHeight())
             mHeadHeight = SizeUtils.dp2px(base.triggerHeight())
 
             this@MaterialRefreshLayout.postDelayed({
                 if (!isLoadMoreing) {
-                    mMaterialFooterView?.onBegin()
-                    mMaterialFooterView?.onSlide(0f, 1f)
+                    footerView?.onBegin()
+                    footerView?.onSlide(0f, 1f)
 
                     if (isOverlay) {
                         base.view.layoutParams.height = mHeadHeight.toInt()
@@ -259,7 +262,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
     fun finishRefresh() {
         post {
             resetChildView()
-            mMaterialHeaderView?.onComlete()
+            headerView?.onComlete()
             isRefreshing = false
         }
     }
@@ -268,7 +271,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
     fun finishLoadMore() {
         post {
             resetChildView()
-            mMaterialFooterView?.onComlete()
+            footerView?.onComlete()
             isLoadMoreing = false
         }
     }
@@ -281,14 +284,14 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
     /**触发下拉刷新*/
     private fun refreshListener() {
         isRefreshing = true
-        mMaterialHeaderView?.onRefreshing()
+        headerView?.onRefreshing()
         mListener?.onRefresh?.invoke(this)
     }
 
     /**触发上拉加载*/
     private fun loadmoreListener() {
         isLoadMoreing = true
-        mMaterialFooterView?.onRefreshing()
+        footerView?.onRefreshing()
         mListener?.onLoadMore?.invoke(this)
     }
 

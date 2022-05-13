@@ -25,70 +25,33 @@ class CircleProgressBar constructor(context: Context, attrs: AttributeSet?, defs
 
     constructor(context: Context) : this(context, null)
 
-    private var mProgressDrawable = MaterialProgressDrawable(context, this).apply {
+    private val mProgressDrawable = MaterialProgressDrawable(context, this).apply {
         setStartEndTrim(0f, 0.75f)
     }
-    private var mBgCircle: ShapeDrawable? = null
-    private var mShadowRadius = SizeUtils.dp2px(3.5f).toInt()
-    var progressBackGroundColor = 0
-        set(value) {
-            invalidate()
-            field = value
-        }
+    private val mShadowRadius = SizeUtils.dp2px(3.5f).toInt()
 
-    /**dp*/
-    var progressStokeWidth = 0f
-        set(value) {
-            field = SizeUtils.dp2px(value)
-            invalidate()
-        }
-    private var mArrowWidth = 0
-    private var mArrowHeight = 0
+    /**进度框背景颜色*/
+    private val progressBackGroundColor = 0xFFFAFAFA.toInt()
+
+    /**画笔大小*/
+    private val progressStokeWidth = 3f
+
     private var mDiameter = 0
-    private var mInnerRadius = 0
-    var isShowArrow = false
+
+    /**是否显示箭头*/
+    var isShowArrow = true
         set(value) {
             field = value
             invalidate()
         }
-    var circleBackgroundEnabled = false
-        set(value) {
-            field = value
-            invalidate()
-        }
-    var colors =
+    private val colors =
         intArrayOf(0xffF44336.toInt(), 0xff4CAF50.toInt(), 0xff03A9F4.toInt(), 0xffFFEB3B.toInt())
-        set(value) {
-            mProgressDrawable.setColorSchemeColors(value)
-            field = value
-        }
 
     init {
         val a =
             context.obtainStyledAttributes(attrs, R.styleable.CircleProgressBar, defstyleAttr, 0)
 
-        progressBackGroundColor = a.getColor(
-            R.styleable.CircleProgressBar_mlpb_background_color, 0xFFFAFAFA.toInt()
-        )
-
-        mInnerRadius =
-            a.getDimensionPixelOffset(R.styleable.CircleProgressBar_mlpb_inner_radius, -1)
-
-        progressStokeWidth = a.getDimensionPixelOffset(
-            R.styleable.CircleProgressBar_mlpb_progress_stoke_width,
-            3
-        ).toFloat()
-
-        mArrowWidth = a.getDimensionPixelOffset(
-            R.styleable.CircleProgressBar_mlpb_arrow_width, -1
-        )
-        mArrowHeight = a.getDimensionPixelOffset(
-            R.styleable.CircleProgressBar_mlpb_arrow_height, -1
-        )
-
-        isShowArrow = a.getBoolean(R.styleable.CircleProgressBar_mlpb_show_arrow, false)
-        circleBackgroundEnabled =
-            a.getBoolean(R.styleable.CircleProgressBar_mlpb_enable_circle_background, true)
+        isShowArrow = a.getBoolean(R.styleable.CircleProgressBar_isShowArrow, true)
         a.recycle()
         super.setImageDrawable(mProgressDrawable)
     }
@@ -100,7 +63,7 @@ class CircleProgressBar constructor(context: Context, attrs: AttributeSet?, defs
             else it
         }
 
-        if (background == null && circleBackgroundEnabled) {
+        if (background == null) {
             val mBgCircle = ShapeDrawable(OvalShadow(mShadowRadius, mDiameter - mShadowRadius * 2))
             setLayerType(LAYER_TYPE_SOFTWARE, mBgCircle.paint)
             //设置阴影，模糊半径（越大越模糊），阴影离开文字的x横向距离，阴影离开文字的Y横向距离，阴影颜色
@@ -119,10 +82,10 @@ class CircleProgressBar constructor(context: Context, attrs: AttributeSet?, defs
         mProgressDrawable.setColorSchemeColors(colors)
         mProgressDrawable.setSizeParameters(
             mDiameter.toDouble(), mDiameter.toDouble(),
-            if (mInnerRadius <= 0) (mDiameter - progressStokeWidth * 2) / 4.0 else mInnerRadius.toDouble(),
+            (mDiameter - progressStokeWidth * 2) / 4.0,
             progressStokeWidth.toDouble(),
-            if (mArrowWidth < 0) progressStokeWidth * 4f else mArrowWidth.toFloat(),
-            if (mArrowHeight < 0) progressStokeWidth * 2f else mArrowHeight.toFloat()
+            progressStokeWidth * 4f,
+            progressStokeWidth * 2f
         )
         if (isShowArrow) {
             mProgressDrawable.isShowArrowOnFirstStart = true
@@ -164,8 +127,8 @@ class CircleProgressBar constructor(context: Context, attrs: AttributeSet?, defs
         visibility = View.VISIBLE
     }
 
-    override fun onSlide(moveX: Float,fraction: Float) {
-        mProgressDrawable.setProgressRotation(fraction)
+    override fun onSlide(moveX: Float, fractionY: Float) {
+        mProgressDrawable.setProgressRotation(fractionY)
     }
 
     override fun onRefreshing() {

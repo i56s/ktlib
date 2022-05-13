@@ -24,21 +24,11 @@ class MaterialWaveView constructor(context: Context, attrs: AttributeSet?, defst
 
     constructor(context: Context) : this(context, null)
 
-    /**滑动的最大高度(dp)*/
-    var defaulWaveHeight = SizeUtils.dp2px(140f)
-        set(value) {
-            field = SizeUtils.dp2px(value)
-        }
+    private var waveHeight = 0f
+    private var headHeight = 0f
 
-    /**刷新中的高度(dp)*/
-    var defaulHeadHeight = SizeUtils.dp2px(70f)
-        set(value) {
-            field = SizeUtils.dp2px(value)
-        }
-
-    var waveHeight = 0f
-    var headHeight = 0f
-    var color = 0
+    /**拖动的背景颜色*/
+    private var color = 0x90FFFFFF.toInt()
     private var path = Path()
     private var paint = Paint().apply {
         isAntiAlias = true
@@ -69,13 +59,13 @@ class MaterialWaveView constructor(context: Context, attrs: AttributeSet?, defst
     override fun onBegin() = Unit
 
     override fun onSlide(moveX: Float, fractionY: Float) {
-        headHeight = defaulHeadHeight * SizeUtils.limitValue(1f, fractionY)
-        waveHeight = defaulWaveHeight * max(0f, fractionY - 1)
+        headHeight = triggerHeight() * SizeUtils.limitValue(1f, fractionY)
+        waveHeight = slideMaxHeight() * max(0f, fractionY - 1)
         invalidate()
     }
 
     override fun onRefreshing() {
-        headHeight = defaulHeadHeight
+        headHeight = triggerHeight()
         val animator = ValueAnimator.ofFloat(waveHeight, 0f)
         animator.addUpdateListener {
             waveHeight = it.animatedValue as Float

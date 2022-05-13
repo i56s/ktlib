@@ -69,4 +69,8 @@
         <!--是否启用上拉加载 默认禁用-->
         <attr name="loadMoreEnable" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="CircleProgressBar">
+        <attr name="isShowArrow" format="boolean"/>
+    </declare-styleable>
 </resources>
