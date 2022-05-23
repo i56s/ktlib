@@ -4,9 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.i56s.test.FragmentLayoutTestView
-        android:id="@+id/test_frag"
+    <com.i56s.ktlib.views.xrefresh.XRecyclerView
+        android:id="@+id/recycler"
         android:layout_width="match_parent"
-        android:background="#00ff00"
         android:layout_height="match_parent" />
 </LinearLayout>

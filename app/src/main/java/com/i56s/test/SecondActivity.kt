@@ -1,5 +1,7 @@
 package com.i56s.test
 
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.i56s.ktlib.utils.ToastUtils
 import com.i56s.test.databinding.ActivitySecondBinding
 
 /**
@@ -13,8 +15,24 @@ class SecondActivity : BaseActivity<ActivitySecondBinding>() {
         ActivitySecondBinding.inflate(layoutInflater)
 
     override fun initCreate() {
+        mBinding.recycler.recyclerView.layoutManager = LinearLayoutManager(mContext)
+        mBinding.recycler.recyclerView.adapter = PublicAdapter(mContext)
     }
 
     override fun initEvent() {
+        mBinding.recycler.setMaterialRefreshListener {
+            onRefresh = {
+                ToastUtils.showToast("刷新了")
+                it.postDelayed({
+                    it.finishRefresh()
+                }, 1500)
+            }
+            onLoadMore = {
+                ToastUtils.showToast("加载了")
+                it.postDelayed({
+                    it.finishLoadMore()
+                }, 1500)
+            }
+        }
     }
 }

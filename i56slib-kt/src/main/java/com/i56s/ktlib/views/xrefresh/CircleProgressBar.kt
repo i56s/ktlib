@@ -33,8 +33,8 @@ class CircleProgressBar constructor(context: Context, attrs: AttributeSet?, defs
     /**进度框背景颜色*/
     private val progressBackGroundColor = 0xFFFAFAFA.toInt()
 
-    /**画笔大小*/
-    private val progressStokeWidth = 3f
+    /**画笔大小(dp)*/
+    private val progressStokeWidth = SizeUtils.dp2px(3f)
 
     private var mDiameter = 0
 
@@ -44,7 +44,9 @@ class CircleProgressBar constructor(context: Context, attrs: AttributeSet?, defs
             field = value
             invalidate()
         }
-    private val colors =
+
+    /**变换的颜色集*/
+    var colors =
         intArrayOf(0xffF44336.toInt(), 0xff4CAF50.toInt(), 0xff03A9F4.toInt(), 0xffFFEB3B.toInt())
 
     init {

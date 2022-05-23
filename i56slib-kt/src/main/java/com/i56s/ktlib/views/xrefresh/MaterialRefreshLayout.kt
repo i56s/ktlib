@@ -22,7 +22,11 @@ import kotlin.math.abs
  * ### 创建时间：2022-05-07 15:04
  * ### 描述：下拉刷新，上拉加载 嵌套布局
  */
-class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, defstyleAttr: Int) :
+open class MaterialRefreshLayout constructor(
+    context: Context,
+    attrs: AttributeSet?,
+    defstyleAttr: Int
+) :
     FrameLayout(context, attrs, defstyleAttr) {
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -82,9 +86,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-
         mChildView = getChildAt(0)
-
         //初始化刷新布局
         if (isRefreshEnable) {
             headerView = MaterialLoaderView(context).apply {
@@ -93,7 +95,6 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 ).apply { gravity = Gravity.TOP }
                 visibility = View.GONE
-                LogUtils.d("测试", "对象1打印：${this.parent?.hashCode()}")
                 this@MaterialRefreshLayout.addView(this)
             }
         }
@@ -101,6 +102,7 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
         //初始化上拉加载
         if (isLoadMoreEnable) {
             footerView = MaterialLoaderView(context).apply {
+                isFooter = true
                 layoutParams = LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
@@ -198,6 +200,18 @@ class MaterialRefreshLayout constructor(context: Context, attrs: AttributeSet?, 
             }
         }
         return super.onTouchEvent(event)
+    }
+
+    /**获取默认的头部布局*/
+    fun getDefaultHeaderView(): MaterialLoaderView? {
+        if (headerView is MaterialLoaderView) return headerView as MaterialLoaderView
+        return null
+    }
+
+    /**获取默认的尾部布局*/
+    fun getDefaultFooterView(): MaterialLoaderView? {
+        if (footerView is MaterialLoaderView) return footerView as MaterialLoaderView
+        return null
     }
 
     /** 自动刷新 */

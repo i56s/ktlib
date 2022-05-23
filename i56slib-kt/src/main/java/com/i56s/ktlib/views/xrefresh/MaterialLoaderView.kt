@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
+import com.i56s.ktlib.utils.LogUtils
 import com.i56s.ktlib.utils.SizeUtils
 
 /**
@@ -19,11 +20,36 @@ class MaterialLoaderView constructor(context: Context, attrs: AttributeSet?, def
 
     constructor(context: Context) : this(context, null)
 
-    private lateinit var materialWaveView: MaterialWaveView
-    private lateinit var circleProgressBar: CircleProgressBar
+    private val materialWaveView: MaterialWaveView = MaterialWaveView(context)
+    private val circleProgressBar: CircleProgressBar = CircleProgressBar(context)
 
     /**进度框大小(dp)*/
     private val progressSize = SizeUtils.dp2px(50f).toInt()
+
+    /**是否是底部*/
+    var isFooter = false
+        set(value) {
+            materialWaveView.isFooter = value
+            field = value
+        }
+
+    /**变换的颜色集*/
+    var colors =
+        intArrayOf(0xffF44336.toInt(), 0xff4CAF50.toInt(), 0xff03A9F4.toInt(), 0xffFFEB3B.toInt())
+        set(value) {
+            circleProgressBar.colors = value
+            field = value
+        }
+
+    /**波浪颜色*/
+    var waveColor = 0x90FFFFFF.toInt()
+        set(value) {
+            materialWaveView.color = value
+            field = value
+        }
+
+    /**是否显示波浪*/
+    var isShowWave = true
 
     init {
         if (!isInEditMode) {
@@ -34,9 +60,7 @@ class MaterialLoaderView constructor(context: Context, attrs: AttributeSet?, def
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        materialWaveView = MaterialWaveView(context)
-        addView(materialWaveView)
-        circleProgressBar = CircleProgressBar(context)
+        if (isShowWave) addView(materialWaveView)
         circleProgressBar.layoutParams = LayoutParams(progressSize, progressSize).apply {
             gravity = Gravity.CENTER
         }
@@ -47,7 +71,7 @@ class MaterialLoaderView constructor(context: Context, attrs: AttributeSet?, def
 
     override fun onBegin() {
         visibility = View.VISIBLE
-        materialWaveView.onBegin()
+        if (isShowWave) materialWaveView.onBegin()
         circleProgressBar.apply {
             scaleX = 0.001f
             scaleY = 0.001f
@@ -56,7 +80,7 @@ class MaterialLoaderView constructor(context: Context, attrs: AttributeSet?, def
     }
 
     override fun onSlide(moveX: Float, fractionY: Float) {
-        materialWaveView.onSlide(moveX, fractionY)
+        if (isShowWave) materialWaveView.onSlide(moveX, fractionY)
         circleProgressBar.apply {
             onSlide(moveX, fractionY)
             val a = SizeUtils.limitValue(1f, fractionY)
@@ -67,12 +91,12 @@ class MaterialLoaderView constructor(context: Context, attrs: AttributeSet?, def
     }
 
     override fun onRefreshing() {
-        materialWaveView.onRefreshing()
+        if (isShowWave) materialWaveView.onRefreshing()
         circleProgressBar.onRefreshing()
     }
 
     override fun onComlete() {
-        materialWaveView.onComlete()
+        if (isShowWave) materialWaveView.onComlete()
         circleProgressBar.onComlete()
         circleProgressBar.translationY = 0f
         circleProgressBar.scaleX = 0f
