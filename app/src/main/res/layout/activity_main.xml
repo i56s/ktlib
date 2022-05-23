@@ -5,29 +5,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.jcodecraeer.xrecyclerview.XRecyclerView
-        android:id="@+id/recycler"
+    <com.i56s.ktlib.views.xrefresh.MaterialRefreshLayout
+        android:id="@+id/refresh"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent"
+        app:isOverlay="false"
+        app:loadMoreEnable="true">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler2"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:visibility="gone" />
+        <TextView
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="哈哈哈" />
 
-    <Button
-        android:id="@+id/item_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="数量" />
-
-
-    <com.i56s.ktlib.views.xrefresh.CircleProgressBar
-        android:id="@+id/progress"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        app:isShowArrow="true" />
+    </com.i56s.ktlib.views.xrefresh.MaterialRefreshLayout>
 </LinearLayout>

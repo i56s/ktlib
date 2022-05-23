@@ -2,7 +2,9 @@ package com.i56s.ktlib.views.xrefresh
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ScrollView
 import androidx.recyclerview.widget.RecyclerView
 import com.i56s.ktlib.utils.LogUtils
 
@@ -21,13 +23,47 @@ class XRecyclerView constructor(
 
     constructor(context: Context) : this(context, null)
 
-    val recyclerView = RecyclerView(context).apply {
+    /**空滑动布局*/
+    private val mEmptyScrollView = ScrollView(context).apply {
         layoutParams =
             LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
+    val recyclerView = object : RecyclerView(context) {
+        override fun setAdapter(adapter: Adapter<*>?) {
+            super.setAdapter(adapter)
+            val mDataObserver = DataObserver(adapter)
+            adapter?.registerAdapterDataObserver(mDataObserver)
+            mDataObserver.onChanged()
+        }
+    }.apply {
+        layoutParams =
+            LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+    }
+
+    var emptyView: View? = null
+        set(value) {
+            mEmptyScrollView.removeAllViews()
+            value?.let(mEmptyScrollView::addView)
+            field = value
+        }
+
     init {
-        LogUtils.d("测试","嘿嘿嘿")
         addView(recyclerView)
+        //recyclerView.adapter.itemCount
+    }
+
+    private inner class DataObserver(adapter: RecyclerView.Adapter<*>?) :
+        RecyclerView.AdapterDataObserver() {
+        private val mAdapter = adapter
+        override fun onChanged() {
+            if (mAdapter?.itemCount == 0) {
+                removeView(recyclerView)
+                addView(mEmptyScrollView)
+            } else if (getChildAt(0) != recyclerView) {
+                removeView(mEmptyScrollView)
+                addView(recyclerView)
+            }
+        }
     }
 }

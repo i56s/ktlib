@@ -1,5 +1,8 @@
 package com.i56s.test
 
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.i56s.ktlib.utils.ToastUtils
 import com.i56s.test.databinding.ActivitySecondBinding
@@ -16,6 +19,16 @@ class SecondActivity : BaseActivity<ActivitySecondBinding>() {
 
     override fun initCreate() {
         mBinding.recycler.recyclerView.layoutManager = LinearLayoutManager(mContext)
+        mBinding.recycler.isOverlay = false
+        mBinding.recycler.isLoadMoreEnable = true
+        mBinding.recycler.emptyView = TextView(mContext).apply {
+            layoutParams =
+                ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+        }
+        (mBinding.recycler.emptyView as TextView).text = "哈哈哈1"
         mBinding.recycler.recyclerView.adapter = PublicAdapter(mContext)
     }
 

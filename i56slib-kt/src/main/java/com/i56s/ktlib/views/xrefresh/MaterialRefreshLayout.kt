@@ -9,6 +9,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
+import android.widget.AbsListView
 import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
 import com.i56s.ktlib.R
@@ -204,13 +205,13 @@ open class MaterialRefreshLayout constructor(
 
     /**获取默认的头部布局*/
     fun getDefaultHeaderView(): MaterialLoaderView? {
-        if (headerView is MaterialLoaderView) return headerView as MaterialLoaderView
+        if (headerView is MaterialLoaderView?) return headerView as MaterialLoaderView
         return null
     }
 
     /**获取默认的尾部布局*/
     fun getDefaultFooterView(): MaterialLoaderView? {
-        if (footerView is MaterialLoaderView) return footerView as MaterialLoaderView
+        if (footerView is MaterialLoaderView?) return footerView as MaterialLoaderView
         return null
     }
 
