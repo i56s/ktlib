@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.i56s.ktlib.base.BaseRecyclerAdapter
+import com.i56s.ktlib.utils.LogUtils
 import com.i56s.test.databinding.ListItemBinding
 
 /**
@@ -16,7 +17,9 @@ import com.i56s.test.databinding.ListItemBinding
 class PublicAdapter constructor(context: Context) :
     BaseRecyclerAdapter<Any>(context, mutableListOf()) {
 
-    override fun getItemCount(): Int = 4
+    var count = 4
+
+    override fun getItemCount(): Int = count
 
     override fun onCreate(
         layoutInflater: LayoutInflater,

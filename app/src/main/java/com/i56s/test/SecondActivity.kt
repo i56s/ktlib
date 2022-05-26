@@ -17,6 +17,8 @@ class SecondActivity : BaseActivity<ActivitySecondBinding>() {
     override fun getViewBinding(): ActivitySecondBinding =
         ActivitySecondBinding.inflate(layoutInflater)
 
+    lateinit var mAdapter: PublicAdapter
+
     override fun initCreate() {
         mBinding.recycler.recyclerView.layoutManager = LinearLayoutManager(mContext)
         mBinding.recycler.isOverlay = false
@@ -28,11 +30,20 @@ class SecondActivity : BaseActivity<ActivitySecondBinding>() {
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
         }
-        (mBinding.recycler.emptyView as TextView).text = "哈哈哈1"
-        mBinding.recycler.recyclerView.adapter = PublicAdapter(mContext)
+        (mBinding.recycler.emptyView as TextView).text = "数据空了"
+        mAdapter = PublicAdapter(mContext)
+        mBinding.recycler.recyclerView.adapter = mAdapter
     }
 
     override fun initEvent() {
+        mBinding.clear.setOnClickListener {
+            mAdapter.count = 0
+            mAdapter.notifyDataSetChanged()
+        }
+        mBinding.add.setOnClickListener {
+            mAdapter.count = 4
+            mAdapter.notifyDataSetChanged()
+        }
         mBinding.recycler.setMaterialRefreshListener {
             onRefresh = {
                 ToastUtils.showToast("刷新了")

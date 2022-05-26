@@ -50,13 +50,13 @@ class XRecyclerView constructor(
 
     init {
         addView(recyclerView)
-        //recyclerView.adapter.itemCount
     }
 
     private inner class DataObserver(adapter: RecyclerView.Adapter<*>?) :
         RecyclerView.AdapterDataObserver() {
         private val mAdapter = adapter
         override fun onChanged() {
+            if (emptyView == null) return
             if (mAdapter?.itemCount == 0) {
                 removeView(recyclerView)
                 addView(mEmptyScrollView)
