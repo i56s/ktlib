@@ -13,9 +13,4 @@
     <color name="titleview_bg">#4baefe</color>
     <!--标题文本颜色-->
     <color name="titleview_title">@android:color/white</color>
-    <!--刷新颜色-->
-    <color name="material_red">#ffF44336</color>
-    <color name="material_green">#ff4CAF50</color>
-    <color name="material_blue">#ff03A9F4</color>
-    <color name="material_yellow">#ffFFEB3B</color>
 </resources>

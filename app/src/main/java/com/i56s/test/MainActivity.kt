@@ -1,25 +1,7 @@
 package com.i56s.test
 
-import android.content.Context
-import android.content.Intent
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewbinding.ViewBinding
-import com.i56s.ktlib.base.BaseRecyclerAdapter
-import com.i56s.ktlib.base.LibBaseActivity
-import com.i56s.ktlib.utils.LogUtils
 import com.i56s.test.databinding.ActivityMainBinding
-import com.i56s.test.databinding.ItemTestBinding
-import com.i56s.test.databinding.ViewHeaderBinding
-import com.jcodecraeer.xrecyclerview.XRecyclerView
 
 class MainActivity : BaseActivity<ActivityMainBinding>() {
 
