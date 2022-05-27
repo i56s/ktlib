@@ -1,11 +1,15 @@
 package com.i56s.ktlib.base
 
 import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.LibDialogFragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
 import com.i56s.ktlib.R
 import com.i56s.ktlib.utils.LogUtils
@@ -17,13 +21,8 @@ import com.i56s.ktlib.utils.LogUtils
  */
 abstract class LibBaseDialog<T : ViewBinding> : LibDialogFragment() {
 
-    private val cTag = "LibDialog基类"
+    private val cTag = "弹框基类"
 
-    /**数据开始加载的时间*/
-    private var mLoadTime: Long = 0
-
-    /**数据刷新时间*/
-    private var mFragmentLoadDataTime: Long = 5 * 60 * 1000
     private var mDismissListener: ((dialog: DialogInterface) -> Unit)? = null
     private var mBackDismissListener: (() -> Unit)? =
         null
@@ -47,7 +46,6 @@ abstract class LibBaseDialog<T : ViewBinding> : LibDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         this.initData()
         this.initEvent()
-        this.loadData()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -79,42 +77,9 @@ abstract class LibBaseDialog<T : ViewBinding> : LibDialogFragment() {
         this.setDialogProperties(dialog)
     }
 
-    override fun onStart() {
-        super.onStart()
-        this.loadData()
-    }
-
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        this.onHiddenChanged(!userVisibleHint)
-    }
-
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        if (!hidden) {
-            if (context == null) return
-            //再次刷新
-            this.loadData()
-        }
-    }
-
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         mDismissListener?.invoke(dialog)
-    }
-
-    /**加载数据*/
-    private fun loadData() {
-        if (System.currentTimeMillis() - mLoadTime > mFragmentLoadDataTime) {
-            LogUtils.e(cTag, "定时加载数据${javaClass.name}")
-            this.refreshLoadTime()
-            this.loadDataOfTimer()
-        }
-    }
-
-    /**刷新加载数据的时间*/
-    fun refreshLoadTime() {
-        mLoadTime = System.currentTimeMillis()
     }
 
     /**主线程运行*/
@@ -123,16 +88,8 @@ abstract class LibBaseDialog<T : ViewBinding> : LibDialogFragment() {
     /**销毁页面*/
     fun finish() = activity?.finish()
 
-    /**定时加载数据 当fragment可见时调用该方法*/
-    open fun loadDataOfTimer() {}
-
     /**用于设置dialog的属性*/
     open fun setDialogProperties(dialog: Dialog?) {}
-
-    /**设置数据刷新时间*/
-    fun setFragmentLoadDataTime(fragmentLoadDataTime: Long) {
-        mFragmentLoadDataTime = fragmentLoadDataTime
-    }
 
     /**获取dialog宽度
      * @return 屏幕的百分比 0=自适应*/

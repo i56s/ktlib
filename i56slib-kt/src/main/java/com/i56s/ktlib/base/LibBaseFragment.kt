@@ -59,9 +59,6 @@ abstract class LibBaseFragment<T : ViewBinding> : Fragment() {
     /**销毁页面*/
     fun finish() = activity?.finish()
 
-    /**定时加载数据 当fragment可见时调用该方法*/
-    open fun loadDataOfTimer() {}
-
     /**在onCreate之后执行*/
     abstract fun onCreateAfter()
 

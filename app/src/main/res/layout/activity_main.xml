@@ -5,19 +5,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.i56s.ktlib.views.xrefresh.MaterialRefreshLayout
-        android:id="@+id/refresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:isOverlay="false"
-        app:loadMoreEnable="true">
-
-        <TextView
-            android:id="@+id/recyclerview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="哈哈哈" />
-
-    </com.i56s.ktlib.views.xrefresh.MaterialRefreshLayout>
+    <Button
+        android:id="@+id/open_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="打开" />
 </LinearLayout>
