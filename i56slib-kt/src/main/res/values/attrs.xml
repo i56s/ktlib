@@ -35,7 +35,17 @@
         <attr name="loadMoreEnable" format="boolean" />
     </declare-styleable>
 
+    <!-- 刷新布局  -->
+    <declare-styleable name="XRecyclerView">
+        <!--是否覆盖子控件(浮在子控件上层) 默认覆盖-->
+        <attr name="isOverlay" />
+        <!--是否启用下拉刷新 默认启用-->
+        <attr name="refreshEnable" />
+        <!--是否启用上拉加载 默认禁用-->
+        <attr name="loadMoreEnable" />
+    </declare-styleable>
+
     <declare-styleable name="CircleProgressBar">
-        <attr name="isShowArrow" format="boolean"/>
+        <attr name="isShowArrow" format="boolean" />
     </declare-styleable>
 </resources>

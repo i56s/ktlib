@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ScrollView
 import androidx.recyclerview.widget.RecyclerView
+import com.i56s.ktlib.R
 import com.i56s.ktlib.utils.LogUtils
 
 /**
@@ -50,6 +51,16 @@ class XRecyclerView constructor(
 
     init {
         addView(recyclerView)
+        val t = context.obtainStyledAttributes(
+            attrs,
+            R.styleable.XRecyclerView,
+            defstyleAttr,
+            0
+        )
+        isOverlay = t.getBoolean(R.styleable.XRecyclerView_isOverlay, true)
+        isRefreshEnable = t.getBoolean(R.styleable.XRecyclerView_refreshEnable, true)
+        isLoadMoreEnable = t.getBoolean(R.styleable.XRecyclerView_loadMoreEnable, false)
+        t.recycle()
     }
 
     private inner class DataObserver(adapter: RecyclerView.Adapter<*>?) :
