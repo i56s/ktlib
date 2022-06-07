@@ -292,22 +292,22 @@ open class MaterialRefreshLayout constructor(
     }
 
     /**设置刷新监听事件*/
-    fun setMaterialRefreshListener(listener: MaterialRefreshListener.() -> Unit) {
-        mListener = MaterialRefreshListener().apply { listener() }
+    fun setMaterialRefreshListener(listener: MaterialRefreshListener) {
+        mListener = listener
     }
 
     /**触发下拉刷新*/
     private fun refreshListener() {
         isRefreshing = true
         headerView?.onRefreshing()
-        mListener?.onRefresh?.invoke(this)
+        mListener?.onRefresh(this)
     }
 
     /**触发上拉加载*/
     private fun loadmoreListener() {
         isLoadMoreing = true
         footerView?.onRefreshing()
-        mListener?.onLoadMore?.invoke(this)
+        mListener?.onLoadMore(this)
     }
 
     /**创建动画*/
