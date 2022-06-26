@@ -18,12 +18,12 @@ import kotlin.math.min
  * ### 创建时间：2022-05-09 14:29
  * ### 描述：进度圆圈
  */
-class CircleProgressBar constructor(context: Context, attrs: AttributeSet?, defstyleAttr: Int) :
+class CircleProgressBar @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defstyleAttr: Int = 0
+) :
     AppCompatImageView(context, attrs, defstyleAttr), BaseMaterialView {
-
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-
-    constructor(context: Context) : this(context, null)
 
     private val mProgressDrawable = MaterialProgressDrawable(context, this).apply {
         setStartEndTrim(0f, 0.75f)

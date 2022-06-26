@@ -13,12 +13,12 @@ import com.i56s.ktlib.utils.SizeUtils
  * ### 创建时间：2022-05-09 11:00
  * ### 描述：上拉或下拉的刷新控件
  */
-class MaterialLoaderView constructor(context: Context, attrs: AttributeSet?, defstyleAttr: Int) :
+class MaterialLoaderView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defstyleAttr: Int = 0
+) :
     FrameLayout(context, attrs, defstyleAttr), BaseMaterialView {
-
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-
-    constructor(context: Context) : this(context, null)
 
     private val materialWaveView: MaterialWaveView = MaterialWaveView(context)
     private val circleProgressBar: CircleProgressBar = CircleProgressBar(context)

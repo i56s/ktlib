@@ -13,12 +13,12 @@ import com.i56s.ktlib.R
  * ### 创建时间：2021-09-18 17:00
  * ### 描述：加载中的圆圈控件
  */
-class LoadingView constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
+class LoadingView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) :
     View(context, attrs, defStyleAttr) {
-
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-
-    constructor(context: Context) : this(context, null)
 
     /**默认颜色*/
     private val COLORS =

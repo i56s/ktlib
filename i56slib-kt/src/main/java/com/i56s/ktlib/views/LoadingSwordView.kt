@@ -13,10 +13,12 @@ import kotlin.math.min
  * ### 创建时间：2021-09-28 09:46
  * ### 描述：剑气加载
  */
-class LoadingSwordView constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
+class LoadingSwordView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) :
     View(context, attrs, defStyleAttr) {
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-    constructor(context: Context) : this(context, null)
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL

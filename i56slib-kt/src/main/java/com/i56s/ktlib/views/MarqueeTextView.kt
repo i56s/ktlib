@@ -10,12 +10,12 @@ import androidx.appcompat.widget.AppCompatTextView
  * ### 创建时间：2021-09-26 14:19
  * ### 描述：文本跑马灯
  */
-class MarqueeTextView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
+class MarqueeTextView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) :
     AppCompatTextView(context, attrs, defStyleAttr) {
-
-    constructor(context: Context) : this(context, null)
-
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     init { //设置单行
         setSingleLine() //设置Ellipsize

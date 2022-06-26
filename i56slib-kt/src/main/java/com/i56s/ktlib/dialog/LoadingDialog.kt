@@ -24,23 +24,22 @@ import com.i56s.ktlib.views.LoadingView
  * ### 创建时间：2021-09-18 16:59
  * ### 描述：加载弹框，有两种形状- TYPE_DEFAULT 和 TYPE_SWORD
  */
-class LoadingDialog constructor(type: Int) : LibBaseDialog<ViewBinding>() {
+class LoadingDialog @JvmOverloads constructor(type: LoadingType = LoadingType.TYPE_DEFAULT) :
+    LibBaseDialog<ViewBinding>() {
 
-    companion object {
+    enum class LoadingType {
         /**默认加载框*/
-        const val TYPE_DEFAULT = 0
+        TYPE_DEFAULT,
 
         /**剑气加载*/
-        const val TYPE_SWORD = 1
+        TYPE_SWORD
     }
 
     var loadingText = "加载中"
     private var mPointCount = 0
     private val mHandler = Handler(Looper.getMainLooper())
-    private var mType = TYPE_DEFAULT
+    private var mType = LoadingType.TYPE_DEFAULT
     private var mListener: OnLoadingDismissListener? = null
-
-    constructor() : this(TYPE_DEFAULT)
 
     init {
         mType = type
@@ -54,10 +53,10 @@ class LoadingDialog constructor(type: Int) : LibBaseDialog<ViewBinding>() {
         linView.gravity = Gravity.CENTER
         linView.orientation = LinearLayout.VERTICAL
 
-        val loadingView =
-            if (mType == TYPE_SWORD) LoadingSwordView(inflater.context) else LoadingView(
-                inflater.context
-            )
+        val loadingView = when (mType) {
+            LoadingType.TYPE_SWORD -> LoadingSwordView(inflater.context)
+            else -> LoadingView(inflater.context)
+        }
 
         linView.addView(loadingView)
 

@@ -23,16 +23,12 @@ import kotlin.math.abs
  * ### 创建时间：2022-05-07 15:04
  * ### 描述：下拉刷新，上拉加载 嵌套布局
  */
-open class MaterialRefreshLayout constructor(
+open class MaterialRefreshLayout @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet?,
-    defstyleAttr: Int
+    attrs: AttributeSet? = null,
+    defstyleAttr: Int = 0
 ) :
     FrameLayout(context, attrs, defstyleAttr) {
-
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-
-    constructor(context: Context) : this(context, null)
 
     /**下拉控件*/
     var headerView: BaseMaterialView? = null

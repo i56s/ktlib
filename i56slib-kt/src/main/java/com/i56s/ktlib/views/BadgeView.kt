@@ -12,12 +12,12 @@ import com.i56s.ktlib.R
  * ### 创建时间：2022-03-24 17:18
  * ### 描述：红点数字
  */
-class BadgeView constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
+class BadgeView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) :
     View(context, attrs, defStyleAttr) {
-
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-
-    constructor(context: Context) : this(context, null)
 
     private val mCirclePaint = Paint()
 

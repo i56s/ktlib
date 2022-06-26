@@ -12,10 +12,8 @@ import com.i56s.ktlib.adapter.TabPagerAdapter
  * ### 创建时间：2022-03-24 17:41
  * ### 描述：实现懒加载
  */
-class LazyViewPager constructor(context: Context, attrs: AttributeSet?) :
+class LazyViewPager @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     ViewPager(context, attrs) {
-
-    constructor(context: Context) : this(context, null)
 
     private val defaultOffset = 0.5f
 

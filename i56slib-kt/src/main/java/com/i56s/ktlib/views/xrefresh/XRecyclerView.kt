@@ -14,15 +14,11 @@ import com.i56s.ktlib.utils.LogUtils
  * ### 创建时间：2022-05-13 15:01
  * ### 描述：带RecyclerView的刷新控件
  */
-class XRecyclerView constructor(
+class XRecyclerView @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet?,
-    defstyleAttr: Int
+    attrs: AttributeSet? = null,
+    defstyleAttr: Int = 0
 ) : MaterialRefreshLayout(context, attrs, defstyleAttr) {
-
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-
-    constructor(context: Context) : this(context, null)
 
     /**空滑动布局*/
     private val mEmptyScrollView = ScrollView(context).apply {

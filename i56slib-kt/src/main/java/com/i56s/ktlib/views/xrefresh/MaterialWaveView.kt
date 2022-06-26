@@ -18,12 +18,12 @@ import kotlin.math.max
  * ### 创建时间：2022-05-09 11:45
  * ### 描述：下拉刷新滑动背景
  */
-class MaterialWaveView constructor(context: Context, attrs: AttributeSet?, defstyleAttr: Int) :
+class MaterialWaveView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defstyleAttr: Int = 0
+) :
     View(context, attrs, defstyleAttr), BaseMaterialView {
-
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-
-    constructor(context: Context) : this(context, null)
 
     private var waveHeight = 0f
     private var headHeight = 0f

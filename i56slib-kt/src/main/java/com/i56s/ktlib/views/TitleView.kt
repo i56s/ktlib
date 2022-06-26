@@ -21,7 +21,11 @@ import com.i56s.ktlib.databinding.ViewTitleBinding
  * ### 创建时间：2021-09-18 17:04
  * ### 描述：标题控件
  */
-class TitleView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
+class TitleView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) :
     ConstraintLayout(context, attrs, defStyleAttr) {
 
     private var mListener: (() -> Boolean)? = null
@@ -64,10 +68,6 @@ class TitleView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
             mBinding.titleTitle.setTextColor(value)
             field = value
         }
-
-    constructor(context: Context) : this(context, null)
-
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     init {
 
