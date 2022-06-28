@@ -36,13 +36,14 @@ object Md5Utils {
     /**
      * 字符串加密
      * @param inStr 需要加密的字符串
+     * @param c 密钥
      * @return 加密后的字符串(以16进制形式返回)
      */
     @JvmStatic
-    fun decryption(inStr: String): String {
+    fun encryption(inStr: String, c: Char = '>'): String {
         val a = inStr.toCharArray()
         for (i in a.indices) {
-            a[i] = (a[i].toInt() xor '>'.toInt()).toChar()
+            a[i] = (a[i].code xor c.code).toChar()
         }
         return str2HexStr(String(a))
     }
@@ -50,14 +51,14 @@ object Md5Utils {
     /**
      * 字符串解密
      * @param inStr 加密后的字符串
-     * @return 加密前的字符串
+     * @param c 密钥
+     * @return 解密后的字符串
      */
     @JvmStatic
-    fun encryption(inStr: String): String {
-        val str = hexStr2Str(inStr)
-        val a = inStr.toCharArray()
+    fun decryption(inStr: String, c: Char = '>'): String {
+        val a = hexStr2Str(inStr).toCharArray()
         for (i in a.indices) {
-            a[i] = (a[i].toInt() xor '>'.toInt()).toChar()
+            a[i] = (a[i].code xor c.code).toChar()
         }
         return String(a)
     }
