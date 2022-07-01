@@ -39,7 +39,6 @@ class LoadingDialog @JvmOverloads constructor(type: LoadingType = LoadingType.TY
     private var mPointCount = 0
     private val mHandler = Handler(Looper.getMainLooper())
     private var mType = LoadingType.TYPE_DEFAULT
-    private var mListener: OnLoadingDismissListener? = null
 
     init {
         mType = type
@@ -102,11 +101,6 @@ class LoadingDialog @JvmOverloads constructor(type: LoadingType = LoadingType.TY
         super.onDestroyView()
     }
 
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        mListener?.onDismiss(dialog)
-    }
-
     override fun initData() {}
 
     override fun initEvent() {}
@@ -119,16 +113,5 @@ class LoadingDialog @JvmOverloads constructor(type: LoadingType = LoadingType.TY
     fun show(loadText: String, manager: FragmentManager) {
         loadingText = loadText
         this.show(manager)
-    }
-
-    /**设置窗口关闭事件监听器*/
-    fun setOnLoadingDismissListener(listener: OnLoadingDismissListener?) {
-        mListener = listener; }
-
-    /**窗口关闭事件监听器*/
-    interface OnLoadingDismissListener {
-
-        /**窗口关闭回调*/
-        fun onDismiss(dialog: DialogInterface)
     }
 }
