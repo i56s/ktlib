@@ -37,7 +37,7 @@ abstract class BaseRecyclerAdapter<T> constructor(context: Context, datas: Mutab
     }
 
     /** 设置点击事件监听器 */
-    fun setOnItemClickListener(li: ((position: Int, data: T) -> Unit)?) {
+    open fun setOnItemClickListener(li: ((position: Int, data: T) -> Unit)?) {
         mListener = li
     }
 
