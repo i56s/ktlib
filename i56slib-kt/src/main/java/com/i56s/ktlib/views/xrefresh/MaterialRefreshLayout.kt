@@ -36,7 +36,8 @@ open class MaterialRefreshLayout @JvmOverloads constructor(
     /**上拉控件*/
     var footerView: BaseMaterialView? = null
     private var mChildView: View? = null
-    private var mListener: MaterialRefreshListener? = null
+    private var mRefreshListener: ((layout: MaterialRefreshLayout) -> Unit)? = null
+    private var mLoadMoreListener: ((layout: MaterialRefreshLayout) -> Unit)? = null
 
     private val mInterpolator = DecelerateInterpolator(10f)//减速插值器
 
@@ -288,22 +289,27 @@ open class MaterialRefreshLayout @JvmOverloads constructor(
     }
 
     /**设置刷新监听事件*/
-    fun setMaterialRefreshListener(listener: MaterialRefreshListener) {
-        mListener = listener
+
+    fun setOnRefreshListener(listener: ((layout: MaterialRefreshLayout) -> Unit)?) {
+        mRefreshListener = listener
+    }
+
+    fun setOnLoadMoreListener(listener: ((layout: MaterialRefreshLayout) -> Unit)?) {
+        mLoadMoreListener = listener
     }
 
     /**触发下拉刷新*/
     private fun refreshListener() {
         isRefreshing = true
         headerView?.onRefreshing()
-        mListener?.onRefresh(this)
+        mRefreshListener?.invoke(this)
     }
 
     /**触发上拉加载*/
     private fun loadmoreListener() {
         isLoadMoreing = true
         footerView?.onRefreshing()
-        mListener?.onLoadMore(this)
+        mLoadMoreListener?.invoke(this)
     }
 
     /**创建动画*/

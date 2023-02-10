@@ -24,11 +24,9 @@ class SecondActivity : BaseActivity<ActivitySecondBinding>() {
         mBinding.recycler.isOverlay = false
         mBinding.recycler.isLoadMoreEnable = true
         mBinding.recycler.emptyView = TextView(mContext).apply {
-            layoutParams =
-                ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+            )
         }
         (mBinding.recycler.emptyView as TextView).text = "数据空了"
         mAdapter = PublicAdapter(mContext)
@@ -44,19 +42,17 @@ class SecondActivity : BaseActivity<ActivitySecondBinding>() {
             mAdapter.count = 4
             mAdapter.notifyDataSetChanged()
         }
-        mBinding.recycler.setMaterialRefreshListener {
-            onRefresh = {
-                ToastUtils.showToast("刷新了")
-                it.postDelayed({
-                    it.finishRefresh()
-                }, 1500)
-            }
-            onLoadMore = {
-                ToastUtils.showToast("加载了")
-                it.postDelayed({
-                    it.finishLoadMore()
-                }, 1500)
-            }
+        mBinding.recycler.setOnRefreshListener {
+            ToastUtils.showToast("刷新了")
+            it.postDelayed({
+                it.finishRefresh()
+            }, 1500)
+        }
+        mBinding.recycler.setOnLoadMoreListener {
+            ToastUtils.showToast("加载了")
+            it.postDelayed({
+                it.finishLoadMore()
+            }, 1500)
         }
     }
 }

@@ -18,7 +18,7 @@ class LoadMoreActivity : BaseActivity<ActivityLoadMoreBinding>() {
         ActivityLoadMoreBinding.inflate(layoutInflater)
 
     override fun initCreate() {
-        mBinding.refresh.setMaterialRefreshListener {
+        /*mBinding.refresh.setMaterialRefreshListener {
 
             onRefresh = {
                 Toast.makeText(this@LoadMoreActivity, "下拉刷新", Toast.LENGTH_SHORT).show()
@@ -33,7 +33,7 @@ class LoadMoreActivity : BaseActivity<ActivityLoadMoreBinding>() {
                     mBinding.refresh.finishLoadMore()
                 }, 1500)
             }
-        }
+        }*/
         mBinding.refresh.post {
             mBinding.refresh.getDefaultHeaderView()?.isShowWave = false
         }
