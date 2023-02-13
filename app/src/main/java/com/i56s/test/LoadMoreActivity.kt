@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.i56s.ktlib.utils.ToastUtils
 import com.i56s.ktlib.views.xrefresh.MaterialLoaderView
 import com.i56s.test.databinding.ActivityLoadMoreBinding
 
@@ -18,22 +19,20 @@ class LoadMoreActivity : BaseActivity<ActivityLoadMoreBinding>() {
         ActivityLoadMoreBinding.inflate(layoutInflater)
 
     override fun initCreate() {
-        /*mBinding.refresh.setMaterialRefreshListener {
+        mBinding.refresh.setOnRefreshListener {
+            ToastUtils.showToast("刷新了")
+            it.postDelayed({
+                it.finishRefresh()
+            }, 1500)
+        }
+        mBinding.refresh.setOnLoadMoreListener {
+            ToastUtils.showToast("加载了")
+            it.postDelayed({
+                it.finishLoadMore()
+            }, 1500)
+        }
 
-            onRefresh = {
-                Toast.makeText(this@LoadMoreActivity, "下拉刷新", Toast.LENGTH_SHORT).show()
-                mBinding.refresh.postDelayed({
-                    mBinding.refresh.finishRefresh()
-                }, 1500)
-            }
 
-            onLoadMore = {
-                Toast.makeText(this@LoadMoreActivity, "加载更多", Toast.LENGTH_SHORT).show()
-                mBinding.refresh.postDelayed({
-                    mBinding.refresh.finishLoadMore()
-                }, 1500)
-            }
-        }*/
         mBinding.refresh.post {
             mBinding.refresh.getDefaultHeaderView()?.isShowWave = false
         }

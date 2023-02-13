@@ -50,8 +50,23 @@
     </declare-styleable>
 
     <declare-styleable name="SwipeMenuLayout">
-        <attr name="swipeEnable" format="boolean"/>
-        <attr name="ios" format="boolean"/>
-        <attr name="leftSwipe" format="boolean"/>
+        <attr name="swipeEnable" format="boolean" />
+        <attr name="ios" format="boolean" />
+        <attr name="leftSwipe" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="PayPasswordView">
+        <attr name="ppv_num" format="integer" />
+        <!-- 边框间距 -->
+        <attr name="ppv_borderGap" format="dimension" />
+        <!-- 横线高度 -->
+        <attr name="ppv_lineHeight" format="dimension" />
+        <!-- 格子大小 -->
+        <attr name="ppv_size" format="dimension" />
+        <attr name="ppv_lineColor" format="color" />
+        <!-- 密文样式 -->
+        <attr name="ppv_dot" format="string" />
+        <attr name="ppv_dotColor" format="color" />
+        <attr name="ppv_autoClear" format="boolean" />
+        <attr name="ppv_isShowNumber" format="boolean" />
     </declare-styleable>
 </resources>

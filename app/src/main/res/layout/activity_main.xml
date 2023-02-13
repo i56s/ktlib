@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     android:orientation="vertical">
 
     <Button
@@ -10,4 +11,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="打开" />
+
+    <com.i56s.ktlib.views.PayPasswordView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:ppv_lineHeight="1dp"
+        app:ppv_num="5"
+        app:ppv_isShowNumber="false"
+        app:ppv_lineColor="#ff0000"
+        app:ppv_borderGap="5dp" />
 </LinearLayout>
