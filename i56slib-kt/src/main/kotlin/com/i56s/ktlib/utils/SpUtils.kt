@@ -18,11 +18,8 @@ object SpUtils {
      * 初始化SpUtil工具类
      * @param spName 设置SharedPreferences文件名(不用添加后缀)，默认名称：SpUtil.xml
      */
-    internal fun init(spName: String?) {
-        sp = I56sLib.context.getSharedPreferences(
-            if (TextUtils.isEmpty(spName)) "I56s" else spName,
-            Context.MODE_PRIVATE
-        )
+    internal fun init() {
+        sp = I56sLib.context.getSharedPreferences("i56s", Context.MODE_PRIVATE)
     }
 
     /**

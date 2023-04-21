@@ -38,14 +38,19 @@ object I56sLib {
     val activityList: MutableList<Activity> = mutableListOf()
 
     /**初始化
-     * @param spName 设置SharedPreferences文件名(不用添加后缀)，默认名称：SpUtil.xml
-     * @param isOut true=输出日志 false=不输出
+     * @param isDebug 是否调试中*/
+    fun init(application: Application, isDebug: Boolean) {
+        init(application, isDebug, LogUtils.Level.DEBUG)
+    }
+
+    /**初始化
+     * @param isDebug 是否调试中
      * @param level 日志等级*/
-    @SuppressLint("PrivateApi")
-    fun init(application: Application, spName: String, isOut: Boolean, level: LogUtils.Level) {
+    @SuppressLint("PrivateApi", "InternalInsetResource")
+    fun init(application: Application, isDebug: Boolean, level: LogUtils.Level) {
         context = application.applicationContext //初始化日志
-        LogUtils.init(isOut, level) //初始化sp存储
-        SpUtils.init(spName)
+        LogUtils.init(isDebug, level) //初始化sp存储
+        SpUtils.init()
 
         //获取状态栏高度
         val resourceId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
@@ -54,7 +59,7 @@ object I56sLib {
         }
 
         application.registerActivityLifecycleCallbacks(object :
-                                                           Application.ActivityLifecycleCallbacks {
+            Application.ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 activityList.add(activity)
             }

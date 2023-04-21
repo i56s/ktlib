@@ -14,7 +14,7 @@ import androidx.fragment.app.FragmentTransaction
  * ### 描述：TabLayout+ViewPager滑动适配器
  */
 class TabPagerAdapter constructor(fm: FragmentManager, list: List<Bean>?) :
-    FragmentPagerAdapter(fm) {
+    FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     private var mCurrentItem: Fragment? = null
 
@@ -66,6 +66,7 @@ class TabPagerAdapter constructor(fm: FragmentManager, list: List<Bean>?) :
         }
     }
 
+    /**添加懒加载*/
     fun addLazyItem(container: ViewGroup, position: Int): Fragment? {
         val fragment = mLazyItems.get(position) ?: return null
 
