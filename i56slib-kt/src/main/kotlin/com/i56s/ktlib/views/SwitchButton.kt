@@ -1,12 +1,17 @@
 package com.i56s.ktlib.views
 
 import android.content.Context
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RadialGradient
 import android.graphics.RectF
+import android.graphics.Shader
+import android.os.Parcel
+import android.os.Parcelable
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import com.i56s.ktlib.R
@@ -104,20 +109,344 @@ class SwitchButton @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        when (MeasureSpec.getMode(widthMeasureSpec)) {
-            MeasureSpec.AT_MOST, MeasureSpec.UNSPECIFIED ->
-                widthMeasureSpec = MeasureSpec.makeMeasureSpec(
-                    56 + paddingLeft + paddingRight,
-                    MeasureSpec.EXACTLY
-                )
+        var w = widthMeasureSpec
+        var h = heightMeasureSpec
+        when (MeasureSpec.getMode(w)) {
+            MeasureSpec.AT_MOST, MeasureSpec.UNSPECIFIED -> w = MeasureSpec.makeMeasureSpec(
+                56 + paddingLeft + paddingRight, MeasureSpec.EXACTLY
+            )
+
+            MeasureSpec.EXACTLY -> {}
         }
-        when (MeasureSpec.getMode(heightMeasureSpec)) {
-            MeasureSpec.AT_MOST, MeasureSpec.UNSPECIFIED ->
-                heightMeasureSpec = MeasureSpec.makeMeasureSpec(
-                    (MeasureSpec.getSize(widthMeasureSpec) * mAspectRatio).toInt()
-                            + paddingTop + paddingBottom, MeasureSpec.EXACTLY
-                )
+        when (MeasureSpec.getMode(h)) {
+            MeasureSpec.AT_MOST, MeasureSpec.UNSPECIFIED -> h = MeasureSpec.makeMeasureSpec(
+                (MeasureSpec.getSize(w) * mAspectRatio).toInt() + paddingTop + paddingBottom,
+                MeasureSpec.EXACTLY
+            )
+
+            MeasureSpec.EXACTLY -> {}
         }
-        setMeasuredDimension(widthMeasureSpec, heightMeasureSpec)
+        setMeasuredDimension(w, h)
+    }
+
+    override fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
+        mCanVisibleDrawing =
+            width > paddingLeft + paddingRight && height > paddingTop + paddingBottom
+        if (mCanVisibleDrawing) {
+            val actuallyDrawingAreaWidth = paddingLeft - paddingRight
+            val actuallyDrawingAreaHeight = paddingTop - paddingBottom
+            var actuallyDrawingAreaLeft = 0
+            var actuallyDrawingAreaRight = 0
+            var actuallyDrawingAreaTop = 0
+            var actuallyDrawingAreaBottom = 0
+            if (actuallyDrawingAreaWidth * mAspectRatio < actuallyDrawingAreaHeight) {
+                actuallyDrawingAreaLeft = paddingLeft
+                actuallyDrawingAreaRight = width - paddingRight
+                val heightExtraSize =
+                    (actuallyDrawingAreaHeight - actuallyDrawingAreaWidth * mAspectRatio).toInt()
+                actuallyDrawingAreaTop = paddingTop + heightExtraSize / 2
+                actuallyDrawingAreaBottom = getHeight() - paddingBottom - heightExtraSize / 2
+            } else {
+                val widthExtraSize =
+                    (actuallyDrawingAreaWidth - actuallyDrawingAreaHeight / mAspectRatio).toInt()
+                actuallyDrawingAreaLeft = paddingLeft + widthExtraSize / 2
+                actuallyDrawingAreaRight = getWidth() - paddingRight - widthExtraSize / 2
+                actuallyDrawingAreaTop = paddingTop
+                actuallyDrawingAreaBottom = getHeight() - paddingBottom
+            }
+            mShadowReservedHeight = (actuallyDrawingAreaBottom - actuallyDrawingAreaTop) * 0.07f
+            val left = actuallyDrawingAreaLeft
+            val top = actuallyDrawingAreaTop + mShadowReservedHeight
+            mRight = actuallyDrawingAreaRight.toFloat()
+            val bottom = actuallyDrawingAreaBottom - mShadowReservedHeight
+
+            val sHeight = bottom - top
+            mCenterX = (mRight + left) / 2
+            mCenterY = (bottom + top) / 2
+
+            mLeft = left.toFloat()
+            mWidth = bottom - top
+            bRight = left + mWidth
+            // OfB
+            val halfHeightOfS = mWidth / 2
+            mRadius = halfHeightOfS * 0.95f
+            // offset of switching
+            mOffset = mRadius * 0.2f
+            mStrokeWidth = (halfHeightOfS - mRadius) * 2
+            mOnLeftX = mRight - mWidth
+            mOn2LeftX = mOnLeftX - mOffset
+            mOffLeftX = left.toFloat()
+            mOff2LeftX = mOffLeftX + mOffset
+            mScale = 1 - mStrokeWidth / sHeight
+
+            mBackgroundPath.reset()
+            val bound = RectF()
+            bound.top = top
+            bound.bottom = bottom
+            bound.left = left.toFloat()
+            bound.right = left + sHeight
+            mBackgroundPath.arcTo(bound, 90f, 180f)
+            bound.left = mRight - sHeight
+            bound.right = mRight
+            mBackgroundPath.arcTo(bound, 270f, 180f)
+            mBackgroundPath.close()
+
+            mBound.left = mLeft
+            mBound.right = bRight
+            // bTop = sTop
+            mBound.top = top + mStrokeWidth / 2
+            // bBottom = sBottom
+            mBound.bottom = bottom - mStrokeWidth / 2
+            val bCenterX = (bRight + mLeft) / 2
+            val bCenterY = (bottom + top) / 2
+
+            val red = mShadowColor shr 16 and 0xFF
+            val green = mShadowColor shr 8 and 0xFF
+            val blue = mShadowColor and 0xFF
+            mShadowGradient = RadialGradient(
+                bCenterX,
+                bCenterY,
+                mRadius,
+                Color.argb(200, red, green, blue),
+                Color.argb(25, red, green, blue),
+                Shader.TileMode.CLAMP
+            )
+        }
+    }
+
+    private fun calcBPath(percent: Float) {
+        mBarPath.reset()
+        mBound.left = mLeft + mStrokeWidth / 2
+        mBound.right = bRight - mStrokeWidth / 2
+        mBarPath.arcTo(mBound, 90f, 180f)
+        mBound.left = mLeft + percent * mOffset + mStrokeWidth / 2
+        mBound.right = bRight + percent * mOffset - mStrokeWidth / 2
+        mBarPath.arcTo(mBound, 270f, 180f)
+        mBarPath.close()
+    }
+
+    private fun calcBTranslate(percent: Float): Float {
+        var result = 0f
+        when (mCheckedState - mLastCheckedState) {
+            1 -> if (mCheckedState == STATE_SWITCH_OFF2) {
+                // off -> off2
+                result = mOffLeftX
+            } else if (mCheckedState == STATE_SWITCH_ON) {
+                // on2 -> on
+                result = mOnLeftX - (mOnLeftX - mOn2LeftX) * percent
+            }
+
+            2 -> if (mCheckedState == STATE_SWITCH_ON) {
+                // off2 -> on
+                result = mOnLeftX - (mOnLeftX - mOffLeftX) * percent
+            } else if (mCheckedState == STATE_SWITCH_ON2) {
+                // off -> on2
+                result = mOn2LeftX - (mOn2LeftX - mOffLeftX) * percent
+            }
+            // off -> on
+            3 -> result = mOnLeftX - (mOnLeftX - mOffLeftX) * percent
+            -1 -> if (mCheckedState == STATE_SWITCH_ON2) {
+                // on -> on2
+                result = mOn2LeftX + (mOnLeftX - mOn2LeftX) * percent
+            } else if (mCheckedState == STATE_SWITCH_OFF) {
+                // off2 -> off
+                result = mOffLeftX
+            }
+
+            -2 -> if (mCheckedState == STATE_SWITCH_OFF) {
+                // on2 -> off
+                result = mOffLeftX + (mOn2LeftX - mOffLeftX) * percent
+            } else if (mCheckedState == STATE_SWITCH_OFF2) {
+                // on -> off2
+                result = mOff2LeftX + (mOnLeftX - mOff2LeftX) * percent
+            }
+            // on -> off
+            -3 -> result = mOffLeftX + (mOnLeftX - mOffLeftX) * percent
+            else -> if (mCheckedState == STATE_SWITCH_OFF) {
+                //  off -> off
+                result = mOffLeftX
+            } else if (mCheckedState == STATE_SWITCH_ON) {
+                // on -> on
+                result = mOnLeftX
+            }
+        }
+        return result - mOffLeftX
+    }
+
+    override fun onDraw(canvas: Canvas?) {
+        if (!mCanVisibleDrawing) {
+            return
+        }
+
+        mPaint.isAntiAlias = true
+
+        val isOn = (mCheckedState == STATE_SWITCH_ON || mCheckedState == STATE_SWITCH_ON2)
+        // Draw background
+        mPaint.style = Paint.Style.FILL
+        mPaint.color = if (isOn) mAccentColor else mOffColor
+        canvas?.drawPath(mBackgroundPath, mPaint)
+
+        mAnim1 = if (mAnim1 - mAnimationSpeed > 0) mAnim1 - mAnimationSpeed else 0f
+        mAnim2 = if (mAnim2 - mAnimationSpeed > 0) mAnim2 - mAnimationSpeed else 0f
+
+        val dsAnim = mInterpolator.getInterpolation(mAnim1)
+        val dbAnim = mInterpolator.getInterpolation(mAnim2)
+        // Draw background animation
+        val scale = mScale * (if (isOn) dsAnim else 1 - dsAnim)
+        val scaleOffset = (mRight - mCenterX - mRadius) * (if (isOn) 1 - dsAnim else dsAnim)
+        canvas?.save()
+        canvas?.scale(scale, scale, mCenterX + scaleOffset, mCenterY)
+        if (isEnabled) {
+            mPaint.color = mBgColor
+        } else {
+            mPaint.color = mBgEnabledColor
+        }
+        canvas?.drawPath(mBackgroundPath, mPaint)
+        canvas?.restore()
+        // To prepare center bar path
+        canvas?.save()
+        canvas?.translate(calcBTranslate(dbAnim), mShadowReservedHeight)
+        val isState2 = (mCheckedState == STATE_SWITCH_ON2 || mCheckedState == STATE_SWITCH_OFF2)
+        calcBPath(if (isState2) 1 - dbAnim else dbAnim)
+        // Use center bar path to draw shadow
+        if (mShadow) {
+            mPaint.style = Paint.Style.FILL
+            mPaint.shader = mShadowGradient
+            canvas?.drawPath(mBarPath, mPaint)
+            mPaint.shader = null
+        }
+        canvas?.translate(0f, -mShadowReservedHeight)
+        // draw bar
+        canvas?.scale(0.98f, 0.98f, mWidth / 2, mWidth / 2)
+        mPaint.style = Paint.Style.FILL
+        mPaint.color = Color.parseColor("#FFFFFF")
+        canvas?.drawPath(mBarPath, mPaint)
+        mPaint.style = Paint.Style.STROKE
+        mPaint.strokeWidth = mStrokeWidth * 0.5f
+        mPaint.color = if (isOn) mPrimaryDarkColor else mOffDarkColor
+        canvas?.drawPath(mBarPath, mPaint)
+        canvas?.restore()
+
+        mPaint.reset()
+        if (mAnim1 > 0 || mAnim2 > 0) {
+            invalidate()
+        }
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        super.onTouchEvent(event)
+        if (isEnabled && (mCheckedState == STATE_SWITCH_ON || mCheckedState == STATE_SWITCH_OFF) && (mAnim1 * mAnim2 == 0f)) {
+            when (event?.action) {
+                MotionEvent.ACTION_UP -> {
+                    mLastCheckedState = mCheckedState
+                    mAnim2 = 1f
+                    when (mCheckedState) {
+                        STATE_SWITCH_OFF -> {
+                            setChecked(true, false)
+                            mListener?.invoke(this, true)
+                        }
+
+                        STATE_SWITCH_ON -> {
+                            setChecked(false, false)
+                            mListener?.invoke(this, false)
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    override fun onSaveInstanceState(): Parcelable {
+        val superState = super.onSaveInstanceState()
+        val state = SavedState(superState)
+        state.checked = mChecked
+        return state
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        state as SavedState
+        super.onRestoreInstanceState(state.superState)
+        mChecked = state.checked
+        mCheckedState = if (mChecked) STATE_SWITCH_ON else STATE_SWITCH_OFF
+        invalidate()
+    }
+
+    fun setColor(
+        newColorPrimary: Int,
+        newColorPrimaryDark: Int,
+        newColorOff: Int = mOffColor,
+        newColorOffDark: Int = mOffDarkColor,
+        newColorShadow: Int = mShadowColor
+    ) {
+        mAccentColor = newColorPrimary
+        mPrimaryDarkColor = newColorPrimaryDark
+        mOffColor = newColorOff
+        mOffDarkColor = newColorOffDark
+        mShadowColor = newColorShadow
+        invalidate()
+    }
+
+    /**设置按钮阴影开关*/
+    fun setShadow(shadow: Boolean) {
+        mShadow = shadow
+        invalidate()
+    }
+
+    /**当前状态是否选中*/
+    fun isChecked(): Boolean = mChecked
+
+    /**设置选择状态（默认会回调监听器）*/
+    fun setChecked(checked: Boolean) {
+        // 回调监听器
+        setChecked(checked, true)
+    }
+
+    /**设置选择状态*/
+    fun setChecked(checked: Boolean, callback: Boolean) {
+        val newState = if (checked) STATE_SWITCH_ON else STATE_SWITCH_OFF
+        if (newState == mCheckedState) {
+            return
+        }
+        if ((newState == STATE_SWITCH_ON && (mCheckedState == STATE_SWITCH_OFF || mCheckedState == STATE_SWITCH_OFF2)) || (newState == STATE_SWITCH_OFF && (mCheckedState == STATE_SWITCH_ON || mCheckedState == STATE_SWITCH_ON2))) {
+            mAnim1 = 1f
+        }
+        mAnim2 = 1f
+
+        if (!mChecked && newState == STATE_SWITCH_ON) {
+            mChecked = true
+        } else if (mChecked && newState == STATE_SWITCH_OFF) {
+            mChecked = false
+        }
+        mLastCheckedState = mCheckedState;
+        mCheckedState = newState
+        postInvalidate()
+
+        if (callback) {
+            mListener?.invoke(this, checked)
+        }
+    }
+
+    private class SavedState : BaseSavedState {
+        var checked = false
+
+        constructor(superState: Parcelable?) : super(superState)
+
+        constructor(inP: Parcel) : super(inP) {
+            checked = 1 == inP.readInt()
+        }
+
+        override fun writeToParcel(out: Parcel?, flags: Int) {
+            super.writeToParcel(out, flags)
+            out?.writeInt(if (checked) 1 else 0)
+        }
+
+        override fun describeContents(): Int = 0
+
+        companion object CREATOR : Parcelable.Creator<SavedState> {
+            override fun createFromParcel(parcel: Parcel): SavedState = SavedState(parcel)
+
+            override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
+        }
     }
 }

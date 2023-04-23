@@ -5,7 +5,14 @@ fun main() {
     //println("测试：${Test.F}")
 }
 
-enum class Test(val type:String){
-    F("aaaa"),
-    D("bbbb")
+open class Base {
+
+    constructor(a: Int)
+    constructor(str: String)
+}
+
+class A : Base {
+    constructor(a: Int) : super(a = a)
+
+    constructor(str: String):super(str)
 }
