@@ -84,6 +84,7 @@ object I56sLib {
                 activityList.remove(activity)
             }
         })
+        LogUtils.e("i56s","类库初始化成功，详细使用方式请联系作者：i56s@qq.com")
     }
 
     /**判断APP是否在后台*/
