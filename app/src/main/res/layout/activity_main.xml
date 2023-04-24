@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
     android:orientation="vertical">
 
     <Button
@@ -32,4 +33,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="取" />
+
+    <com.i56s.ktlib.views.SwitchButton
+        android:id="@+id/switchBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        app:closeCircleStrokeColor="#BFBFBF"
+        app:closeColor="#DFDFDF"
+        app:closeStrokeColor="#E3E3E3"
+        app:disableColor="#BFBFBF"
+        app:openCircleStrokeColor="#2CBCB7"
+        app:openColor="#32D8D2"
+        app:shadowCircleColor="#333333"
+        app:shadowOpen="true" />
 </LinearLayout>

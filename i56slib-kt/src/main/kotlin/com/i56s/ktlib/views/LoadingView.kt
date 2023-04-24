@@ -7,6 +7,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import com.i56s.ktlib.R
+import kotlin.math.min
 
 /**
  * ### 创建者：wxr
@@ -67,7 +68,7 @@ class LoadingView @JvmOverloads constructor(
         } else {
             vWidth = MeasureSpec.getSize(widthMeasureSpec)
             vHeight = MeasureSpec.getSize(heightMeasureSpec)
-            vWidth = Math.min(vWidth, vHeight)
+            vWidth = min(vWidth, vHeight)
         }
         widthRect = vWidth / 12 //菊花矩形的宽
         heightRect = 4 * widthRect //菊花矩形的高

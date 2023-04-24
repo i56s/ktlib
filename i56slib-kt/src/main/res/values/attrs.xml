@@ -75,5 +75,21 @@
         <attr name="android:checked" />
         <!-- 是否禁用 -->
         <attr name="android:enabled" />
+        <!-- 是否打开圆圈阴影 -->
+        <attr name="shadowOpen" format="boolean" />
+        <!-- 开启状态背景色 -->
+        <attr name="openColor" format="color" />
+        <!-- 开启状态圆圈描边色 -->
+        <attr name="openCircleStrokeColor" format="color" />
+        <!-- 关闭状态描边色 -->
+        <attr name="closeStrokeColor" format="color" />
+        <!-- 关闭状态圆圈描边色 -->
+        <attr name="closeCircleStrokeColor" format="color" />
+        <!-- 关闭状态背景色 -->
+        <attr name="closeColor" format="color" />
+        <!-- 禁用状态背景色 -->
+        <attr name="disableColor" format="color" />
+        <!-- 圆圈阴影色 -->
+        <attr name="shadowCircleColor" format="color" />
     </declare-styleable>
 </resources>

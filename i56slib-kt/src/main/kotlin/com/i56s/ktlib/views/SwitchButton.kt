@@ -1,5 +1,6 @@
 package com.i56s.ktlib.views
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -52,35 +53,58 @@ class SwitchButton @JvmOverloads constructor(
     private var mCheckedState = 0
     private var mCanVisibleDrawing = false
 
-    /**是否显示按钮阴影*/
-    private var mShadow = false
+    /**是否显示圆圈阴影*/
+    var isOpenShadow = false
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     /**是否选中*/
-    private var mChecked = false
+    var isChecked = false
+        set(value) {
+            val newState = if (value) STATE_SWITCH_ON else STATE_SWITCH_OFF
+            if (newState == mCheckedState) {
+                return
+            }
+            if ((newState == STATE_SWITCH_ON && (mCheckedState == STATE_SWITCH_OFF || mCheckedState == STATE_SWITCH_OFF2)) || (newState == STATE_SWITCH_OFF && (mCheckedState == STATE_SWITCH_ON || mCheckedState == STATE_SWITCH_ON2))) {
+                mAnim1 = 1f
+            }
+            mAnim2 = 1f
+
+            if (!field && newState == STATE_SWITCH_ON) {
+                field = true
+            } else if (field && newState == STATE_SWITCH_OFF) {
+                field = false
+            }
+            mLastCheckedState = mCheckedState;
+            mCheckedState = newState
+            postInvalidate()
+        }
 
     /**开启状态背景色*/
-    private var mAccentColor = Color.parseColor("#32D8D2")
+    var openColor = Color.parseColor("#32D8D2")
 
-    /**开启状态按钮描边色*/
-    private var mPrimaryDarkColor = Color.parseColor("#2CBCB7")
+    /**开启状态圆圈描边色*/
+    var openCircleStrokeColor = Color.parseColor("#2CBCB7")
 
     /**关闭状态描边色*/
-    private var mOffColor = Color.parseColor("#E3E3E3")
+    var closeStrokeColor = Color.parseColor("#E3E3E3")
 
-    /**关闭状态按钮描边色*/
-    private var mOffDarkColor = Color.parseColor("#BFBFBF")
+    /**关闭状态圆圈描边色*/
+    var closeCircleStrokeColor = Color.parseColor("#BFBFBF")
 
-    /**按钮正常的背景色（关闭状态下）*/
-    private var mBgColor = Color.parseColor("#DFDFDF")
+    /**关闭状态背景色*/
+    var closeColor = Color.parseColor("#DFDFDF")
 
-    /**按钮禁用的背景色*/
-    private var mBgEnabledColor = Color.parseColor("#BFBFBF")
+    /**禁用状态背景色*/
+    var disableColor = Color.parseColor("#BFBFBF")
 
-    /**按钮阴影色*/
-    private var mShadowColor = Color.parseColor("#333333")
+    /**圆圈阴影色*/
+    var shadowCircleColor = Color.parseColor("#333333")
 
     /**监听器*/
-    var mListener: ((button: SwitchButton, checked: Boolean) -> Unit)? = null
+    private var mListener: ((button: SwitchButton, checked: Boolean) -> Unit)? = null
 
     private var mRight = 0f
     private var mCenterX = 0f
@@ -99,13 +123,34 @@ class SwitchButton @JvmOverloads constructor(
     private var mShadowReservedHeight = 0f
 
     init {
-        setLayerType(LAYER_TYPE_SOFTWARE, null)
+        if (!isInEditMode) {
+            setLayerType(LAYER_TYPE_SOFTWARE, null)
+        }
+
         val array = context.obtainStyledAttributes(attrs, R.styleable.SwitchButton)
-        mChecked = array.getBoolean(R.styleable.SwitchButton_android_checked, mChecked)
-        setEnabled(array.getBoolean(R.styleable.SwitchButton_android_enabled, isEnabled()))
-        mCheckedState = if (mChecked) STATE_SWITCH_ON else STATE_SWITCH_OFF
-        mLastCheckedState = mCheckedState
+        isChecked = array.getBoolean(R.styleable.SwitchButton_android_checked, false)
+        isEnabled = array.getBoolean(R.styleable.SwitchButton_android_enabled, true)
+        isOpenShadow = array.getBoolean(R.styleable.SwitchButton_shadowOpen, false)
+        openColor = array.getColor(R.styleable.SwitchButton_openColor, openColor)
+        openCircleStrokeColor =
+            array.getColor(R.styleable.SwitchButton_openCircleStrokeColor, openCircleStrokeColor)
+        closeStrokeColor =
+            array.getColor(R.styleable.SwitchButton_closeStrokeColor, closeStrokeColor)
+        closeCircleStrokeColor =
+            array.getColor(R.styleable.SwitchButton_closeCircleStrokeColor, closeCircleStrokeColor)
+        closeColor = array.getColor(R.styleable.SwitchButton_closeColor, closeColor)
+        disableColor = array.getColor(R.styleable.SwitchButton_disableColor, disableColor)
+        shadowCircleColor =
+            array.getColor(R.styleable.SwitchButton_shadowCircleColor, shadowCircleColor)
         array.recycle()
+
+        mCheckedState = if (isChecked) STATE_SWITCH_ON else STATE_SWITCH_OFF
+        mLastCheckedState = mCheckedState
+    }
+
+    /**设置选中监听器*/
+    fun setOnCheckedListener(listener: ((button: SwitchButton, checked: Boolean) -> Unit)?) {
+        mListener = listener
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -113,7 +158,7 @@ class SwitchButton @JvmOverloads constructor(
         var h = heightMeasureSpec
         when (MeasureSpec.getMode(w)) {
             MeasureSpec.AT_MOST, MeasureSpec.UNSPECIFIED -> w = MeasureSpec.makeMeasureSpec(
-                56 + paddingLeft + paddingRight, MeasureSpec.EXACTLY
+                156 + paddingLeft + paddingRight, MeasureSpec.EXACTLY
             )
 
             MeasureSpec.EXACTLY -> {}
@@ -200,9 +245,9 @@ class SwitchButton @JvmOverloads constructor(
             val bCenterX = (bRight + mLeft) / 2
             val bCenterY = (bottom + top) / 2
 
-            val red = mShadowColor shr 16 and 0xFF
-            val green = mShadowColor shr 8 and 0xFF
-            val blue = mShadowColor and 0xFF
+            val red = shadowCircleColor shr 16 and 0xFF
+            val green = shadowCircleColor shr 8 and 0xFF
+            val blue = shadowCircleColor and 0xFF
             mShadowGradient = RadialGradient(
                 bCenterX,
                 bCenterY,
@@ -278,12 +323,13 @@ class SwitchButton @JvmOverloads constructor(
             return
         }
 
+        //设置抗锯齿
         mPaint.isAntiAlias = true
 
         val isOn = (mCheckedState == STATE_SWITCH_ON || mCheckedState == STATE_SWITCH_ON2)
         // Draw background
         mPaint.style = Paint.Style.FILL
-        mPaint.color = if (isOn) mAccentColor else mOffColor
+        mPaint.color = if (isOn) openColor else closeStrokeColor
         canvas?.drawPath(mBackgroundPath, mPaint)
 
         mAnim1 = if (mAnim1 - mAnimationSpeed > 0) mAnim1 - mAnimationSpeed else 0f
@@ -297,9 +343,9 @@ class SwitchButton @JvmOverloads constructor(
         canvas?.save()
         canvas?.scale(scale, scale, mCenterX + scaleOffset, mCenterY)
         if (isEnabled) {
-            mPaint.color = mBgColor
+            mPaint.color = closeColor
         } else {
-            mPaint.color = mBgEnabledColor
+            mPaint.color = disableColor
         }
         canvas?.drawPath(mBackgroundPath, mPaint)
         canvas?.restore()
@@ -308,8 +354,8 @@ class SwitchButton @JvmOverloads constructor(
         canvas?.translate(calcBTranslate(dbAnim), mShadowReservedHeight)
         val isState2 = (mCheckedState == STATE_SWITCH_ON2 || mCheckedState == STATE_SWITCH_OFF2)
         calcBPath(if (isState2) 1 - dbAnim else dbAnim)
-        // Use center bar path to draw shadow
-        if (mShadow) {
+        // 绘制阴影
+        if (isOpenShadow) {
             mPaint.style = Paint.Style.FILL
             mPaint.shader = mShadowGradient
             canvas?.drawPath(mBarPath, mPaint)
@@ -323,7 +369,7 @@ class SwitchButton @JvmOverloads constructor(
         canvas?.drawPath(mBarPath, mPaint)
         mPaint.style = Paint.Style.STROKE
         mPaint.strokeWidth = mStrokeWidth * 0.5f
-        mPaint.color = if (isOn) mPrimaryDarkColor else mOffDarkColor
+        mPaint.color = if (isOn) openCircleStrokeColor else closeCircleStrokeColor
         canvas?.drawPath(mBarPath, mPaint)
         canvas?.restore()
 
@@ -333,6 +379,7 @@ class SwitchButton @JvmOverloads constructor(
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         super.onTouchEvent(event)
         if (isEnabled && (mCheckedState == STATE_SWITCH_ON || mCheckedState == STATE_SWITCH_OFF) && (mAnim1 * mAnim2 == 0f)) {
@@ -342,89 +389,34 @@ class SwitchButton @JvmOverloads constructor(
                     mAnim2 = 1f
                     when (mCheckedState) {
                         STATE_SWITCH_OFF -> {
-                            setChecked(true, false)
+                            isChecked = true
                             mListener?.invoke(this, true)
                         }
 
                         STATE_SWITCH_ON -> {
-                            setChecked(false, false)
+                            isChecked = false
                             mListener?.invoke(this, false)
                         }
                     }
                 }
             }
         }
-        return true;
+        return true
     }
 
     override fun onSaveInstanceState(): Parcelable {
         val superState = super.onSaveInstanceState()
         val state = SavedState(superState)
-        state.checked = mChecked
+        state.checked = isChecked
         return state
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) {
         state as SavedState
         super.onRestoreInstanceState(state.superState)
-        mChecked = state.checked
-        mCheckedState = if (mChecked) STATE_SWITCH_ON else STATE_SWITCH_OFF
+        isChecked = state.checked
+        mCheckedState = if (isChecked) STATE_SWITCH_ON else STATE_SWITCH_OFF
         invalidate()
-    }
-
-    fun setColor(
-        newColorPrimary: Int,
-        newColorPrimaryDark: Int,
-        newColorOff: Int = mOffColor,
-        newColorOffDark: Int = mOffDarkColor,
-        newColorShadow: Int = mShadowColor
-    ) {
-        mAccentColor = newColorPrimary
-        mPrimaryDarkColor = newColorPrimaryDark
-        mOffColor = newColorOff
-        mOffDarkColor = newColorOffDark
-        mShadowColor = newColorShadow
-        invalidate()
-    }
-
-    /**设置按钮阴影开关*/
-    fun setShadow(shadow: Boolean) {
-        mShadow = shadow
-        invalidate()
-    }
-
-    /**当前状态是否选中*/
-    fun isChecked(): Boolean = mChecked
-
-    /**设置选择状态（默认会回调监听器）*/
-    fun setChecked(checked: Boolean) {
-        // 回调监听器
-        setChecked(checked, true)
-    }
-
-    /**设置选择状态*/
-    fun setChecked(checked: Boolean, callback: Boolean) {
-        val newState = if (checked) STATE_SWITCH_ON else STATE_SWITCH_OFF
-        if (newState == mCheckedState) {
-            return
-        }
-        if ((newState == STATE_SWITCH_ON && (mCheckedState == STATE_SWITCH_OFF || mCheckedState == STATE_SWITCH_OFF2)) || (newState == STATE_SWITCH_OFF && (mCheckedState == STATE_SWITCH_ON || mCheckedState == STATE_SWITCH_ON2))) {
-            mAnim1 = 1f
-        }
-        mAnim2 = 1f
-
-        if (!mChecked && newState == STATE_SWITCH_ON) {
-            mChecked = true
-        } else if (mChecked && newState == STATE_SWITCH_OFF) {
-            mChecked = false
-        }
-        mLastCheckedState = mCheckedState;
-        mCheckedState = newState
-        postInvalidate()
-
-        if (callback) {
-            mListener?.invoke(this, checked)
-        }
     }
 
     private class SavedState : BaseSavedState {

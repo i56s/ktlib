@@ -44,3 +44,4 @@ LoadingView | 菊花加载控件
 MarqueeTextView | 跑马灯文本控件
 PayPasswordView | 交易密码输入控件
 TitleView | 标题控件
+[SwitchButton](./doc/SwitchButton.md) | 高仿ios开关按钮

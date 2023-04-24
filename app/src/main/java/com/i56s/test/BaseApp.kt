@@ -15,6 +15,6 @@ class BaseApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        I56sLib.init(this, "Test", BuildConfig.DEBUG, LogUtils.Level.DEBUG)
+        I56sLib.init(this,  BuildConfig.DEBUG)
     }
 }
