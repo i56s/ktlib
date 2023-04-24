@@ -2,16 +2,20 @@
 <resources>
     <!--标题控件-->
     <declare-styleable name="TitleView">
+        <!--标题高度-->
+        <attr name="tvHeight" format="dimension" />
         <!--标题文字-->
         <attr name="tvTitle" format="string" />
-        <!--是否显示回退按钮 默认true显示-->
+        <!--标题文字颜色-->
+        <attr name="tvTextColor" format="color" />
+        <!--标题文字大小-->
+        <attr name="tvTitleSize" format="dimension" />
+        <!--是否显示回退按钮-->
         <attr name="tvShowBack" format="boolean" />
         <!--是否添加状态栏高度-->
         <attr name="tvAddStatusBarHeight" format="boolean" />
         <!--背景颜色-->
         <attr name="tvBgColor" format="color" />
-        <!--标题文字颜色-->
-        <attr name="tvTextColor" format="color" />
         <!--返回按钮图-->
         <attr name="tvBackImg" format="reference" />
     </declare-styleable>

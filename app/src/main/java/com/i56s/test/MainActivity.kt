@@ -8,22 +8,15 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun getViewBinding(): ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
 
-    val mDialog = ConfirmDialog()
-
     override fun initCreate() {
-        mBinding.openDialog.setOnClickListener {
-            mDialog.show(supportFragmentManager)
+        //设置返回键点击事件
+        mBinding.titleView.setOnBackClickListener {
+            LogUtils.d("标题", "返回点击")
+            true//表示消费事件，点击不会关闭页面
         }
-        mBinding.save.setOnClickListener {
-            //MMKVUtils.putString("test","哈哈哈")
-        }
-        mBinding.get.setOnClickListener {
-            //ToastUtils.showToast(MMKVUtils.getString("test"))
-        }
-
-        //是否选中监听
-        mBinding.switchBtn.setOnCheckedListener { button, checked ->
-            LogUtils.d("isChecked", checked.toString())
+        //设置标题点击事件
+        mBinding.titleView.setOnTitleClickListener {
+            LogUtils.d("标题", "标题点击")
         }
     }
 

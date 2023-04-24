@@ -6,45 +6,35 @@
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/open_dialog"
-        android:layout_width="wrap_content"
+    <com.i56s.ktlib.views.TitleView
+        android:id="@+id/titleView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="打开" />
+        app:tvAddStatusBarHeight="false"
+        app:tvBackImg="@drawable/ic_baseline_keyboard_arrow_left_40"
+        app:tvBgColor="@color/titleview_bg"
+        app:tvHeight="@dimen/titleview_height"
+        app:tvShowBack="true"
+        app:tvTextColor="@color/titleview_title"
+        app:tvTitle="这是一个标题"
+        app:tvTitleSize="@dimen/titleview_title_size" />
 
-    <com.i56s.ktlib.views.PayPasswordView
-        android:layout_width="wrap_content"
+    <com.i56s.ktlib.views.TitleView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        app:ppv_borderGap="5dp"
-        app:ppv_isShowNumber="false"
-        app:ppv_lineColor="#ff0000"
-        app:ppv_lineHeight="1dp"
-        app:ppv_num="5" />
+        android:layout_marginTop="20dp"
+        app:tvShowBack="false"
+        app:tvTitle="标题">
 
-    <Button
-        android:id="@+id/save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="存" />
-
-    <Button
-        android:id="@+id/get"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="取" />
-
-    <com.i56s.ktlib.views.SwitchButton
-        android:id="@+id/switchBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checked="true"
-        app:closeCircleStrokeColor="#BFBFBF"
-        app:closeColor="#DFDFDF"
-        app:closeStrokeColor="#E3E3E3"
-        app:disableColor="#BFBFBF"
-        app:openCircleStrokeColor="#2CBCB7"
-        app:openColor="#32D8D2"
-        app:shadowCircleColor="#333333"
-        app:shadowOpen="true" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:text="提交"
+            android:textColor="@android:color/white"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </com.i56s.ktlib.views.TitleView>
 </LinearLayout>

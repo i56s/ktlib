@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -22,11 +23,8 @@ import com.i56s.ktlib.databinding.ViewTitleBinding
  * ### 描述：标题控件
  */
 class TitleView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) :
-    ConstraintLayout(context, attrs, defStyleAttr) {
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private var mListener: (() -> Boolean)? = null
     private var mTitleListener: (() -> Unit)? = null
@@ -74,18 +72,35 @@ class TitleView @JvmOverloads constructor(
         //初始化属性
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.TitleView)
 
-        title = typedArray.getString(R.styleable.TitleView_tvTitle) //获取标题文字
-        isShowBack = typedArray.getBoolean(R.styleable.TitleView_tvShowBack, true) //是否显示返回按钮
+        //获取标题文字
+        title = typedArray.getString(R.styleable.TitleView_tvTitle)
+        //是否显示返回按钮
+        isShowBack = typedArray.getBoolean(R.styleable.TitleView_tvShowBack, true)
+        //是否添加状态栏高度
         val isAddStatusBarHeight =
-            typedArray.getBoolean(R.styleable.TitleView_tvAddStatusBarHeight, false) //是否添加状态栏高度
-        backImgDrawable = typedArray.getDrawable(R.styleable.TitleView_tvBackImg) //返回按钮图片
+            typedArray.getBoolean(R.styleable.TitleView_tvAddStatusBarHeight, false)
+        //返回按钮图片
+        backImgDrawable = typedArray.getDrawable(R.styleable.TitleView_tvBackImg)
+        //标题文字大小
+        mBinding.titleTitle.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX, typedArray.getDimension(
+                R.styleable.TitleView_tvTitleSize,
+                context.resources.getDimension(R.dimen.titleview_title_size)
+            )
+        )
+        //标题高度
+        mBinding.root.layoutParams.height = typedArray.getDimensionPixelSize(
+            R.styleable.TitleView_tvHeight,
+            context.resources.getDimensionPixelSize(R.dimen.titleview_height)
+        )
+        //标题文字默认颜色
         titleTextColor = typedArray.getColor(
             R.styleable.TitleView_tvTextColor,
-            ContextCompat.getColor(context, R.color.titleview_title) //标题文字默认颜色
-        ) //背景颜色
+            ContextCompat.getColor(context, R.color.titleview_title)
+        )
+        //背景默认颜色
         val bgColor = typedArray.getColor(
-            R.styleable.TitleView_tvBgColor,
-            ContextCompat.getColor(context, R.color.titleview_bg) //背景默认颜色
+            R.styleable.TitleView_tvBgColor, ContextCompat.getColor(context, R.color.titleview_bg)
         )
         mBinding.root.setBackgroundColor(bgColor)
         typedArray.recycle()
