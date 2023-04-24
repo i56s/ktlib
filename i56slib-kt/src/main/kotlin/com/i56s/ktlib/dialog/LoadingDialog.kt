@@ -13,8 +13,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.viewbinding.ViewBinding
+import com.i56s.ktlib.I56sLib
+import com.i56s.ktlib.base.LibBaseActivity
 import com.i56s.ktlib.base.LibBaseDialog
 import com.i56s.ktlib.views.LoadingSwordView
 import com.i56s.ktlib.views.LoadingView
@@ -24,7 +27,7 @@ import com.i56s.ktlib.views.LoadingView
  * ### 创建时间：2021-09-18 16:59
  * ### 描述：加载弹框，有两种形状- TYPE_DEFAULT 和 TYPE_SWORD
  */
-class LoadingDialog @JvmOverloads constructor(type: LoadingType = LoadingType.TYPE_DEFAULT) :
+class LoadingDialog @JvmOverloads constructor(private var type: LoadingType = LoadingType.TYPE_DEFAULT) :
     LibBaseDialog<ViewBinding>() {
 
     enum class LoadingType {
@@ -35,14 +38,11 @@ class LoadingDialog @JvmOverloads constructor(type: LoadingType = LoadingType.TY
         TYPE_SWORD
     }
 
-    var loadingText = "加载中"
-    private var mPointCount = 0
-    private val mHandler = Handler(Looper.getMainLooper())
-    private var mType = LoadingType.TYPE_DEFAULT
+    /**是否显示遮罩层*/
+    private var isShowMask = true
 
-    init {
-        mType = type
-    }
+    /**加载视图*/
+    private var loadingView: View? = null
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -52,66 +52,48 @@ class LoadingDialog @JvmOverloads constructor(type: LoadingType = LoadingType.TY
         linView.gravity = Gravity.CENTER
         linView.orientation = LinearLayout.VERTICAL
 
-        val loadingView = when (mType) {
-            LoadingType.TYPE_SWORD -> LoadingSwordView(inflater.context)
-            else -> LoadingView(inflater.context)
-        }
-
-        linView.addView(loadingView)
-
-        val loadText = TextView(inflater.context)
-        loadText.text = loadingText
-
-        mHandler.postDelayed(object : Runnable {
-            override fun run() {
-                mPointCount++
-                when (mPointCount) {
-                    1 -> loadText.text = "$loadingText."
-                    2 -> loadText.text = "$loadingText.."
-                    3 -> {
-                        loadText.text = "$loadingText..."
-                        mPointCount = 0
-                    }
+        linView.addView(
+            if (loadingView != null) loadingView else
+                when (type) {
+                    LoadingType.TYPE_SWORD -> LoadingSwordView(inflater.context)
+                    else -> LoadingView(inflater.context)
                 }
-                mHandler.postDelayed(this, 600)
-            }
-        }, 600)
-
-        loadText.setTextColor(Color.WHITE)
-        loadText.textSize = 15f
-
-        val layoutParams = ViewGroup.MarginLayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        layoutParams.topMargin = 10
-        loadText.layoutParams = layoutParams
-
-        linView.addView(loadText)
         return linView
     }
 
     override fun getViewBinding(container: ViewGroup?): ViewBinding = ViewBinding { TextView(null) }
 
     override fun setDialogProperties(dialog: Dialog?) {
+        if (!isShowMask) {
+            dialog?.window?.setDimAmount(0f)
+        }
         dialog?.setCanceledOnTouchOutside(false)
-    }
-
-    override fun onDestroyView() {
-        mHandler.removeCallbacksAndMessages(null)
-        super.onDestroyView()
     }
 
     override fun initData() {}
 
     override fun initEvent() {}
 
-    override fun show(manager: FragmentManager) {
-        if (!isShowing()) super.show(manager)
+    override fun show() {
+        if (!isShowing()) super.show()
+    }
+
+    /**设置是否显示遮罩层*/
+    fun setShowMask(isShowMask: Boolean): LoadingDialog {
+        this.isShowMask = isShowMask
+        return this
+    }
+
+    /**设置加载视图*/
+    fun setLoadingView(view: View): LoadingDialog {
+        loadingView = view
+        return this
     }
 
     /**显示加载框*/
-    fun show(loadText: String, manager: FragmentManager) {
-        loadingText = loadText
-        this.show(manager)
+    fun show(type: LoadingType = this.type) {
+        this.type = type
+        this.show()
     }
 }

@@ -6,35 +6,9 @@
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
-    <com.i56s.ktlib.views.TitleView
-        android:id="@+id/titleView"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/open"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:tvAddStatusBarHeight="false"
-        app:tvBackImg="@drawable/ic_title_view_back"
-        app:tvBgColor="@color/titleview_bg"
-        app:tvHeight="@dimen/titleview_height"
-        app:tvShowBack="true"
-        app:tvTextColor="@color/titleview_title"
-        app:tvTitle="这是一个标题"
-        app:tvTitleSize="@dimen/titleview_title_size" />
-
-    <com.i56s.ktlib.views.TitleView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        app:tvShowBack="false"
-        app:tvTitle="标题">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="15dp"
-            android:text="提交"
-            android:textColor="@android:color/white"
-            android:textSize="15sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </com.i56s.ktlib.views.TitleView>
+        android:text="打开" />
 </LinearLayout>

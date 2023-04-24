@@ -1,6 +1,6 @@
 # TitleView 标题控件
 
-### 标题控件继承自 ConstraintLayout 布局，可自用添加所需控件
+### 标题控件继承自 ConstraintLayout 布局，可自由添加所需控件
 
 ## 效果图
 

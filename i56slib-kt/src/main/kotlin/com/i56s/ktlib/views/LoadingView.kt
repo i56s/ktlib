@@ -77,19 +77,19 @@ class LoadingView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas?) {
         if (rect == null) {
-            rect = RectF((vWidth - widthRect) / 2f, 0f, (vWidth + widthRect) / 2f, heightRect - 10f)
+            rect = RectF((vWidth - widthRect) / 2f, 0f, (vWidth + widthRect) / 2f, heightRect - 5f)
             round = rect?.right!! - rect?.left!!
         }
 
         for (i in 0..11) {
             if (i - pos >= 5) {
-                rectPaint.setColor(color.get(5))
-            } else if (i - pos >= 0 && i - pos < 5) {
-                rectPaint.setColor(color.get(i - pos))
+                rectPaint.color = color[5]
+            } else if (i - pos in 0..4) {
+                rectPaint.color = color[i - pos]
             } else if (i - pos >= -7 && i - pos < 0) {
-                rectPaint.setColor(color.get(5))
+                rectPaint.color = color[5]
             } else if (i - pos >= -11 && i - pos < -7) {
-                rectPaint.setColor(color.get(12 + i - pos))
+                rectPaint.color = color[12 + i - pos]
             }
             canvas?.drawRoundRect(rect!!, round, round, rectPaint) //绘制
             canvas?.rotate(30f, vWidth / 2f, vWidth / 2f) //旋转

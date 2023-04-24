@@ -5,12 +5,14 @@ import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.LibDialogFragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
+import com.i56s.ktlib.I56sLib
 import com.i56s.ktlib.R
 import com.i56s.ktlib.utils.LogUtils
 
@@ -101,6 +103,13 @@ abstract class LibBaseDialog<T : ViewBinding> : LibDialogFragment() {
 
     /**@return dialog是否显示*/
     fun isShowing(): Boolean = if (dialog != null) dialog?.isShowing!! else false
+
+    /**显示dialog*/
+    open fun show(){
+        if (I56sLib.activity is AppCompatActivity) {
+            this.show((I56sLib.activity as AppCompatActivity).supportFragmentManager)
+        }
+    }
 
     /**显示dialog*/
     open fun show(manager: FragmentManager) = super.show(manager, hashCode().toString())
