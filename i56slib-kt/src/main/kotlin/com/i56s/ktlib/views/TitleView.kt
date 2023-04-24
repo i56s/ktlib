@@ -7,9 +7,6 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.LayoutInflater
-import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -39,7 +36,7 @@ class TitleView @JvmOverloads constructor(
 
     /** 返回按钮资源图片 */
     @DrawableRes
-    var backImgRes = R.drawable.ic_baseline_keyboard_arrow_left_40
+    var backImgRes = R.drawable.ic_title_view_back
         set(value) {
             mBinding.titleBack.setImageResource(value)
             field = value

@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:tvAddStatusBarHeight="false"
-        app:tvBackImg="@drawable/ic_baseline_keyboard_arrow_left_40"
+        app:tvBackImg="@drawable/ic_title_view_back"
         app:tvBgColor="@color/titleview_bg"
         app:tvHeight="@dimen/titleview_height"
         app:tvShowBack="true"

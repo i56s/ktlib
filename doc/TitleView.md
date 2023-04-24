@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:tvAddStatusBarHeight="false"
-        app:tvBackImg="@drawable/ic_baseline_keyboard_arrow_left_40"
+        app:tvBackImg="@drawable/ic_title_view_back"
         app:tvBgColor="@color/titleview_bg"
         app:tvHeight="@dimen/titleview_height"
         app:tvShowBack="true"
@@ -59,13 +59,13 @@ tvTitleSize | 标题文字大小 | dimen/titleview_title_size (20sp)
 tvShowBack | 是否显示回退按钮 | true
 tvAddStatusBarHeight | 是否添加状态栏高度 | false
 tvBgColor | 背景颜色 | color/titleview_bg (#4BAEFE)
-tvBackImg | 返回按钮图 | drawable/ic_baseline_keyboard_arrow_left_40
+tvBackImg | 返回按钮图 | drawable/ic_title_view_back
 
 ### 以下属性可在相应的文件或文件夹中进行覆盖，覆盖后不必每次添加
 
 属性名 | 所在文件 | 说明 | 默认值
 --- | --- | --- | ---
-ic_baseline_keyboard_arrow_left_40 | drawable(文件夹) | 返回按钮图 | -
+ic_title_view_back | drawable(文件夹) | 返回按钮图 | -
 titleview_height | dimens.xml | 标题高度 | 50dp
 titleview_title_size | dimens.xml | 标题文字大小 | 20sp
 titleview_title | color.xml | 标题文字颜色 | #FFFFFF
