@@ -1,4 +1,50 @@
-## 一、首先需要初始化类库
+## 一、集成步骤
+
+### 引入方式
+
+- 如果你的项目 Gradle 配置是在 ``7.0`` 以下，需要在 ``build.gradle`` 文件中加入
+
+```groovy
+allprojects {
+    repositories {
+        // JitPack 远程仓库：https://jitpack.io
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+- 如果你的 Gradle 配置是 ``7.0`` 及以上，则需要在 ``settings.gradle`` 文件中加入
+
+```groovy
+dependencyResolutionManagement {
+    repositories {
+        // JitPack 远程仓库：https://jitpack.io
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+- 配置完远程仓库后，在项目 app 模块下的 ``build.gradle`` 文件中加入远程依赖
+
+```groovy
+android {
+    // 开启viewBinding
+    buildFeatures {
+        viewBinding true
+    }
+    // 支持 JDK 1.8
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation 'com.github.i56s:ktlib:1.0.2'
+}
+```
+
+### 初始化类库
 
 ```
  I56sLib.init(application, isDebug)

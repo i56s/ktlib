@@ -38,33 +38,6 @@ android {
     buildFeatures {
         viewBinding true
     }
-
-    /*libraryVariants.all { variant ->
-        def typeName = "R"
-        def fileName = ''
-        if (variant.buildType.name == "debug") {
-            typeName = "D"
-        }
-        fileName = "i56slib${typeName}" + "${defaultConfig.versionName}.aar"
-        variant.outputs.all {
-            //修改输出aar名称
-            outputFileName = fileName
-        }
-
-        //复制文件到libs目录
-        def outputFilePath = "../libs/"
-        File outputFile = new File(outputFilePath)
-        variant.assemble.doLast {
-            copy {
-                variant.outputs.all { file ->
-                    copy {
-                        from file.outputFile
-                        into outputFile
-                    }
-                }
-            }
-        }
-    }*/
 }
 
 dependencies {
@@ -78,25 +51,14 @@ dependencies {
 }
 
 //将源码打包,为了保证引入的aar包可以查看源码
-task androidSourcesJar(type: Jar) {
-    //删除libs目录下所有aar文件
-    /*FileTree tree = fileTree("../libs/")
-    tree.visit{
-        element ->
-            if(element.getName().endsWith(".aar")){
-                println "$element.file.name"+" "+element.getName()
-                delete element.file
-            }
-    }
-    //修改源码输出目录
-    destinationDir = file('../libs/')*/
+/*task androidSourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     archiveClassifier.set('sources')
 }
 //包含文档和源码的aar
 artifacts {
     archives androidSourcesJar
-}
+}*/
 
 afterEvaluate {
     publishing {
