@@ -8,7 +8,6 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
-import java.io.File
 
 /**
  * ### 创建者：wxr
@@ -53,7 +52,6 @@ abstract class LibBaseActivity<VB : ViewBinding, VM : LibBaseViewModel> : AppCom
 
     /**设置状态栏颜色跟 title 颜色一样*/
     private fun setBackGroundColor() {
-        File("").exists()
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.decorView.systemUiVisibility =
             View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
