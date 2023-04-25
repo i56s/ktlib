@@ -2,37 +2,29 @@ package com.i56s.ktlib.base
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Point
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
+import java.io.File
 
 /**
  * ### 创建者：wxr
  * ### 创建时间：2021-09-18 16:46
  * ### 描述：activity的基类
  */
-abstract class LibBaseActivity<T : ViewBinding> : AppCompatActivity() {
+abstract class LibBaseActivity<VB : ViewBinding, VM : LibBaseViewModel> : AppCompatActivity() {
 
     /**上下文成员变量*/
     protected lateinit var mContext: Context
 
     /**activity成员变量*/
-    protected lateinit var mActivity: LibBaseActivity<T>
+    protected lateinit var mActivity: LibBaseActivity<VB, VM>
 
-    companion object {
-        /**屏幕宽度*/
-        var screenX = 0
-            private set
-
-        /**屏幕高度*/
-        var screenY = 0
-            private set
-    }
-
-    protected lateinit var mBinding: T
+    protected lateinit var mBinding: VB
+    protected var mModel: VM? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (isOverstepStatusBar()) setBackGroundColor()
@@ -40,20 +32,20 @@ abstract class LibBaseActivity<T : ViewBinding> : AppCompatActivity() {
         this.mActivity = this
         if (isRemoveStatusBar()) { //去掉状态栏
             window.setFlags(
+                //API 30以上被弃用
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
             )
         }
-        if (screenX == 0 || screenY == 0) { //获取屏幕宽高
-            val point = Point()
-            windowManager.defaultDisplay.getSize(point)
-            screenX = point.x
-            screenY = point.y
-        }
+
         this.onCreateBefore()
         super.onCreate(savedInstanceState)
         this.onCreateAfter()
+
         mBinding = this.getViewBinding()
+        getViewModel()?.let {
+            mModel = ViewModelProvider(this).get(it)
+        }
         this.setContentView(mBinding.root)
         this.initCreate()
         this.initEvent()
@@ -61,6 +53,7 @@ abstract class LibBaseActivity<T : ViewBinding> : AppCompatActivity() {
 
     /**设置状态栏颜色跟 title 颜色一样*/
     private fun setBackGroundColor() {
+        File("").exists()
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.decorView.systemUiVisibility =
             View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -74,18 +67,21 @@ abstract class LibBaseActivity<T : ViewBinding> : AppCompatActivity() {
     /**布局是否超出状态栏 true=超出，false=不超出*/
     abstract fun isOverstepStatusBar(): Boolean
 
-    /**在onCreate之前执行*/
+    /** 在onCreate之前执行 */
     abstract fun onCreateBefore()
 
-    /**在onCreate之后执行*/
+    /** 在onCreate之后执行 */
     abstract fun onCreateAfter()
 
     /** 获取视图绑定对象 */
-    abstract fun getViewBinding(): T
+    abstract fun getViewBinding(): VB
 
-    /**activity创建时调用*/
+    /** 获取ViewModel类对象 */
+    abstract fun getViewModel(): Class<VM>?
+
+    /** activity创建时调用 */
     abstract fun initCreate()
 
-    /**初始化事件监听*/
+    /** 初始化事件监听 */
     abstract fun initEvent()
 }

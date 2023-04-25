@@ -13,10 +13,12 @@ import com.i56s.test.databinding.ActivityLoadMoreBinding
  * 创建时间：2022-05-07 11:31
  * 描述：
  */
-class LoadMoreActivity : BaseActivity<ActivityLoadMoreBinding>() {
+class LoadMoreActivity : BaseActivity<ActivityLoadMoreBinding, BaseViewModel>() {
 
     override fun getViewBinding(): ActivityLoadMoreBinding =
         ActivityLoadMoreBinding.inflate(layoutInflater)
+
+    override fun getViewModel(): Class<BaseViewModel>? = null
 
     override fun initCreate() {
         mBinding.refresh.setOnRefreshListener {
