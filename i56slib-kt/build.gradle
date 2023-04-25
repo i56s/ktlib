@@ -4,6 +4,8 @@ plugins {
     id 'maven-publish'
 }
 
+group = "com.github.i56s"
+
 android {
     compileSdk 32
 
@@ -103,7 +105,7 @@ afterEvaluate {
                 from components.release
 
                 // You can then customize attributes of the publication as shown below.
-                groupId = 'com.i56s.libs'
+                groupId = 'com.github.i56s'
                 artifactId = 'ktlib'
                 version = android.defaultConfig.versionName
             }
