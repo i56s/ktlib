@@ -120,6 +120,7 @@
 
 -keep public class *{
     public *;
+    protected *;
 }
 
 #-----------处理反射类---------------
