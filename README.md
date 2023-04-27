@@ -24,7 +24,7 @@ dependencyResolutionManagement {
 }
 ```
 
-- 配置完远程仓库后，在项目 app 模块下的 ``build.gradle`` 文件中加入远程依赖
+- 配置完远程仓库后，在项目 app 模块下的 ``build.gradle`` 文件中加入远程依赖 [![](https://jitpack.io/v/i56s/ktlib.svg)](https://jitpack.io/#i56s/ktlib)
 
 ```groovy
 android {
