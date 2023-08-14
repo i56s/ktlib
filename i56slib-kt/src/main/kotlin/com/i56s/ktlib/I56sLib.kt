@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.os.Bundle
+import com.i56s.ktlib.orders.CrashHandler
 import com.i56s.ktlib.utils.LogUtils
 import com.i56s.ktlib.utils.SpUtils
 
@@ -52,6 +53,8 @@ object I56sLib {
         LogUtils.init(isDebug, level) //初始化sp存储
         SpUtils.init()
 
+        if (isDebug) CrashHandler.register(application)
+
         //获取状态栏高度
         val resourceId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
         if (resourceId > 0) {
@@ -84,7 +87,7 @@ object I56sLib {
                 activityList.remove(activity)
             }
         })
-        LogUtils.e("i56s","类库初始化成功，详细使用方式请联系作者：i56s@qq.com")
+        LogUtils.e("i56s", "类库初始化成功，详细使用方式请联系作者：i56s@qq.com")
     }
 
     /**判断APP是否在后台*/

@@ -2,6 +2,7 @@ package com.i56s.test
 
 import com.i56s.test.databinding.ActivityMainBinding
 import com.i56s.test.model.MainViewModel
+import java.lang.RuntimeException
 
 class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
 
@@ -10,7 +11,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
 
     override fun initCreate() {
         mBinding.open.setOnClickListener {
-            mModel?.log()
+            throw RuntimeException("测试错误")
         }
     }
 

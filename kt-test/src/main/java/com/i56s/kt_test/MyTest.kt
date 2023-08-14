@@ -1,18 +1,12 @@
 package com.i56s.kt_test
 
+import com.google.gson.Gson
+
 fun main() {
-    println("测试：")
-    //println("测试：${Test.F}")
+    val json = "{\"age\":10,\"name\":\"张三\",\"h\":128}"
+    val bean = Gson().fromJson(json,Bean::class.java)
+    println("测试：$bean")
+    println("测试2：${bean.h}")
 }
 
-open class Base {
-
-    constructor(a: Int)
-    constructor(str: String)
-}
-
-class A : Base {
-    constructor(a: Int) : super(a = a)
-
-    constructor(str: String):super(str)
-}
+data class Bean(var age: Int, var name: String?, var h: Int = 19)

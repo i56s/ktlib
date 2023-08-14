@@ -2,7 +2,7 @@ package com.i56s.test
 
 import android.app.Application
 import com.i56s.ktlib.I56sLib
-import com.i56s.ktlib.utils.LogUtils
+import com.i56s.ktlib.orders.CrashHandler
 
 /**
  * 创建者：wxr
@@ -15,6 +15,7 @@ class BaseApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        I56sLib.init(this,  BuildConfig.DEBUG)
+        I56sLib.init(this, BuildConfig.DEBUG)
+
     }
 }

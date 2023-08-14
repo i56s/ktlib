@@ -16,4 +16,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="打开" />
+
+    <com.i56s.test.views.LoadingHourglassView
+        android:id="@+id/lhv"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:hv_auto="true"
+        app:hv_duration="60000" />
 </LinearLayout>
