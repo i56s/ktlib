@@ -40,7 +40,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.github.i56s:ktlib:1.0.2'
+    implementation 'com.github.i56s:ktlib:lastversion'
 }
 ```
 

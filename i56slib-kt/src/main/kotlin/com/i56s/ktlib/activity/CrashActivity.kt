@@ -168,96 +168,101 @@ class CrashActivity : LibBaseActivity<ActivityCrashBinding, LibBaseViewModel>() 
                 .append("\n崩溃时间：\t")//
                 .append(dateFormat.format(Date()))
 
-            val permissions = info.requestedPermissions.toList()
-            if (permissions.contains(
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) || permissions.contains(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            ) {
-                builder.append("\n存储权限：\t")//
-                    .append(
-                        if (checkedPermission(
-                                Manifest.permission_group.STORAGE
-                            )
-                        ) "已获得" else "未获得"
-                    )
-            }
+            info.requestedPermissions?.let{
+                val permissions = it.toList()
 
-            if (permissions.contains(Manifest.permission.ACCESS_FINE_LOCATION)//
-                || permissions.contains(Manifest.permission.ACCESS_COARSE_LOCATION)
-            ) {
-                builder.append("\n定位权限：\t")
-                if (checkedPermission(Manifest.permission.ACCESS_FINE_LOCATION)//
-                    && checkedPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                if (permissions.contains(
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) || permissions.contains(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 ) {
-                    builder.append("精确、粗略")
-                } else {
-                    if (checkedPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                        builder.append("精确")
-                    } else if (checkedPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                        builder.append("粗略")
+                    builder.append("\n存储权限：\t")//
+                        .append(
+                            if (checkedPermission(
+                                    Manifest.permission_group.STORAGE
+                                )
+                            ) "已获得" else "未获得"
+                        )
+                }
+
+                if (permissions.contains(Manifest.permission.ACCESS_FINE_LOCATION)//
+                    || permissions.contains(Manifest.permission.ACCESS_COARSE_LOCATION)
+                ) {
+                    builder.append("\n定位权限：\t")
+                    if (checkedPermission(Manifest.permission.ACCESS_FINE_LOCATION)//
+                        && checkedPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                    ) {
+                        builder.append("精确、粗略")
                     } else {
-                        builder.append("未获得")
+                        if (checkedPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                            builder.append("精确")
+                        } else if (checkedPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                            builder.append("粗略")
+                        } else {
+                            builder.append("未获得")
+                        }
                     }
                 }
-            }
 
-            if (permissions.contains(Manifest.permission.CAMERA)) {
-                builder.append("\n相机权限：\t")//
-                    .append(
-                        if (checkedPermission(Manifest.permission.CAMERA)) "已获得" else "未获得"
-                    )
-            }
+                if (permissions.contains(Manifest.permission.CAMERA)) {
+                    builder.append("\n相机权限：\t")//
+                        .append(
+                            if (checkedPermission(Manifest.permission.CAMERA)) "已获得" else "未获得"
+                        )
+                }
 
-            if (permissions.contains(Manifest.permission.RECORD_AUDIO)) {
-                builder.append("\n录音权限：\t")//
-                    .append(
-                        if (checkedPermission(
-                                Manifest.permission.RECORD_AUDIO
-                            )
-                        ) "已获得" else "未获得"
-                    )
-            }
+                if (permissions.contains(Manifest.permission.RECORD_AUDIO)) {
+                    builder.append("\n录音权限：\t")//
+                        .append(
+                            if (checkedPermission(
+                                    Manifest.permission.RECORD_AUDIO
+                                )
+                            ) "已获得" else "未获得"
+                        )
+                }
 
-            if (permissions.contains(Manifest.permission.SYSTEM_ALERT_WINDOW)) {
-                builder.append("\n悬浮窗权限：\t")//
-                    .append(
-                        if (checkedPermission(
-                                Manifest.permission.SYSTEM_ALERT_WINDOW
-                            )
-                        ) "已获得" else "未获得"
-                    )
-            }
+                if (permissions.contains(Manifest.permission.SYSTEM_ALERT_WINDOW)) {
+                    builder.append("\n悬浮窗权限：\t")//
+                        .append(
+                            if (checkedPermission(
+                                    Manifest.permission.SYSTEM_ALERT_WINDOW
+                                )
+                            ) "已获得" else "未获得"
+                        )
+                }
 
-            if (permissions.contains(Manifest.permission.REQUEST_INSTALL_PACKAGES)) {
-                builder.append("\n安装包权限：\t")//
-                    .append(
-                        if (checkedPermission(
-                                Manifest.permission.REQUEST_INSTALL_PACKAGES
-                            )
-                        ) "已获得" else "未获得"
-                    )
-            }
+                if (permissions.contains(Manifest.permission.REQUEST_INSTALL_PACKAGES)) {
+                    builder.append("\n安装包权限：\t")//
+                        .append(
+                            if (checkedPermission(
+                                    Manifest.permission.REQUEST_INSTALL_PACKAGES
+                                )
+                            ) "已获得" else "未获得"
+                        )
+                }
 
-            if (permissions.contains(Manifest.permission.INTERNET)) {
-                builder.append("\n当前网络访问：\t")
+                /*if (permissions.contains(Manifest.permission.INTERNET)) {
+                    builder.append("\n当前网络访问：\t")
 
-                Thread {
-                    try {
-                        InetAddress.getByName("www.baidu.com")
-                        builder.append("正常")
-                    } catch (ignored: UnknownHostException) {
-                        builder.append("异常")
-                    }
-                    runOnUiThread {
-                        mBinding.tvCrashInfo.text = builder
-                    }
-                }.start()
-            } else {
-                mBinding.tvCrashInfo.text = builder
+                    Thread {
+                        try {
+                            InetAddress.getByName("www.baidu.com")
+                            builder.append("正常")
+                        } catch (ignored: UnknownHostException) {
+                            builder.append("异常")
+                        }
+                        runOnUiThread {
+                            mBinding.tvCrashInfo.text = builder
+                        }
+                    }.start()
+                } else {
+                    mBinding.tvCrashInfo.text = builder
+                }*/
             }
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
+
+        mBinding.tvCrashInfo.text = builder
     }
 
     override fun initEvent() {
