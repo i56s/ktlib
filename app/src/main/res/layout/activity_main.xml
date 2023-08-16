@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
@@ -17,10 +18,13 @@
         android:layout_height="wrap_content"
         android:text="打开" />
 
-    <com.i56s.test.views.LoadingHourglassView
-        android:id="@+id/lhv"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        app:hv_auto="true"
-        app:hv_duration="60000" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/item_test" />
+
+    <com.i56s.ktlib.views.xrefresh.XRecyclerView
+        android:id="@+id/testsXr"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>
