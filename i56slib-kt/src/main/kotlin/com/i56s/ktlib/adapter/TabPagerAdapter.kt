@@ -60,7 +60,7 @@ class TabPagerAdapter constructor(fm: FragmentManager, list: List<Bean>?) :
         val itemId = getItemId(position)
         val name = makeFragmentName(container.id, itemId)
         if (mFragmentManager.findFragmentByTag(name) == null) {
-            mCurTransaction?.detach(`object` as Fragment)
+            mCurTransaction?.remove(`object` as Fragment)
         } else {
             mLazyItems.remove(position)
         }

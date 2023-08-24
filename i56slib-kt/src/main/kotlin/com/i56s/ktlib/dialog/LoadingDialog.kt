@@ -62,7 +62,7 @@ class LoadingDialog @JvmOverloads constructor(private var type: LoadingType = Lo
         return linView
     }
 
-    override fun getViewBinding(container: ViewGroup?): ViewBinding = ViewBinding { TextView(null) }
+    override fun getViewBinding(layoutInflater: LayoutInflater): ViewBinding = ViewBinding { TextView(null) }
 
     override fun setDialogProperties(dialog: Dialog?) {
         if (!isShowMask) {

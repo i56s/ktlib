@@ -2,6 +2,7 @@ package com.i56s.ktlib.dialog
 
 import android.text.TextUtils
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.i56s.ktlib.base.LibBaseDialog
@@ -24,7 +25,7 @@ class ConfirmDialog : LibBaseDialog<DialogConfirmBinding>() {
     /**标记对象*/
     var tagObj: Any? = null
 
-    override fun getViewBinding(container: ViewGroup?): DialogConfirmBinding =
+    override fun getViewBinding(layoutInflater: LayoutInflater): DialogConfirmBinding =
         DialogConfirmBinding.inflate(layoutInflater)
 
     override fun initData() {
