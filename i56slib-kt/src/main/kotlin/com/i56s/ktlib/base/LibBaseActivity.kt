@@ -17,18 +17,20 @@ import androidx.viewbinding.ViewBinding
 abstract class LibBaseActivity<VB : ViewBinding, VM : LibBaseViewModel> : AppCompatActivity() {
 
     /**上下文成员变量*/
-    protected lateinit var mContext: Context
+    protected val mContext: Context by lazy { this }
 
     /**activity成员变量*/
-    protected lateinit var mActivity: LibBaseActivity<VB, VM>
+    protected val mActivity: LibBaseActivity<VB, VM> by lazy { this }
 
-    protected lateinit var mBinding: VB
-    protected var mModel: VM? = null
+    protected val mBinding: VB by lazy { this.getViewBinding() }
+    protected val mModel: VM? by lazy {
+        getViewModel()?.let {
+            ViewModelProvider(this).get(it)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (isOverstepStatusBar()) setBackGroundColor()
-        this.mContext = this
-        this.mActivity = this
         if (isRemoveStatusBar()) { //去掉状态栏
             window.setFlags(
                 //API 30以上被弃用
@@ -41,10 +43,6 @@ abstract class LibBaseActivity<VB : ViewBinding, VM : LibBaseViewModel> : AppCom
         super.onCreate(savedInstanceState)
         this.onCreateAfter()
 
-        mBinding = this.getViewBinding()
-        getViewModel()?.let {
-            mModel = ViewModelProvider(this).get(it)
-        }
         this.setContentView(mBinding.root)
         this.initCreate()
         this.initEvent()

@@ -26,21 +26,17 @@ abstract class LibBaseDialog<T : ViewBinding> : LibDialogFragment() {
     private val cTag = "弹框基类"
 
     private var mDismissListener: ((dialog: DialogInterface) -> Unit)? = null
-    private var mBackDismissListener: (() -> Unit)? =
-        null
+    private var mBackDismissListener: (() -> Unit)? = null
     var isCancelOutSide = true
 
-    protected lateinit var mBinding: T
+    protected val mBinding: T by lazy { getViewBinding(layoutInflater) }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         Dialog(requireActivity(), R.style.Dialog)
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        mBinding = getViewBinding(container)
+    override fun onCreateView(inflater: LayoutInflater,
+                              container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         return mBinding.root
     }
 
@@ -105,7 +101,7 @@ abstract class LibBaseDialog<T : ViewBinding> : LibDialogFragment() {
     fun isShowing(): Boolean = if (dialog != null) dialog?.isShowing!! else false
 
     /**显示dialog*/
-    open fun show(){
+    open fun show() {
         if (I56sLib.activity is AppCompatActivity) {
             this.show((I56sLib.activity as AppCompatActivity).supportFragmentManager)
         }
@@ -125,7 +121,7 @@ abstract class LibBaseDialog<T : ViewBinding> : LibDialogFragment() {
     }
 
     /** 获取视图绑定对象 */
-    abstract fun getViewBinding(container: ViewGroup?): T
+    abstract fun getViewBinding(layoutInflater: LayoutInflater): T
 
     /**初始化数据*/
     abstract fun initData()

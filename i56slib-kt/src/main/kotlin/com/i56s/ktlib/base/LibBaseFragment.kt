@@ -20,10 +20,9 @@ abstract class LibBaseFragment<T : ViewBinding> : Fragment() {
     private val TAG = "fragment基类"
 
     /**视图对象*/
-    private var _mBinding: T? = null
-    protected val mBinding get() = _mBinding!!
-    protected lateinit var mContext: Context
-    protected lateinit var mActivity: Activity
+    protected val mBinding: T by lazy { getViewBinding(layoutInflater) }
+    protected val mContext: Context by lazy { requireContext() }
+    protected val mActivity: Activity by lazy { requireActivity() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,17 +30,14 @@ abstract class LibBaseFragment<T : ViewBinding> : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        _mBinding = getViewBinding(container)
         return mBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         LogUtils.d(TAG, "$this 创建了")
         super.onViewCreated(view, savedInstanceState)
-        mContext = requireContext()
-        mActivity = requireActivity()
 
         this.initData()
         this.initEvent()
@@ -50,7 +46,6 @@ abstract class LibBaseFragment<T : ViewBinding> : Fragment() {
     override fun onDestroyView() {
         LogUtils.d(TAG, "$this ------销毁了")
         super.onDestroyView()
-        _mBinding = null
     }
 
     /**主线程运行*/
@@ -63,7 +58,7 @@ abstract class LibBaseFragment<T : ViewBinding> : Fragment() {
     abstract fun onCreateAfter()
 
     /** 获取视图绑定对象 */
-    abstract fun getViewBinding(container: ViewGroup?): T
+    abstract fun getViewBinding(layoutInflater: LayoutInflater): T
 
     /**初始化数据*/
     abstract fun initData()
