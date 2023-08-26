@@ -15,6 +15,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateInterpolator
+import androidx.core.content.ContextCompat
 import com.i56s.ktlib.R
 
 /**
@@ -23,12 +24,15 @@ import com.i56s.ktlib.R
  * ### 描述：高仿ios开关按钮
  */
 class SwitchButton @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+        context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
     companion object {
+        /**状态-关*/
         private const val STATE_SWITCH_OFF = 1
         private const val STATE_SWITCH_OFF2 = 2
+
+        /**状态-开*/
         private const val STATE_SWITCH_ON = 3
         private const val STATE_SWITCH_ON2 = 4
     }
@@ -77,31 +81,40 @@ class SwitchButton @JvmOverloads constructor(
             } else if (field && newState == STATE_SWITCH_OFF) {
                 field = false
             }
-            mLastCheckedState = mCheckedState;
+            mLastCheckedState = mCheckedState
             mCheckedState = newState
             postInvalidate()
         }
 
     /**开启状态背景色*/
-    var openColor = Color.parseColor("#32D8D2")
+    var openColor: Int = 0
+
+    /**开启状态圆圈颜色*/
+    var openCircleColor: Int = 0
 
     /**开启状态圆圈描边色*/
-    var openCircleStrokeColor = Color.parseColor("#2CBCB7")
-
-    /**关闭状态描边色*/
-    var closeStrokeColor = Color.parseColor("#E3E3E3")
-
-    /**关闭状态圆圈描边色*/
-    var closeCircleStrokeColor = Color.parseColor("#BFBFBF")
+    var openCircleStrokeColor: Int = 0
 
     /**关闭状态背景色*/
-    var closeColor = Color.parseColor("#DFDFDF")
+    var closeColor: Int = 0
+
+    /**关闭状态圆圈颜色*/
+    var closeCircleColor: Int = 0
+
+    /**关闭状态描边色*/
+    var closeStrokeColor: Int = 0
+
+    /**关闭状态圆圈描边色*/
+    var closeCircleStrokeColor: Int = 0
 
     /**禁用状态背景色*/
-    var disableColor = Color.parseColor("#BFBFBF")
+    var disableColor: Int = 0
+
+    /**禁用状态圆圈颜色*/
+    var disableCircleColor: Int = 0
 
     /**圆圈阴影色*/
-    var shadowCircleColor = Color.parseColor("#333333")
+    var shadowCircleColor: Int = 0
 
     /**监听器*/
     private var mListener: ((button: SwitchButton, checked: Boolean) -> Unit)? = null
@@ -127,25 +140,22 @@ class SwitchButton @JvmOverloads constructor(
             setLayerType(LAYER_TYPE_SOFTWARE, null)
         }
 
-        val array = context.obtainStyledAttributes(attrs, R.styleable.SwitchButton)
+        val array =
+            context.obtainStyledAttributes(attrs, R.styleable.SwitchButton, 0, R.style.SwitchButton)
         isChecked = array.getBoolean(R.styleable.SwitchButton_android_checked, false)
         isEnabled = array.getBoolean(R.styleable.SwitchButton_android_enabled, true)
         isOpenShadow = array.getBoolean(R.styleable.SwitchButton_shadowOpen, false)
-        openColor = array.getColor(R.styleable.SwitchButton_openColor, openColor)
-        openCircleStrokeColor =
-            array.getColor(R.styleable.SwitchButton_openCircleStrokeColor, openCircleStrokeColor)
-        closeStrokeColor =
-            array.getColor(R.styleable.SwitchButton_closeStrokeColor, closeStrokeColor)
-        closeCircleStrokeColor =
-            array.getColor(R.styleable.SwitchButton_closeCircleStrokeColor, closeCircleStrokeColor)
-        closeColor = array.getColor(R.styleable.SwitchButton_closeColor, closeColor)
-        disableColor = array.getColor(R.styleable.SwitchButton_disableColor, disableColor)
-        shadowCircleColor =
-            array.getColor(R.styleable.SwitchButton_shadowCircleColor, shadowCircleColor)
+        openColor = array.getColor(R.styleable.SwitchButton_openColor, 0)
+        openCircleColor = array.getColor(R.styleable.SwitchButton_openCircleColor, 0)
+        openCircleStrokeColor = array.getColor(R.styleable.SwitchButton_openCircleStrokeColor, 0)
+        closeStrokeColor = array.getColor(R.styleable.SwitchButton_closeStrokeColor, 0)
+        closeCircleStrokeColor = array.getColor(R.styleable.SwitchButton_closeCircleStrokeColor, 0)
+        closeColor = array.getColor(R.styleable.SwitchButton_closeColor, 0)
+        closeCircleColor = array.getColor(R.styleable.SwitchButton_closeCircleColor, 0)
+        disableColor = array.getColor(R.styleable.SwitchButton_disableColor, 0)
+        disableCircleColor = array.getColor(R.styleable.SwitchButton_disableCircleColor, 0)
+        shadowCircleColor = array.getColor(R.styleable.SwitchButton_shadowCircleColor, 0)
         array.recycle()
-
-        mCheckedState = if (isChecked) STATE_SWITCH_ON else STATE_SWITCH_OFF
-        mLastCheckedState = mCheckedState
     }
 
     /**设置选中监听器*/
@@ -362,10 +372,11 @@ class SwitchButton @JvmOverloads constructor(
             mPaint.shader = null
         }
         canvas?.translate(0f, -mShadowReservedHeight)
-        // draw bar
+        // 画圆
         canvas?.scale(0.98f, 0.98f, mWidth / 2, mWidth / 2)
         mPaint.style = Paint.Style.FILL
-        mPaint.color = Color.parseColor("#FFFFFF")
+        mPaint.color =
+            if (!isEnabled) disableCircleColor else if (isOn) openCircleColor else closeCircleColor
         canvas?.drawPath(mBarPath, mPaint)
         mPaint.style = Paint.Style.STROKE
         mPaint.strokeWidth = mStrokeWidth * 0.5f

@@ -1,5 +1,6 @@
 package com.i56s.test
 
+import android.content.Intent
 import com.i56s.test.databinding.ActivityMainBinding
 import com.i56s.test.model.MainViewModel
 import java.lang.RuntimeException
@@ -10,12 +11,15 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     override fun getViewModel(): Class<MainViewModel> = MainViewModel::class.java
 
     override fun initCreate() {
-        mBinding.open.setOnClickListener {
-            throw RuntimeException("测试错误")
-        }
+
     }
 
     override fun initEvent() {
-
+        mBinding.open.setOnClickListener {
+            startService(Intent(mContext,MyService::class.java))
+        }
+        mBinding.close.setOnClickListener {
+            stopService(Intent(mContext,MyService::class.java))
+        }
     }
 }

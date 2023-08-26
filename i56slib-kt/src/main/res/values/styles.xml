@@ -7,4 +7,17 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item>
     </style>
+
+    <style name="SwitchButton">
+        <item name="openColor">#32D8D2</item>
+        <item name="openCircleColor">#FFFFFF</item>
+        <item name="openCircleStrokeColor">#2CBCB7</item>
+        <item name="closeColor">#DFDFDF</item>
+        <item name="closeCircleColor">#FFFFFF</item>
+        <item name="closeStrokeColor">#E3E3E3</item>
+        <item name="closeCircleStrokeColor">#BFBFBF</item>
+        <item name="disableColor">#BFBFBF</item>
+        <item name="disableCircleColor">#FFFFFF</item>
+        <item name="shadowCircleColor">#333333</item>
+    </style>
 </resources>

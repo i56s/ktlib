@@ -5,26 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
+    android:background="@color/white"
     android:orientation="vertical">
-
-    <com.i56s.ktlib.views.TitleView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tvTitle="标题" />
 
     <Button
         android:id="@+id/open"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="打开" />
+        android:text="启动" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/close"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:listitem="@layout/item_test" />
+        android:text="停止" />
 
-    <com.i56s.ktlib.views.xrefresh.XRecyclerView
-        android:id="@+id/testsXr"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <com.i56s.ktlib.views.SwitchButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </LinearLayout>

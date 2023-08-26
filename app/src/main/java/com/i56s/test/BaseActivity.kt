@@ -12,7 +12,7 @@ abstract class BaseActivity<B : ViewBinding,M :BaseViewModel> : LibBaseActivity<
 
     override fun isRemoveStatusBar(): Boolean = false
 
-    override fun isOverstepStatusBar(): Boolean = true
+    override fun isOverstepStatusBar(): Boolean = false
 
     override fun onCreateBefore() = Unit
 
