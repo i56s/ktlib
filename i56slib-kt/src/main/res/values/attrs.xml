@@ -114,7 +114,6 @@
         <attr name="indicatorSelectPosition" format="integer" />
         <attr name="indicatorSelectColor" format="color" />
         <attr name="indicatorEnableSwitch" format="boolean" />
-        <attr name="indicatorViewPagerId" format="reference" />
         <attr name="indicatorFillMode">
             <enum name="letter" value="0" />
             <enum name="number" value="1" />

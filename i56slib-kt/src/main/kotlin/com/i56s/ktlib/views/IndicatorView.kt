@@ -115,13 +115,6 @@ class IndicatorView @JvmOverloads constructor(context: Context,
         selectColor = typedArray.getColor(R.styleable.IndicatorView_indicatorSelectColor, 0)
         normalColor = typedArray.getColor(R.styleable.IndicatorView_indicatorColor, 0)
 
-        typedArray.getResourceId(R.styleable.IndicatorView_indicatorViewPagerId, -1).let {
-            if (it != -1) {
-                val view = (parent as View).findViewById<View>(it)
-                viewPager = if (view is ViewPager) view else null
-            }
-        }
-
         isEnableClickSwitch =
             typedArray.getBoolean(R.styleable.IndicatorView_indicatorEnableSwitch, false)
 

@@ -24,7 +24,14 @@
         android:layout_height="wrap_content" />
 
     <com.i56s.ktlib.views.IndicatorView
+        android:id="@+id/iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:indicatorViewPagerId="@+id/vp"
         android:background="#00ff00" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/vp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </LinearLayout>
