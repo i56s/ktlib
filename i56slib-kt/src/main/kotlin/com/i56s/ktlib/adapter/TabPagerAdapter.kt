@@ -13,18 +13,15 @@ import androidx.fragment.app.FragmentTransaction
  * ### 创建时间：2022-03-24 16:53
  * ### 描述：TabLayout+ViewPager滑动适配器
  */
-class TabPagerAdapter constructor(fm: FragmentManager, list: List<Bean>?) :
+class TabPagerAdapter constructor(fm: FragmentManager, list: List<Bean>? = null) :
     FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     private var mCurrentItem: Fragment? = null
 
     private val mLazyItems: SparseArray<Fragment> = SparseArray()
-    private val mList: MutableList<Bean> = mutableListOf()
+    private val mList = mutableListOf<Bean>()
     private var mCurTransaction: FragmentTransaction? = null
-
     private val mFragmentManager: FragmentManager = fm
-
-    constructor(fm: FragmentManager) : this(fm, null)
 
     init {
         if (list != null) mList.addAll(list)
@@ -53,21 +50,21 @@ class TabPagerAdapter constructor(fm: FragmentManager, list: List<Bean>?) :
         return fragment
     }
 
-    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+    override fun destroyItem(container: ViewGroup, position: Int, any: Any) {
         if (mCurTransaction == null) {
             mCurTransaction = mFragmentManager.beginTransaction()
         }
         val itemId = getItemId(position)
         val name = makeFragmentName(container.id, itemId)
         if (mFragmentManager.findFragmentByTag(name) == null) {
-            mCurTransaction?.remove(`object` as Fragment)
+            mCurTransaction?.remove(any as Fragment)
         } else {
             mLazyItems.remove(position)
         }
     }
 
     /**添加懒加载*/
-    fun addLazyItem(container: ViewGroup, position: Int): Fragment? {
+    private fun addLazyItem(container: ViewGroup, position: Int): Fragment? {
         val fragment = mLazyItems.get(position) ?: return null
 
         val itemId = getItemId(position)
@@ -88,8 +85,8 @@ class TabPagerAdapter constructor(fm: FragmentManager, list: List<Bean>?) :
         mFragmentManager.executePendingTransactions()
     }
 
-    override fun isViewFromObject(view: View, `object`: Any): Boolean =
-        (`object` as Fragment).view == view
+    override fun isViewFromObject(view: View, any: Any): Boolean =
+        (any as Fragment).view == view
 
     override fun getItemId(position: Int): Long = position.toLong()
 
@@ -97,9 +94,9 @@ class TabPagerAdapter constructor(fm: FragmentManager, list: List<Bean>?) :
 
     override fun getCount(): Int = mList.size
 
-    override fun getPageTitle(position: Int): CharSequence = mList[position].title
+    override fun getPageTitle(position: Int): CharSequence? = mList[position].title
 
-    override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
+    override fun setPrimaryItem(container: ViewGroup, position: Int, any: Any) {
         mCurrentItem = addLazyItem(container, position)
     }
 
@@ -108,5 +105,7 @@ class TabPagerAdapter constructor(fm: FragmentManager, list: List<Bean>?) :
     /** 添加数据 */
     fun addBean(title: String, fragment: Fragment) = mList.add(Bean(title, fragment))
 
-    data class Bean(val title: String, val fragment: Fragment)
+    fun addFragment(fragment: Fragment) = mList.add(Bean(null, fragment))
+
+    data class Bean(val title: String?, val fragment: Fragment)
 }
