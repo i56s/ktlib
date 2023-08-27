@@ -19,16 +19,16 @@ class LazyViewPager @JvmOverloads constructor(context: Context, attrs: Attribute
 
     private var mLazyPagerAdapter: TabPagerAdapter? = null
 
-    /**懒加载偏移值*/
-    var initLazyItemOffset = defaultOffset
+    /**懒加载偏移值(滑动多少开始加载)*/
+    var lazyItemOffset = defaultOffset
         set(value) {
             field = if (value > 0 && value <= 1) value else defaultOffset
         }
 
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.LazyViewPager)
-        initLazyItemOffset =
-            typedArray.getFloat(R.styleable.LazyViewPager_init_lazy_item_offset, defaultOffset)
+        lazyItemOffset =
+            typedArray.getFloat(R.styleable.LazyViewPager_lazy_item_offset, defaultOffset)
         typedArray.recycle()
     }
 
@@ -42,12 +42,12 @@ class LazyViewPager @JvmOverloads constructor(context: Context, attrs: Attribute
     override fun onPageScrolled(position: Int, offset: Float, offsetPixels: Int) {
         if (currentItem == position) {
             val lazyPosition = position + 1
-            if (offset >= initLazyItemOffset) {
+            if (offset >= lazyItemOffset) {
                 mLazyPagerAdapter?.addLazyItem(this, lazyPosition)
                 mLazyPagerAdapter?.finishUpdate(this)
             }
         } else if (currentItem > position) {
-            if (1 - offset >= initLazyItemOffset) {
+            if (1 - offset >= lazyItemOffset) {
                 mLazyPagerAdapter?.addLazyItem(this, position)
                 mLazyPagerAdapter?.finishUpdate(this)
             }

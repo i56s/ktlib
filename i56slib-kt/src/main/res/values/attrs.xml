@@ -21,7 +21,7 @@
     </declare-styleable>
     <!--viewpager懒加载-->
     <declare-styleable name="LazyViewPager">
-        <attr name="init_lazy_item_offset" format="float" />
+        <attr name="lazy_item_offset" format="float" />
     </declare-styleable>
     <declare-styleable name="BadgeView">
         <attr name="badgeBackgroundColor" format="color" />
@@ -102,5 +102,23 @@
         <attr name="disableCircleColor" format="color" />
         <!-- 圆圈阴影色 -->
         <attr name="shadowCircleColor" format="color" />
+    </declare-styleable>
+    <!--指示器控件-->
+    <declare-styleable name="IndicatorView">
+        <attr name="indicatorCount" format="integer" />
+        <attr name="indicatorRadius" format="dimension" />
+        <attr name="indicatorBorderWidth" format="dimension" />
+        <attr name="indicatorSpace" format="dimension" />
+        <attr name="android:textColor" />
+        <attr name="indicatorColor" format="color" />
+        <attr name="indicatorSelectPosition" format="integer" />
+        <attr name="indicatorSelectColor" format="color" />
+        <attr name="indicatorEnableSwitch" format="boolean" />
+        <attr name="indicatorViewPagerId" format="reference" />
+        <attr name="indicatorFillMode">
+            <enum name="letter" value="0" />
+            <enum name="number" value="1" />
+            <enum name="none" value="2" />
+        </attr>
     </declare-styleable>
 </resources>
