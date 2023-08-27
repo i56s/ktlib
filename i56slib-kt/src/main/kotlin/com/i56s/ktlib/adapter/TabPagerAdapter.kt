@@ -64,7 +64,7 @@ class TabPagerAdapter constructor(fm: FragmentManager, list: List<Bean>? = null)
     }
 
     /**添加懒加载*/
-    private fun addLazyItem(container: ViewGroup, position: Int): Fragment? {
+    fun addLazyItem(container: ViewGroup, position: Int): Fragment? {
         val fragment = mLazyItems.get(position) ?: return null
 
         val itemId = getItemId(position)
