@@ -11,22 +11,14 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     override fun getViewBinding(): ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
     override fun getViewModel(): Class<MainViewModel> = MainViewModel::class.java
 
-    override fun initCreate() {
-        val adapter = TabPagerAdapter(supportFragmentManager)
-        adapter.addFragment(TestFragment())
-        adapter.addFragment(TestFragment())
-        adapter.addFragment(TestFragment())
-        adapter.addFragment(TestFragment())
-        mBinding.vp.adapter = adapter
-        mBinding.iv.viewPager = mBinding.vp
-    }
+    override fun initCreate() {}
 
     override fun initEvent() {
-        mBinding.open.setOnClickListener {
-            startService(Intent(mContext, MyService::class.java))
-        }
-        mBinding.close.setOnClickListener {
-            stopService(Intent(mContext, MyService::class.java))
+        mBinding.show.setOnClickListener {
+            val list = mutableListOf<String>()
+            list.add("哈哈哈")
+            list.add("呵呵呵")
+            mBinding.list.adapter = TestAdapter(mContext, list)
         }
     }
 }

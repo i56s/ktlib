@@ -14,6 +14,7 @@ import androidx.viewbinding.ViewBinding
  * ### 创建者：wxr
  * ### 创建时间：2021-09-18 16:43
  * ### 描述：列表适配器，封装添加头部/尾部控件
+ * ### 更新：2023-09-01 ViewBinding增加LayoutParams初始化
  */
 abstract class BaseRecyclerAdapter<T> constructor(context: Context, datas: MutableList<T>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -44,7 +45,10 @@ abstract class BaseRecyclerAdapter<T> constructor(context: Context, datas: Mutab
     override fun getItemViewType(position: Int): Int =
         when {
             isHeaderViewPos(position) -> mHeaderViews.keyAt(position)
-            isFooterViewPos(position) -> mFootViews.keyAt(position - getHeadersCount() - getRealItemCount())
+            isFooterViewPos(position) -> mFootViews.keyAt(
+                position - getHeadersCount() - getRealItemCount()
+            )
+
             else -> cTypeNormal
         }
 
@@ -94,7 +98,7 @@ abstract class BaseRecyclerAdapter<T> constructor(context: Context, datas: Mutab
 
         val pos = position - getHeadersCount()
         val data = datas[pos]
-        if (holder is Holder) onBind(holder, holder.mBinding, pos, data)
+        if (holder is Holder) onBind(holder, holder.binding, pos, data)
         holder.itemView.setOnClickListener { mListener?.invoke(position, data) }
     }
 
@@ -132,20 +136,26 @@ abstract class BaseRecyclerAdapter<T> constructor(context: Context, datas: Mutab
 
     /** 创建view holder */
     abstract fun onCreate(
-        layoutInflater: LayoutInflater,
-        parent: ViewGroup,
-        viewType: Int
+            layoutInflater: LayoutInflater,
+            parent: ViewGroup,
+            viewType: Int
     ): ViewBinding
 
     /** 绑定数据 */
     abstract fun onBind(
-        holder: RecyclerView.ViewHolder,
-        binding: ViewBinding,
-        position: Int,
-        data: T
+            holder: RecyclerView.ViewHolder,
+            binding: ViewBinding,
+            position: Int,
+            data: T
     )
 
-    class Holder constructor(binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
-        val mBinding = binding
+    class Holder constructor(val binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            if (binding.root.layoutParams == null) {
+                binding.root.layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            }
+        }
     }
 }

@@ -8,30 +8,14 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/open"
+        android:id="@+id/show"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="启动" />
+        android:text="显示" />
 
-    <Button
-        android:id="@+id/close"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="停止" />
-
-    <com.i56s.ktlib.views.SwitchButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <com.i56s.ktlib.views.IndicatorView
-        android:id="@+id/iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:indicatorViewPagerId="@+id/vp"
-        android:background="#00ff00" />
-
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/vp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 </LinearLayout>
