@@ -30,4 +30,13 @@
         <item name="indicatorColor">@android:color/darker_gray</item>
         <item name="indicatorFillMode">none</item>
     </style>
+
+    <!--标题栏默认样式-->
+    <style name="TitleView">
+        <item name="android:textSize">@dimen/sp_20</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:height">@dimen/dp_50</item>
+        <item name="android:background">#4baefe</item>
+        <item name="backDrawable">@drawable/ic_title_view_back</item>
+    </style>
 </resources>

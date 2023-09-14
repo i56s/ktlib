@@ -3,21 +3,21 @@
     <!--标题控件-->
     <declare-styleable name="TitleView">
         <!--标题高度-->
-        <attr name="tvHeight" format="dimension" />
+        <attr name="android:height" />
         <!--标题文字-->
-        <attr name="tvTitle" format="string" />
+        <attr name="android:text" />
         <!--标题文字颜色-->
-        <attr name="tvTextColor" format="color" />
+        <attr name="android:textColor" />
         <!--标题文字大小-->
-        <attr name="tvTitleSize" format="dimension" />
+        <attr name="android:textSize" />
         <!--是否显示回退按钮-->
-        <attr name="tvShowBack" format="boolean" />
+        <attr name="showBack" format="boolean" />
         <!--是否添加状态栏高度-->
-        <attr name="tvAddStatusBarHeight" format="boolean" />
-        <!--背景颜色-->
-        <attr name="tvBgColor" format="color" />
+        <attr name="addStatusBarHeight" format="boolean" />
         <!--返回按钮图-->
-        <attr name="tvBackImg" format="reference" />
+        <attr name="backDrawable" format="reference" />
+        <!--背景颜色-->
+        <attr name="android:background"/>
     </declare-styleable>
     <!--viewpager懒加载-->
     <declare-styleable name="LazyViewPager">

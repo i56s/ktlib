@@ -9,8 +9,4 @@
         <item>#999999</item>
         <item>#888888</item>
     </array>
-    <!--标题背景颜色-->
-    <color name="titleview_bg">#4baefe</color>
-    <!--标题文本颜色-->
-    <color name="titleview_title">@android:color/white</color>
 </resources>

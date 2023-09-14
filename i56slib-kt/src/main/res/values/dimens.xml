@@ -1,8 +1,4 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="textandiconmargin">@dimen/dp_10</dimen>
-    <!--标题高度-->
-    <dimen name="titleview_height">@dimen/dp_50</dimen>
-    <!--标题文字大小-->
-    <dimen name="titleview_title_size">@dimen/sp_20</dimen>
 </resources>

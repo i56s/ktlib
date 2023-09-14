@@ -5,7 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
+    android:background="#00ff00"
     android:orientation="vertical">
+
+    <com.i56s.ktlib.views.TitleView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="asdas" />
 
     <Button
         android:id="@+id/show"
