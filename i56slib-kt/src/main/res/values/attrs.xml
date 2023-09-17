@@ -120,4 +120,14 @@
             <enum name="none" value="2" />
         </attr>
     </declare-styleable>
+
+    <!--进度条控件-->
+    <declare-styleable name="ProgressView">
+        <attr name="android:orientation" />
+        <attr name="android:progress" />
+        <attr name="android:max" />
+        <attr name="progressWidth" format="dimension" />
+        <attr name="progressBackgroundColor" format="color" />
+        <attr name="progressColor" format="color" />
+    </declare-styleable>
 </resources>

@@ -39,4 +39,13 @@
         <item name="android:background">#4baefe</item>
         <item name="backDrawable">@drawable/ic_title_view_back</item>
     </style>
+
+    <!--进度条控件默认样式-->
+    <style name="ProgressView">
+        <item name="android:orientation">horizontal</item>
+        <item name="android:max">100</item>
+        <item name="progressBackgroundColor">#4b4a56</item>
+        <item name="progressColor">#00d7f2</item>
+        <item name="progressWidth">@dimen/dp_10</item>
+    </style>
 </resources>
