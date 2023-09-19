@@ -44,8 +44,10 @@
     <style name="ProgressView">
         <item name="android:orientation">horizontal</item>
         <item name="android:max">100</item>
+        <item name="isDraggable">true</item>
         <item name="progressBackgroundColor">#4b4a56</item>
         <item name="progressColor">#00d7f2</item>
         <item name="progressWidth">@dimen/dp_10</item>
+        <item name="android:thumb">@drawable/progress_thumb</item>
     </style>
 </resources>

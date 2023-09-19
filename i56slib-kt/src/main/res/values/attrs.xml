@@ -17,7 +17,7 @@
         <!--返回按钮图-->
         <attr name="backDrawable" format="reference" />
         <!--背景颜色-->
-        <attr name="android:background"/>
+        <attr name="android:background" />
     </declare-styleable>
     <!--viewpager懒加载-->
     <declare-styleable name="LazyViewPager">
@@ -126,6 +126,9 @@
         <attr name="android:orientation" />
         <attr name="android:progress" />
         <attr name="android:max" />
+        <attr name="android:thumb" />
+        <attr name="android:gravity" />
+        <attr name="isDraggable" format="boolean" />
         <attr name="progressWidth" format="dimension" />
         <attr name="progressBackgroundColor" format="color" />
         <attr name="progressColor" format="color" />

@@ -91,3 +91,4 @@ MarqueeTextView | 跑马灯文本控件
 PayPasswordView | 交易密码输入控件
 [TitleView](./doc/TitleView.md) | 标题控件
 [SwitchButton](./doc/SwitchButton.md) | 高仿ios开关按钮
+[ProgressView](./doc/ProgressView.md) | 进度条
