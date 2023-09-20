@@ -62,6 +62,8 @@ dependencies {
 
 ## 二、类介绍
 
+### 主类和工具类
+
 类 | 说明
 --- | ---
 I56sLib | 类库初始化类
@@ -79,6 +81,11 @@ NetworkUtils | 网络状态工具类
 SizeUtils | 尺寸工具类
 SpUtils | SharedPreferences工具类
 ToastUtils | 吐司工具类
+
+### 控件类
+
+类 | 说明
+--- | ---
 CstViewPager | 解决滑动冲突的 ViewPager
 SwipeMenuLayout | Item侧滑删除菜单控件
 XRecyclerView | 上拉加载，下拉刷新控件
