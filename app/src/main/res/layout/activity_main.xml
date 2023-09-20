@@ -10,7 +10,14 @@
     <com.i56s.ktlib.views.TitleView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="asdas" />
+        android:height="@dimen/dp_50"
+        android:background="#4baefe"
+        android:text="标题"
+        android:textColor="#000000"
+        android:textSize="@dimen/sp_15"
+        app:addStatusBarHeight="false"
+        app:backDrawable="@drawable/ic_title_view_back"
+        app:showBack="true" />
 
     <com.i56s.ktlib.views.ProgressView
         android:layout_width="wrap_content"

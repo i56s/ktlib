@@ -59,7 +59,7 @@ progress.setOnProgressChangeListener { progress, view ->
 }
 ```
 
-## 内置默认属性
+## 内置默认属性(可覆盖)
 
 ```xml
 <style name="ProgressView">

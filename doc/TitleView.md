@@ -12,17 +12,16 @@
 
 ```xml
 <com.i56s.ktlib.views.TitleView
-        android:id="@+id/titleView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tvAddStatusBarHeight="false"
-        app:tvBackImg="@drawable/ic_title_view_back"
-        app:tvBgColor="@color/titleview_bg"
-        app:tvHeight="@dimen/titleview_height"
-        app:tvShowBack="true"
-        app:tvTextColor="@color/titleview_title"
-        app:tvTitle="这是一个标题"
-        app:tvTitleSize="@dimen/titleview_title_size" />
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:height="@dimen/dp_50"
+    android:background="#4baefe"
+    android:text="标题"
+    android:textColor="#000000"
+    android:textSize="@dimen/sp_15"
+    app:addStatusBarHeight="false"
+    app:backDrawable="@drawable/ic_title_view_back"
+    app:showBack="true" />
 ```
 
 - 添加控件
@@ -32,8 +31,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        app:tvShowBack="false"
-        app:tvTitle="标题">
+        app:showBack="false"
+        android:text="标题">
 
         <TextView
             android:layout_width="wrap_content"
@@ -52,24 +51,14 @@
 
 属性名 | 说明 | 默认值
 --- | --- | ---
-tvHeight | 标题高度 | dimen/titleview_height (50dp)
-tvTitle | 标题文字 | -
-tvTextColor | 标题文字颜色 | color/titleview_title (#FFFFFF)
-tvTitleSize | 标题文字大小 | dimen/titleview_title_size (20sp)
-tvShowBack | 是否显示回退按钮 | true
-tvAddStatusBarHeight | 是否添加状态栏高度 | false
-tvBgColor | 背景颜色 | color/titleview_bg (#4BAEFE)
-tvBackImg | 返回按钮图 | drawable/ic_title_view_back
-
-### 以下属性可在相应的文件或文件夹中进行覆盖，覆盖后不必每次添加
-
-属性名 | 所在文件 | 说明 | 默认值
---- | --- | --- | ---
-ic_title_view_back | drawable(文件夹) | 返回按钮图 | -
-titleview_height | dimens.xml | 标题高度 | 50dp
-titleview_title_size | dimens.xml | 标题文字大小 | 20sp
-titleview_title | color.xml | 标题文字颜色 | #FFFFFF
-titleview_bg | color.xml | 背景颜色 | #4BAEFE
+android:height | 标题高度 | 50dp
+android:text | 标题文字 | -
+android:textColor | 标题文字颜色 | #FFFFFF
+android:textSize | 标题文字大小 | 20sp
+android:background | 背景颜色 | #4BAEFE
+showBack | 是否显示回退按钮 | true
+addStatusBarHeight | 是否添加状态栏高度 | false
+backDrawable | 返回按钮图 | drawable/ic_title_view_back
 
 ## 监听
 
@@ -83,4 +72,16 @@ mBinding.titleView.setOnBackClickListener {
 mBinding.titleView.setOnTitleClickListener {
     LogUtils.d("标题", "标题点击")
 }
+```
+
+## 内置默认属性(可覆盖)
+
+```xml
+<style name="TitleView">
+        <item name="android:textSize">@dimen/sp_20</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:height">@dimen/dp_50</item>
+        <item name="android:background">#4baefe</item>
+        <item name="backDrawable">@drawable/ic_title_view_back</item>
+</style>
 ```
