@@ -47,18 +47,12 @@ dependencies {
 ### 初始化类库
 
 ```
- I56sLib.init(application, isDebug)
-```
-
-或
-
-```
- I56sLib.init(application, isDebug, level)
+ I56sLib.init(application, isDebug, level = LogUtils.Level.DEBUG)
 ```
 
 - application 当前应用对象
 - isDebug 是否调试中
-- level 默认的日志等级(使用LogUtils.log(tag, msg)时有效)
+- level 默认的日志等级(使用LogUtils.log(tag, msg)时有效) 默认 LogUtils.Level.DEBUG
 
 ## 二、类介绍
 

@@ -42,16 +42,12 @@ object I56sLib {
     var singleClickDelayMillis = 5_00
 
     /**初始化
-     * @param isDebug 是否调试中*/
-    fun init(application: Application, isDebug: Boolean) {
-        init(application, isDebug, LogUtils.Level.DEBUG)
-    }
-
-    /**初始化
      * @param isDebug 是否调试中
      * @param level 日志等级*/
     @SuppressLint("PrivateApi", "InternalInsetResource")
-    fun init(application: Application, isDebug: Boolean, level: LogUtils.Level) {
+    fun init(
+            application: Application, isDebug: Boolean, level: LogUtils.Level = LogUtils.Level.DEBUG
+    ) {
         context = application.applicationContext //初始化日志
         LogUtils.init(isDebug, level) //初始化sp存储
         SpUtils.init()
