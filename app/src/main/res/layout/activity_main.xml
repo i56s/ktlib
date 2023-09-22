@@ -19,16 +19,9 @@
         app:backDrawable="@drawable/ic_title_view_back"
         app:showBack="true" />
 
-    <com.i56s.ktlib.views.ProgressView
-        android:layout_width="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="start"
-        android:max="100"
-        android:orientation="horizontal"
-        android:progress="20"
-        android:thumb="@drawable/progress_thumb"
-        app:isDraggable="false"
-        app:progressBackgroundColor="#4b4a56"
-        app:progressColor="#00d7f2"
-        app:progressWidth="@dimen/dp_10" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 </LinearLayout>

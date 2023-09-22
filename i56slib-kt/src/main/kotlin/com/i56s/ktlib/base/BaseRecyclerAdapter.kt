@@ -15,6 +15,7 @@ import androidx.viewbinding.ViewBinding
  * ### 创建时间：2021-09-18 16:43
  * ### 描述：列表适配器，封装添加头部/尾部控件
  * ### 更新：2023-09-01 ViewBinding增加LayoutParams初始化
+ * ### 更新：2023-09-22 增加setOnItemLongClickListener长按监听
  */
 abstract class BaseRecyclerAdapter<T> constructor(context: Context, datas: MutableList<T>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -27,10 +28,11 @@ abstract class BaseRecyclerAdapter<T> constructor(context: Context, datas: Mutab
     private val mFootViews: SparseArrayCompat<ViewBinding> = SparseArrayCompat()
 
     var datas: MutableList<T> = mutableListOf()
-
+        private set
     protected var mContext: Context
         private set
     private var mListener: ((position: Int, data: T) -> Unit)? = null
+    private var mLongListener: ((position: Int, data: T) -> Boolean)? = null
 
     init {
         this.mContext = context
@@ -40,6 +42,11 @@ abstract class BaseRecyclerAdapter<T> constructor(context: Context, datas: Mutab
     /** 设置点击事件监听器 */
     open fun setOnItemClickListener(li: ((position: Int, data: T) -> Unit)?) {
         mListener = li
+    }
+
+    /**设置长按点击时间监听器*/
+    open fun setOnItemLongClickListener(li: ((position: Int, data: T) -> Boolean)?) {
+        mLongListener = li
     }
 
     override fun getItemViewType(position: Int): Int =
@@ -100,6 +107,9 @@ abstract class BaseRecyclerAdapter<T> constructor(context: Context, datas: Mutab
         val data = datas[pos]
         if (holder is Holder) onBind(holder, holder.binding, pos, data)
         holder.itemView.setOnClickListener { mListener?.invoke(position, data) }
+        holder.itemView.setOnLongClickListener {
+             mLongListener?.invoke(position, data) ?: false
+        }
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {

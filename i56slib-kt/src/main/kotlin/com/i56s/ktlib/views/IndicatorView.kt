@@ -17,9 +17,11 @@ import com.i56s.ktlib.R
  * ### 创建时间： 2023-08-27 15:40
  * ### 描述：指示器控件
  */
-class IndicatorView @JvmOverloads constructor(context: Context,
-                                              attrs: AttributeSet? = null,
-                                              defStyleAttr: Int = 0) :
+class IndicatorView @JvmOverloads constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0
+) :
     View(context, attrs, defStyleAttr), ViewPager.OnPageChangeListener {
 
     private val LETTER = arrayOf(
@@ -210,7 +212,14 @@ class IndicatorView @JvmOverloads constructor(context: Context,
     override fun onPageScrollStateChanged(state: Int) = Unit
 
     enum class FillMode(val type: Int) {
-        LETTER(0), NUMBER(1), NONE(-1)
+        /**空心圆*/
+        LETTER(0),//
+
+        /**数字*/
+        NUMBER(1),//
+
+        /**实心圆*/
+        NONE(-1)
     }
 
     interface OnIndicatorClickListener {
