@@ -13,17 +13,29 @@ fun View.setOnSingleClickListener(l: (View) -> Unit) {
     setOnClickListener(OnSingleClickListener(l))
 }
 
+/**控件显示*/
 fun View.visible() {
     this.visibility = View.VISIBLE
 }
 
-fun View.gone() {
-    this.visibility = View.GONE
+/**控件是否显示*/
+fun View.isVisible(): Boolean = this.visibility == View.VISIBLE
+
+/**控件消失*/
+fun View.gone(isGone: Boolean = true) {
+    this.visibility = if (isGone) View.GONE else View.VISIBLE
 }
 
-fun View.invisible() {
-    this.visibility = View.INVISIBLE
+/**控件是否消失*/
+fun View.isGone(): Boolean = this.visibility == View.GONE
+
+/**控件隐藏*/
+fun View.invisible(isInvisible: Boolean = true) {
+    this.visibility = if (isInvisible) View.INVISIBLE else View.VISIBLE
 }
+
+/**控件是否隐藏*/
+fun View.isInvisible(): Boolean = this.visibility == View.INVISIBLE
 
 class OnSingleClickListener : View.OnClickListener {
     private var previousClickTimeMillis = 0L
