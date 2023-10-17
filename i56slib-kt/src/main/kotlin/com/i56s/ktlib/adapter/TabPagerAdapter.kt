@@ -24,7 +24,7 @@ class TabPagerAdapter constructor(fm: FragmentManager, list: List<Bean>? = null)
     private val mFragmentManager: FragmentManager = fm
 
     init {
-        if (list != null) mList.addAll(list)
+        list?.let(mList::addAll)
     }
 
     override fun startUpdate(container: ViewGroup) {}
@@ -103,7 +103,13 @@ class TabPagerAdapter constructor(fm: FragmentManager, list: List<Bean>? = null)
     private fun makeFragmentName(viewId: Int, id: Long): String = "android:switcher:$viewId:$id"
 
     /** 添加数据 */
-    fun addBean(title: String, fragment: Fragment) = mList.add(Bean(title, fragment))
+    fun addBean(title: String, fragment: Fragment) = addBean(Bean(title, fragment))
+
+    /** 添加数据 */
+    fun addBean(bean: Bean) = mList.add(bean)
+
+    /** 清空数据 */
+    fun clear() = mList.clear()
 
     fun addFragment(fragment: Fragment) = mList.add(Bean(null, fragment))
 
