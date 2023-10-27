@@ -41,6 +41,8 @@ class ProgressView @JvmOverloads constructor(
 
     /**进度变化监听器*/
     private var mListener: ((progress: Int, view: View) -> Unit)? = null
+    private var mSlideStartListener: ((view: View) -> Unit)? = null
+    private var mSlideStopListener: ((view: View) -> Unit)? = null
 
     /**进度条宽度*/
     var progressWidth = 0f
@@ -170,6 +172,9 @@ class ProgressView @JvmOverloads constructor(
         if (!isDraggable) return super.onTouchEvent(event)
         when (event?.action) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    mSlideStartListener?.invoke(this)
+                }
                 progress = if (orientation == HORIZONTAL) {
                     if (gravity == Gravity.RIGHT || gravity == Gravity.END) {
                         ((mWidth - event.x + bgRect.left) * maxProgress / mWidth + 0.5f).toInt()
@@ -181,6 +186,9 @@ class ProgressView @JvmOverloads constructor(
                 }
                 return true
             }
+
+            //手指抬起
+            MotionEvent.ACTION_UP -> mSlideStopListener?.invoke(this)
         }
         return super.onTouchEvent(event)
     }
@@ -261,5 +269,18 @@ class ProgressView @JvmOverloads constructor(
     /**进度变化监听*/
     fun setOnProgressChangeListener(listener: ((progress: Int, view: View) -> Unit)?) {
         mListener = listener
+    }
+
+    /**
+     * 进度滑动监听
+     * @param slideStart 滑动开始
+     * @param slideStop 滑动结束
+     */
+    fun setOnProgressSlideListener(
+            slideStart: ((view: View) -> Unit)? = null,
+            slideStop: ((view: View) -> Unit)?
+    ) {
+        mSlideStartListener = slideStart
+        mSlideStopListener = slideStop
     }
 }

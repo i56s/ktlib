@@ -55,7 +55,14 @@ progressWidth | 进度条宽度 | 10dp | 数值
 ```kotlin
 //进度变化监听
 progress.setOnProgressChangeListener { progress, view ->
-    Log.d("当前进度", "progress = $progress")
+    LogUtils.d("当前进度", "progress = $progress")
+}
+
+//滑动监听
+progress.setOnProgressSlideListener({ v ->
+    LogUtils.d("滑动开始")
+}) { v ->
+    LogUtils.d("滑动结束")
 }
 ```
 

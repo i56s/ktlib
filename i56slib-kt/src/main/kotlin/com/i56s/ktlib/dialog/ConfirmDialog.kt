@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.i56s.ktlib.base.LibBaseDialog
 import com.i56s.ktlib.databinding.DialogConfirmBinding
+import com.i56s.ktlib.orders.gone
 import com.i56s.ktlib.utils.HtmlUtils
 
 /**
@@ -35,16 +36,16 @@ class ConfirmDialog : LibBaseDialog<DialogConfirmBinding>() {
         mBinding.confirmContent.text = HtmlUtils.fromHtml(option.content)
 
         if (TextUtils.isEmpty(option.cancelText)) {
-            mBinding.confirmCancel.visibility = View.GONE
-            mBinding.line6.visibility = View.GONE
+            mBinding.confirmCancel.gone()
+            mBinding.line6.gone()
         } else {
             mBinding.confirmCancel.text = option.cancelText
             mBinding.confirmCancel.setTextColor(option.cancelTextColor)
         }
 
         if (TextUtils.isEmpty(option.okText)) {
-            mBinding.confirmOk.visibility = View.GONE
-            mBinding.line6.visibility = View.GONE
+            mBinding.confirmOk.gone()
+            mBinding.line6.gone()
         } else {
             mBinding.confirmOk.text = option.okText
             mBinding.confirmOk.setTextColor(option.okTextColor)
@@ -85,10 +86,14 @@ class ConfirmDialog : LibBaseDialog<DialogConfirmBinding>() {
      * @property isClickBtnDismiss 点击按钮是否关闭弹框
      */
     data class Options(
-        var title: String = "提示", var content: String = "内容",
-        var contentTextColor: Int = 0xFF999999.toInt(), var contentGravity: Int = Gravity.CENTER,
-        var cancelText: String? = "取消", var cancelTextColor: Int = 0xFF333333.toInt(),
-        var okText: String? = "确定", var okTextColor: Int = 0xFF5395fe.toInt(),
-        var isClickBtnDismiss: Boolean = true
+            var title: String? = "提示",
+            var content: String? = "内容",
+            var contentTextColor: Int = 0xFF999999.toInt(),
+            var contentGravity: Int = Gravity.CENTER,
+            var cancelText: String? = "取消",
+            var cancelTextColor: Int = 0xFF333333.toInt(),
+            var okText: String? = "确定",
+            var okTextColor: Int = 0xFF5395fe.toInt(),
+            var isClickBtnDismiss: Boolean = true
     )
 }

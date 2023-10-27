@@ -19,9 +19,14 @@
         app:backDrawable="@drawable/ic_title_view_back"
         app:showBack="true" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list"
+    <Button
+        android:id="@+id/mainOpen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="打开弹框" />
+
+    <com.i56s.ktlib.views.ProgressView
+        android:id="@+id/mainPro"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        android:layout_height="match_parent"/>
 </LinearLayout>

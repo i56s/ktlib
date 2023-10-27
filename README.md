@@ -56,7 +56,7 @@ dependencies {
 
 ## 二、类介绍
 
-### 主类和工具类
+### 1.主类和工具类
 
 类 | 说明
 --- | ---
@@ -76,7 +76,7 @@ SizeUtils | 尺寸工具类
 SpUtils | SharedPreferences工具类
 ToastUtils | 吐司工具类
 
-### 控件类
+### 2.控件类
 
 类 | 说明
 --- | ---
@@ -90,6 +90,17 @@ LoadingSwordView | 剑气加载控件
 LoadingView | 菊花加载控件
 MarqueeTextView | 跑马灯文本控件
 PayPasswordView | 交易密码输入控件
+IndicatorView | 指示器控件
 [TitleView](./doc/TitleView.md) | 标题控件
 [SwitchButton](./doc/SwitchButton.md) | 高仿ios开关按钮
 [ProgressView](./doc/ProgressView.md) | 进度条
+
+## 三、其他
+- ### [特殊字符](./doc/SpecialChar.md)
+
+
+## 待开发功能
+- 1.LogUtils 日志输出转存文件
+- 2.浏览器控件
+- 3.特殊字符合集
+- 4.文档完善

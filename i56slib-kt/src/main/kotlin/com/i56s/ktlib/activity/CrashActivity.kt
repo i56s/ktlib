@@ -92,7 +92,7 @@ class CrashActivity : LibBaseActivity<ActivityCrashBinding, LibBaseViewModel>() 
                     // 是否高亮代码行数
                     var highlight = true
                     for (packagePrefix in SYSTEM_PACKAGE_PREFIX_LIST) {
-                        if (lineData.startsWith("at " + packagePrefix)) {
+                        if (lineData.startsWith("at $packagePrefix")) {
                             highlight = false
                             break
                         }
