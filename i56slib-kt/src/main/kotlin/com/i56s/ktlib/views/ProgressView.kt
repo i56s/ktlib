@@ -172,9 +172,6 @@ class ProgressView @JvmOverloads constructor(
         if (!isDraggable) return super.onTouchEvent(event)
         when (event?.action) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
-                if (event.action == MotionEvent.ACTION_DOWN) {
-                    mSlideStartListener?.invoke(this)
-                }
                 progress = if (orientation == HORIZONTAL) {
                     if (gravity == Gravity.RIGHT || gravity == Gravity.END) {
                         ((mWidth - event.x + bgRect.left) * maxProgress / mWidth + 0.5f).toInt()
@@ -183,6 +180,9 @@ class ProgressView @JvmOverloads constructor(
                     if (gravity == Gravity.BOTTOM) {
                         ((mHeight - event.y + bgRect.top) * maxProgress / mHeight + 0.5f).toInt()
                     } else ((event.y - bgRect.top) * maxProgress / mHeight + 0.5f).toInt()
+                }
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    mSlideStartListener?.invoke(this)
                 }
                 return true
             }
