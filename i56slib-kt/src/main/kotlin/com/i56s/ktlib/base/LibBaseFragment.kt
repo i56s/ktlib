@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
-import com.i56s.ktlib.utils.LogUtils
 
 /**
  * ### 创建者：wxr
@@ -36,16 +35,10 @@ abstract class LibBaseFragment<T : ViewBinding> : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        LogUtils.d(TAG, "$this 创建了")
         super.onViewCreated(view, savedInstanceState)
 
         this.initData()
         this.initEvent()
-    }
-
-    override fun onDestroyView() {
-        LogUtils.d(TAG, "$this ------销毁了")
-        super.onDestroyView()
     }
 
     /**主线程运行*/

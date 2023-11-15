@@ -17,7 +17,7 @@ import androidx.viewbinding.ViewBinding
  * ### 更新：2023-09-01 ViewBinding增加LayoutParams初始化
  * ### 更新：2023-09-22 增加setOnItemLongClickListener长按监听
  */
-abstract class BaseRecyclerAdapter<T> constructor(context: Context, datas: List<T>) :
+abstract class BaseRecyclerAdapter<T> constructor(protected val context: Context, val datas: List<T>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val cTypeNormal = 3000
@@ -27,17 +27,8 @@ abstract class BaseRecyclerAdapter<T> constructor(context: Context, datas: List<
     private val mHeaderViews: SparseArrayCompat<ViewBinding> = SparseArrayCompat()
     private val mFootViews: SparseArrayCompat<ViewBinding> = SparseArrayCompat()
 
-    var datas: MutableList<T> = mutableListOf()
-        private set
-    protected var mContext: Context
-        private set
     private var mListener: ((position: Int, data: T) -> Unit)? = null
     private var mLongListener: ((position: Int, data: T) -> Boolean)? = null
-
-    init {
-        this.mContext = context
-        this.datas = datas.toMutableList()
-    }
 
     /** 设置点击事件监听器 */
     open fun setOnItemClickListener(li: ((position: Int, data: T) -> Unit)?) {
@@ -49,15 +40,14 @@ abstract class BaseRecyclerAdapter<T> constructor(context: Context, datas: List<
         mLongListener = li
     }
 
-    override fun getItemViewType(position: Int): Int =
-        when {
-            isHeaderViewPos(position) -> mHeaderViews.keyAt(position)
-            isFooterViewPos(position) -> mFootViews.keyAt(
-                position - getHeadersCount() - getRealItemCount()
-            )
+    override fun getItemViewType(position: Int): Int = when {
+        isHeaderViewPos(position) -> mHeaderViews.keyAt(position)
+        isFooterViewPos(position) -> mFootViews.keyAt(
+            position - getHeadersCount() - getRealItemCount()
+        )
 
-            else -> cTypeNormal
-        }
+        else -> cTypeNormal
+    }
 
     fun getRealItemCount(): Int = datas.size
 
@@ -108,7 +98,7 @@ abstract class BaseRecyclerAdapter<T> constructor(context: Context, datas: List<
         if (holder is Holder) onBind(holder, holder.binding, pos, data)
         holder.itemView.setOnClickListener { mListener?.invoke(position, data) }
         holder.itemView.setOnLongClickListener {
-             mLongListener?.invoke(position, data) ?: false
+            mLongListener?.invoke(position, data) ?: false
         }
     }
 
@@ -118,12 +108,11 @@ abstract class BaseRecyclerAdapter<T> constructor(context: Context, datas: List<
         val manager = recyclerView.layoutManager
         if (manager is GridLayoutManager) {
             manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                override fun getSpanSize(position: Int): Int =
-                    when {
-                        mHeaderViews.get(getItemViewType(position)) != null -> manager.spanCount
-                        mFootViews.get(getItemViewType(position)) != null -> manager.spanCount
-                        else -> 1
-                    }
+                override fun getSpanSize(position: Int): Int = when {
+                    mHeaderViews.get(getItemViewType(position)) != null -> manager.spanCount
+                    mFootViews.get(getItemViewType(position)) != null -> manager.spanCount
+                    else -> 1
+                }
             }
         }
     }
@@ -139,24 +128,19 @@ abstract class BaseRecyclerAdapter<T> constructor(context: Context, datas: List<
 
     override fun getItemCount(): Int = getHeadersCount() + getFootersCount() + getRealItemCount()
 
-    fun getString(@StringRes resId: Int): String = mContext.resources.getString(resId)
+    fun getString(@StringRes resId: Int): String = context.resources.getString(resId)
 
-    fun getString(@StringRes resId: Int, formatArgs: Any?): String =
-        mContext.resources.getString(resId, formatArgs)
+    fun getString(@StringRes resId: Int, vararg formatArgs: Any?): String =
+        context.resources.getString(resId, formatArgs)
 
     /** 创建view holder */
     abstract fun onCreate(
-            layoutInflater: LayoutInflater,
-            parent: ViewGroup,
-            viewType: Int
+        layoutInflater: LayoutInflater, parent: ViewGroup, viewType: Int
     ): ViewBinding
 
     /** 绑定数据 */
     abstract fun onBind(
-            holder: RecyclerView.ViewHolder,
-            binding: ViewBinding,
-            position: Int,
-            data: T
+        holder: RecyclerView.ViewHolder, binding: ViewBinding, position: Int, data: T
     )
 
     class Holder constructor(val binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
