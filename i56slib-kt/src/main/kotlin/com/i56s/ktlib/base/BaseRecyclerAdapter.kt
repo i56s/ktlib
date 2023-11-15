@@ -17,7 +17,7 @@ import androidx.viewbinding.ViewBinding
  * ### 更新：2023-09-01 ViewBinding增加LayoutParams初始化
  * ### 更新：2023-09-22 增加setOnItemLongClickListener长按监听
  */
-abstract class BaseRecyclerAdapter<T> constructor(context: Context, datas: MutableList<T>) :
+abstract class BaseRecyclerAdapter<T> constructor(context: Context, datas: List<T>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val cTypeNormal = 3000
@@ -36,7 +36,7 @@ abstract class BaseRecyclerAdapter<T> constructor(context: Context, datas: Mutab
 
     init {
         this.mContext = context
-        this.datas = datas
+        this.datas = datas.toMutableList()
     }
 
     /** 设置点击事件监听器 */
