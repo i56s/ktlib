@@ -1,6 +1,8 @@
 package com.i56s.ktlib.utils
 
+import android.os.Build
 import android.util.Log
+import com.i56s.ktlib.BuildConfig
 import com.i56s.ktlib.I56sLib
 import java.io.File
 import java.text.SimpleDateFormat
@@ -26,7 +28,7 @@ object LogUtils {
     private val logFileDir = I56sLib.context.getExternalFilesDir("logs") ?: I56sLib.context.cacheDir
 
     /**日志文件名*/
-    private val logFileName = "log_${mDateFormat.format(System.currentTimeMillis())}.log"
+    private val logFileName = "log_${mDateFormat.format(System.currentTimeMillis())}"
 
     /**日志打印等级 默认e级*/
     var level: Level = Level.ERROR
@@ -70,8 +72,29 @@ object LogUtils {
             //.append('\n')
         }
         if (isToFile) {
-            mDateFormat.applyPattern("yyyy-MM-dd HH:mm:ss.SSS")
-            File(logFileDir, logFileName).appendText("${mDateFormat.format(System.currentTimeMillis())} $tagName $message\n")
+            val packageInfo =
+                I56sLib.context.packageManager.getPackageInfo(I56sLib.context.packageName, 0)
+
+            val file = File(logFileDir, logFileName + "_c${packageInfo.versionCode}.log")
+            if (!file.exists()) {
+                mDateFormat.applyPattern("yyyy-MM-dd")
+                file.writeText(
+                    """
+************* Log Head ****************
+Date of Log        : ${mDateFormat.format(System.currentTimeMillis())}
+Device Manufacturer: ${Build.BRAND}
+Device Model       : ${Build.MODEL}
+Android Version    : ${Build.VERSION.RELEASE}
+Android SDK        : ${Build.VERSION.SDK_INT}
+App VersionName    : ${packageInfo.versionName}
+App VersionCode    : ${packageInfo.versionCode}
+************* Log Head ****************
+""".trimIndent()
+                )
+                file.appendText("\n")
+            }
+            mDateFormat.applyPattern("HH:mm:ss.SSS")
+            file.appendText("${mDateFormat.format(System.currentTimeMillis())} $tagName $message\n\n")
         }
 
         message?.let {

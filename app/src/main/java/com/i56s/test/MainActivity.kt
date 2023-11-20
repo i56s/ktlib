@@ -1,6 +1,7 @@
 package com.i56s.test
 
 import android.content.Intent
+import android.os.Build
 import android.widget.SeekBar
 import com.i56s.ktlib.I56sLib
 import com.i56s.ktlib.adapter.TabPagerAdapter
@@ -32,7 +33,8 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
 
     override fun initEvent() {
         mBinding.mainOpen.setOnSingleClickListener {
-            LogUtils.i("", isToFile = true)
+            //LogUtils.i("", isToFile = true)
+            LogUtils.e("输出：DEVICE = ${Build.DEVICE},MODEL = ${Build.MODEL}", isToFile = true)
         }
         //滑动监听
         mBinding.mainPro.setOnProgressSlideListener({ v ->
