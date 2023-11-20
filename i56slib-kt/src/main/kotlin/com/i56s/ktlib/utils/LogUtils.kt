@@ -1,6 +1,10 @@
 package com.i56s.ktlib.utils
 
 import android.util.Log
+import com.i56s.ktlib.I56sLib
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 /**
  * ### 创建者：wxr
@@ -14,6 +18,15 @@ object LogUtils {
 
     /**最大打印长度*/
     private const val MAX_LEN = 1000
+
+    /**日期转换器*/
+    private val mDateFormat = SimpleDateFormat("yyyy_MM_dd", Locale.CHINA)
+
+    /**日志文件路径*/
+    private val logFileDir = I56sLib.context.getExternalFilesDir("logs") ?: I56sLib.context.cacheDir
+
+    /**日志文件名*/
+    private val logFileName = "log_${mDateFormat.format(System.currentTimeMillis())}.log"
 
     /**日志打印等级 默认e级*/
     var level: Level = Level.ERROR
@@ -39,7 +52,7 @@ object LogUtils {
      * @param throwable 错误对象
      */
     @JvmStatic
-    fun log(level: Level? = null, tag: String?, message: String?, throwable: Throwable? = null) {
+    fun log(level: Level? = null, tag: String?, message: String?, throwable: Throwable? = null, isToFile: Boolean = false) {
         if (!isOut) return
 
         val stack = Thread.currentThread().stackTrace
@@ -52,14 +65,15 @@ object LogUtils {
                 })
             } catch (_: Exception) {
             }
-            sbf.append("打印位置：")
-                .append('(')
-                .append(stack[5].fileName)
-                .append(':')
-                .append(stack[5].lineNumber)
-                .append(')')
+            sbf.append("打印位置：").append('(').append(stack[5].fileName).append(':')
+                .append(stack[5].lineNumber).append(')')
             //.append('\n')
         }
+        if (isToFile) {
+            mDateFormat.applyPattern("yyyy-MM-dd HH:mm:ss.SSS")
+            File(logFileDir, logFileName).appendText("${mDateFormat.format(System.currentTimeMillis())} $tagName $message\n")
+        }
+
         message?.let {
             sbf.append(" 总字数：")
             sbf.append(it.length)
@@ -74,8 +88,7 @@ object LogUtils {
                     count += MAX_LEN
                     residue = it.length - count
                     printOut(
-                        level, tagName, "$str$count，剩余数：$residue\n${msg.substring(0, MAX_LEN)}",
-                        throwable
+                        level, tagName, "$str$count，剩余数：$residue\n${msg.substring(0, MAX_LEN)}", throwable
                     )
                     msg = msg.substring(MAX_LEN)
                 }
@@ -95,10 +108,7 @@ object LogUtils {
     }
 
     private fun printOut(
-            level: Level? = null,
-            tag: String?,
-            message: String?,
-            throwable: Throwable? = null
+        level: Level? = null, tag: String?, message: String?, throwable: Throwable? = null
     ) {
         val t = tag ?: TAG
         when (level ?: this.level) {
@@ -113,63 +123,63 @@ object LogUtils {
 
     /**i级日志*/
     @JvmStatic
-    fun i(message: String?, throwable: Throwable? = null) =
-        log(Level.INFO, null, message, throwable)
+    fun i(message: String?, throwable: Throwable? = null, isToFile: Boolean = false) =
+        i(null, message, throwable, isToFile)
 
     /**i级日志*/
     @JvmStatic
-    fun i(tag: String?, message: String?, throwable: Throwable? = null) =
-        log(Level.INFO, tag, message, throwable)
+    fun i(tag: String?, message: String?, throwable: Throwable? = null, isToFile: Boolean = false) =
+        log(Level.INFO, tag, message, throwable, isToFile)
 
     /**e级日志*/
     @JvmStatic
-    fun e(message: String?, throwable: Throwable? = null) =
-        log(Level.ERROR, null, message, throwable)
+    fun e(message: String?, throwable: Throwable? = null, isToFile: Boolean = false) =
+        e(null, message, throwable, isToFile)
 
     /**e级日志*/
     @JvmStatic
-    fun e(tag: String?, message: String?, throwable: Throwable? = null) =
-        log(Level.ERROR, tag, message, throwable)
+    fun e(tag: String?, message: String?, throwable: Throwable? = null, isToFile: Boolean = false) =
+        log(Level.ERROR, tag, message, throwable, isToFile)
 
     /**d级日志*/
     @JvmStatic
-    fun d(message: String?, throwable: Throwable? = null) =
-        log(Level.DEBUG, null, message, throwable)
+    fun d(message: String?, throwable: Throwable? = null, isToFile: Boolean = false) =
+        d(null, message, throwable, isToFile)
 
     /**d级日志*/
     @JvmStatic
-    fun d(tag: String?, message: String?, throwable: Throwable? = null) =
-        log(Level.DEBUG, tag, message, throwable)
+    fun d(tag: String?, message: String?, throwable: Throwable? = null, isToFile: Boolean = false) =
+        log(Level.DEBUG, tag, message, throwable, isToFile)
 
     /**w级日志*/
     @JvmStatic
-    fun w(message: String?, throwable: Throwable? = null) =
-        log(Level.WARN, null, message, throwable)
+    fun w(message: String?, throwable: Throwable? = null, isToFile: Boolean = false) =
+        w(null, message, throwable, isToFile)
 
     /**w级日志*/
     @JvmStatic
-    fun w(tag: String?, message: String?, throwable: Throwable? = null) =
-        log(Level.WARN, tag, message, throwable)
+    fun w(tag: String?, message: String?, throwable: Throwable? = null, isToFile: Boolean = false) =
+        log(Level.WARN, tag, message, throwable, isToFile)
 
     /**v级日志*/
     @JvmStatic
-    fun v(message: String?, throwable: Throwable? = null) =
-        log(Level.VERBOS, null, message, throwable)
+    fun v(message: String?, throwable: Throwable? = null, isToFile: Boolean = false) =
+        v(null, message, throwable, isToFile)
 
     /**v级日志*/
     @JvmStatic
-    fun v(tag: String?, message: String?, throwable: Throwable? = null) =
-        log(Level.VERBOS, tag, message, throwable)
+    fun v(tag: String?, message: String?, throwable: Throwable? = null, isToFile: Boolean = false) =
+        log(Level.VERBOS, tag, message, throwable, isToFile)
 
     /**s级日志*/
     @JvmStatic
-    fun s(message: String?, throwable: Throwable? = null) =
-        log(Level.SYSTEM, null, message, throwable)
+    fun s(message: String?, throwable: Throwable? = null, isToFile: Boolean = false) =
+        s(null, message, throwable, isToFile)
 
     /**s级日志*/
     @JvmStatic
-    fun s(tag: String?, message: String?, throwable: Throwable? = null) =
-        log(Level.SYSTEM, tag, message, throwable)
+    fun s(tag: String?, message: String?, throwable: Throwable? = null, isToFile: Boolean = false) =
+        log(Level.SYSTEM, tag, message, throwable, isToFile)
 
     /**日志等级枚举*/
     enum class Level {

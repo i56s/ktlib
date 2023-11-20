@@ -2,6 +2,7 @@ package com.i56s.test
 
 import android.content.Intent
 import android.widget.SeekBar
+import com.i56s.ktlib.I56sLib
 import com.i56s.ktlib.adapter.TabPagerAdapter
 import com.i56s.ktlib.dialog.ConfirmDialog
 import com.i56s.ktlib.orders.setOnSingleClickListener
@@ -9,6 +10,7 @@ import com.i56s.ktlib.utils.LogUtils
 import com.i56s.ktlib.utils.ToastUtils
 import com.i56s.test.databinding.ActivityMainBinding
 import com.i56s.test.model.MainViewModel
+import java.io.File
 import java.io.FileInputStream
 import java.io.InputStreamReader
 import java.lang.RuntimeException
@@ -30,8 +32,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
 
     override fun initEvent() {
         mBinding.mainOpen.setOnSingleClickListener {
-            val dialog = ConfirmDialog()
-            dialog.show()
+            LogUtils.i("", isToFile = true)
         }
         //滑动监听
         mBinding.mainPro.setOnProgressSlideListener({ v ->
