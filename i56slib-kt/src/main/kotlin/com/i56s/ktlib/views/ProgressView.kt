@@ -2,15 +2,16 @@ package com.i56s.ktlib.views
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.RectF
+import android.graphics.Shader
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import com.i56s.ktlib.R
-import com.i56s.ktlib.utils.LogUtils
 
 /**
  * ### 创建者： wxr
@@ -18,7 +19,7 @@ import com.i56s.ktlib.utils.LogUtils
  * ### 描述：进度条
  */
 class ProgressView @JvmOverloads constructor(
-        context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
     companion object {
@@ -34,6 +35,13 @@ class ProgressView @JvmOverloads constructor(
 
     /**进度条未完成画笔*/
     private val mBgPaint = Paint().apply {
+        isAntiAlias = true
+        style = Paint.Style.FILL
+        strokeCap = Paint.Cap.ROUND
+    }
+
+    /**进度条画笔*/
+    private val mProgressPaint = Paint().apply {
         isAntiAlias = true
         style = Paint.Style.FILL
         strokeCap = Paint.Cap.ROUND
@@ -65,11 +73,29 @@ class ProgressView @JvmOverloads constructor(
     /**进度颜色*/
     var progressColor = 0
 
+    /**进度颜色-开始*/
+    var progressColorStart = -1
+
+    /**进度颜色-结束*/
+    var progressColorEnd = -1
+
     /**进度背景颜色*/
     var progressBackgroundColor = 0
 
+    /**进度背景颜色-开始*/
+    var progressBackgroundColorStart = -1
+
+    /**进度背景颜色-结束*/
+    var progressBackgroundColorEnd = -1
+
     /**滑块*/
     var thumbDrawable: Drawable? = null
+
+    /**进度着色器*/
+    var progressShader: Shader? = null
+
+    /**进度背景着色器*/
+    var progressBackgroundShader: Shader? = null
 
     /**进度开始位置*/
     var gravity: Int = 0
@@ -120,6 +146,13 @@ class ProgressView @JvmOverloads constructor(
             thumbW = if (thumbW == 0f) 20f else thumbW
             thumbH = if (thumbH == 0f) 20f else thumbH
         }
+        progressBackgroundColorStart =
+            array.getColor(R.styleable.ProgressView_progressBackgroundColorStart, 0)
+        progressBackgroundColorEnd =
+            array.getColor(R.styleable.ProgressView_progressBackgroundColorEnd, 0)
+        progressColorStart = array.getColor(R.styleable.ProgressView_progressColorStart, 0)
+        progressColorEnd = array.getColor(R.styleable.ProgressView_progressColorEnd, 0)
+
         array.recycle()
     }
 
@@ -159,13 +192,21 @@ class ProgressView @JvmOverloads constructor(
         proRect.set(bgRect)
 
         setMeasuredDimension(
-            MeasureSpec.makeMeasureSpec(mWidth.toInt(), MeasureSpec.EXACTLY),
-            MeasureSpec.makeMeasureSpec(mHeight.toInt(), MeasureSpec.EXACTLY)
+            MeasureSpec.makeMeasureSpec(mWidth.toInt(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(mHeight.toInt(), MeasureSpec.EXACTLY)
         )
 
         //有效的控件宽高
         mWidth = bgRect.right - bgRect.left
         mHeight = bgRect.bottom - bgRect.top
+
+        if ((progressBackgroundColorStart != 0 || progressBackgroundColorEnd != 0) && progressBackgroundShader == null) {
+            progressBackgroundShader =
+                LinearGradient(0f, 0f, bgRect.right, bgRect.bottom, progressBackgroundColorStart, progressBackgroundColorEnd, Shader.TileMode.CLAMP)
+        }
+        if ((progressColorStart != 0 || progressColorEnd != 0) && progressShader == null) {
+            progressShader =
+                LinearGradient(0f, 0f, bgRect.right, bgRect.bottom, progressColorStart, progressColorEnd, Shader.TileMode.CLAMP)
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -227,38 +268,41 @@ class ProgressView @JvmOverloads constructor(
                 else -> proRect.right = progress / maxProgress.toFloat() * mWidth + w + paddingStart
             }
         }
-        mBgPaint.color = progressBackgroundColor
+
+        if (progressBackgroundShader != null) {
+            mBgPaint.shader = progressBackgroundShader
+        } else mBgPaint.color = progressBackgroundColor
+
+        if (progressShader != null) {
+            mProgressPaint.shader = progressShader
+        } else mProgressPaint.color = progressColor
+
         //画进度条背景
         canvas?.drawRoundRect(bgRect, center, center, mBgPaint)
-        mBgPaint.color = progressColor
         //画当前进度
-        canvas?.drawRoundRect(proRect, center, center, mBgPaint)
+        canvas?.drawRoundRect(proRect, center, center, mProgressPaint)
         //画滑块
         thumbDrawable?.let {
             if (orientation == HORIZONTAL) {
                 //横向
                 if (gravity == Gravity.RIGHT || gravity == Gravity.END) {
                     it.setBounds(
-                        (proRect.left - w).toInt(), (proRect.bottom - center - h).toInt(),
-                        (proRect.left + w).toInt(), (proRect.bottom - center + h).toInt()
+                        (proRect.left - w).toInt(), (proRect.bottom - center - h).toInt(), (proRect.left + w).toInt(), (proRect.bottom - center + h).toInt()
                     )
                 } else {
                     it.setBounds(
-                        (proRect.right - w).toInt(), (proRect.bottom - center - h).toInt(),
-                        (proRect.right + w).toInt(), (proRect.bottom - center + h).toInt()
+                        (proRect.right - w).toInt(), (proRect.bottom - center - h).toInt(), (proRect.right + w).toInt(), (proRect.bottom - center + h).toInt()
                     )
                 }
             } else {
                 //竖向
                 if (gravity == Gravity.BOTTOM) {
                     it.setBounds(
-                        (proRect.right - center - w).toInt(), (proRect.top - h).toInt(),
-                        (proRect.right - center + w).toInt(), (proRect.top + h).toInt()
+                        (proRect.right - center - w).toInt(), (proRect.top - h).toInt(), (proRect.right - center + w).toInt(), (proRect.top + h).toInt()
                     )
                 } else {
                     it.setBounds(
-                        (proRect.right - center - w).toInt(), (proRect.bottom - h).toInt(),
-                        (proRect.right - center + w).toInt(), (proRect.bottom + h).toInt()
+                        (proRect.right - center - w).toInt(), (proRect.bottom - h).toInt(), (proRect.right - center + w).toInt(), (proRect.bottom + h).toInt()
                     )
                 }
             }
@@ -277,8 +321,7 @@ class ProgressView @JvmOverloads constructor(
      * @param slideStop 滑动结束
      */
     fun setOnProgressSlideListener(
-            slideStart: ((view: View) -> Unit)? = null,
-            slideStop: ((view: View) -> Unit)?
+        slideStart: ((view: View) -> Unit)? = null, slideStop: ((view: View) -> Unit)?
     ) {
         mSlideStartListener = slideStart
         mSlideStopListener = slideStop

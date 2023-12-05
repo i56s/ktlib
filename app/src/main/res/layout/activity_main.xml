@@ -28,5 +28,10 @@
     <com.i56s.ktlib.views.ProgressView
         android:id="@+id/mainPro"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:progress="50"
+        app:progressBackgroundColorEnd="#ff00ff"
+        app:progressBackgroundColorStart="#0000ff"
+        app:progressColorEnd="#f0f000"
+        app:progressColorStart="#00ff00" />
 </LinearLayout>

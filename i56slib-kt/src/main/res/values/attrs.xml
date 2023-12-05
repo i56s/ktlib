@@ -131,6 +131,10 @@
         <attr name="isDraggable" format="boolean" />
         <attr name="progressWidth" format="dimension" />
         <attr name="progressBackgroundColor" format="color" />
+        <attr name="progressBackgroundColorStart" format="color" />
+        <attr name="progressBackgroundColorEnd" format="color" />
         <attr name="progressColor" format="color" />
+        <attr name="progressColorStart" format="color" />
+        <attr name="progressColorEnd" format="color" />
     </declare-styleable>
 </resources>
