@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.i56s.ktlib.utils.LogUtils
 import com.i56s.ktlib.utils.SizeUtils
@@ -14,11 +15,8 @@ import com.i56s.ktlib.utils.SizeUtils
  * ### 描述：上拉或下拉的刷新控件
  */
 class MaterialLoaderView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defstyleAttr: Int = 0
-) :
-    FrameLayout(context, attrs, defstyleAttr), BaseMaterialView {
+    context: Context, attrs: AttributeSet? = null, defstyleAttr: Int = 0
+) : FrameLayout(context, attrs, defstyleAttr), BaseMaterialView {
 
     private val materialWaveView: MaterialWaveView = MaterialWaveView(context)
     private val circleProgressBar: CircleProgressBar = CircleProgressBar(context)
@@ -60,10 +58,14 @@ class MaterialLoaderView @JvmOverloads constructor(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        if (isShowWave) addView(materialWaveView)
+        if (isShowWave) {
+            (materialWaveView.parent as? ViewGroup)?.removeView(materialWaveView)
+            addView(materialWaveView)
+        }
         circleProgressBar.layoutParams = LayoutParams(progressSize, progressSize).apply {
             gravity = Gravity.CENTER
         }
+        (circleProgressBar.parent as? ViewGroup)?.removeView(circleProgressBar)
         addView(circleProgressBar)
     }
 
