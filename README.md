@@ -96,10 +96,9 @@ IndicatorView | 指示器控件
 [ProgressView](./doc/ProgressView.md) | 进度条
 
 ## 三、其他
-- ### [特殊字符](./doc/SpecialChar.md)
+- ### [ASCII对照表（strings.xml 特殊字符）](./doc/SpecialChar.md)
 
 
 ## 待开发功能
 - 1.浏览器控件
-- 2.特殊字符合集
-- 3.文档完善
+- 2.文档完善
