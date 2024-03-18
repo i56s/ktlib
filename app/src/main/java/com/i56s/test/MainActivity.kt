@@ -3,6 +3,7 @@ package com.i56s.test
 import android.content.Intent
 import android.os.Build
 import android.widget.SeekBar
+import com.blankj.utilcode.util.DeviceUtils
 import com.i56s.ktlib.I56sLib
 import com.i56s.ktlib.adapter.TabPagerAdapter
 import com.i56s.ktlib.dialog.ConfirmDialog
@@ -32,9 +33,13 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     override fun initEvent() {
+        //输出：androidId = 35594a1e26b32611，uid = 2199ff998284f3634ba9d168ba7250996
+        //输出：androidId = 35594a1e26b32611，uid = 2199ff998284f3634ba9d168ba7250996
         mBinding.mainOpen.setOnSingleClickListener {
             //LogUtils.i("", isToFile = true)
-            LogUtils.e("输出：DEVICE = ${Build.DEVICE},MODEL = ${Build.MODEL}", isToFile = true)
+           val androidId =  DeviceUtils.getAndroidID()
+            val uid = DeviceUtils.getUniqueDeviceId()
+            LogUtils.e("输出：androidId = $androidId，uid = $uid")
         }
         //滑动监听
         mBinding.mainPro.setOnProgressSlideListener({ v ->
