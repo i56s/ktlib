@@ -31,6 +31,11 @@ object I56sLib {
     var statusBarHeight: Int = -1
         private set
 
+    /**是否是调试模式*/
+    @JvmStatic
+    var isDebug: Boolean = false
+        private set
+
     /**页面显示计数器*/
     private var activityShowCount: Int = 0
 
@@ -39,6 +44,7 @@ object I56sLib {
     val activityList: MutableList<Activity> = mutableListOf()
 
     /**单一点击事件时间*/
+    @JvmStatic
     var singleClickDelayMillis = 5_00
 
     /**初始化
@@ -46,8 +52,9 @@ object I56sLib {
      * @param level 日志等级*/
     @SuppressLint("PrivateApi", "InternalInsetResource")
     fun init(
-            application: Application, isDebug: Boolean, level: LogUtils.Level = LogUtils.Level.DEBUG
+        application: Application, isDebug: Boolean, level: LogUtils.Level = LogUtils.Level.DEBUG
     ) {
+        this.isDebug = isDebug
         context = application.applicationContext //初始化日志
         LogUtils.init(isDebug, level) //初始化sp存储
         SpUtils.init()
