@@ -1,5 +1,6 @@
 package com.i56s.ktlib.views
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.LinearGradient
@@ -73,6 +74,9 @@ class ProgressView @JvmOverloads constructor(
     /**进度颜色*/
     var progressColor = 0
 
+    /**进度着色器类型*/
+    var progressShaderType = ShaderType.CURRENT
+
     /**进度颜色-开始*/
     var progressColorStart = -1
 
@@ -90,9 +94,6 @@ class ProgressView @JvmOverloads constructor(
 
     /**滑块*/
     var thumbDrawable: Drawable? = null
-
-    /**进度着色器*/
-    var progressShader: Shader? = null
 
     /**进度背景着色器*/
     var progressBackgroundShader: Shader? = null
@@ -150,6 +151,10 @@ class ProgressView @JvmOverloads constructor(
             array.getColor(R.styleable.ProgressView_progressBackgroundColorStart, 0)
         progressBackgroundColorEnd =
             array.getColor(R.styleable.ProgressView_progressBackgroundColorEnd, 0)
+        progressShaderType = when (array.getInt(R.styleable.ProgressView_progressShaderType, 0)) {
+            1 -> ShaderType.FULL
+            else -> ShaderType.CURRENT
+        }
         progressColorStart = array.getColor(R.styleable.ProgressView_progressColorStart, 0)
         progressColorEnd = array.getColor(R.styleable.ProgressView_progressColorEnd, 0)
 
@@ -192,7 +197,8 @@ class ProgressView @JvmOverloads constructor(
         proRect.set(bgRect)
 
         setMeasuredDimension(
-            MeasureSpec.makeMeasureSpec(mWidth.toInt(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(mHeight.toInt(), MeasureSpec.EXACTLY)
+            MeasureSpec.makeMeasureSpec(mWidth.toInt(), MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(mHeight.toInt(), MeasureSpec.EXACTLY)
         )
 
         //有效的控件宽高
@@ -201,11 +207,15 @@ class ProgressView @JvmOverloads constructor(
 
         if ((progressBackgroundColorStart != 0 || progressBackgroundColorEnd != 0) && progressBackgroundShader == null) {
             progressBackgroundShader =
-                LinearGradient(0f, 0f, bgRect.right, bgRect.bottom, progressBackgroundColorStart, progressBackgroundColorEnd, Shader.TileMode.CLAMP)
-        }
-        if ((progressColorStart != 0 || progressColorEnd != 0) && progressShader == null) {
-            progressShader =
-                LinearGradient(0f, 0f, bgRect.right, bgRect.bottom, progressColorStart, progressColorEnd, Shader.TileMode.CLAMP)
+                LinearGradient(
+                    0f,
+                    0f,
+                    bgRect.right,
+                    bgRect.bottom,
+                    progressBackgroundColorStart,
+                    progressBackgroundColorEnd,
+                    Shader.TileMode.CLAMP
+                )
         }
     }
 
@@ -239,6 +249,7 @@ class ProgressView @JvmOverloads constructor(
         return super.dispatchTouchEvent(event)
     }
 
+    @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas?) {
         //进度条高度的一半
         val center = progressWidth / 2f
@@ -273,8 +284,37 @@ class ProgressView @JvmOverloads constructor(
             mBgPaint.shader = progressBackgroundShader
         } else mBgPaint.color = progressBackgroundColor
 
-        if (progressShader != null) {
-            mProgressPaint.shader = progressShader
+        if (progressColorStart != 0 || progressColorEnd != 0) {
+            when (progressShaderType) {
+                //当前进度渲染
+                ShaderType.CURRENT -> {
+                    mProgressPaint.shader =
+                        LinearGradient(
+                            0f,
+                            0f,
+                            proRect.right,
+                            proRect.bottom,
+                            progressColorStart,
+                            progressColorEnd,
+                            Shader.TileMode.CLAMP
+                        )
+                }
+                //全进度渲染
+                ShaderType.FULL -> {
+                    mProgressPaint.shader =
+                        LinearGradient(
+                            0f,
+                            0f,
+                            bgRect.right,
+                            bgRect.bottom,
+                            progressColorStart,
+                            progressColorEnd,
+                            Shader.TileMode.CLAMP
+                        )
+                }
+            }
+
+
         } else mProgressPaint.color = progressColor
 
         //画进度条背景
@@ -287,22 +327,34 @@ class ProgressView @JvmOverloads constructor(
                 //横向
                 if (gravity == Gravity.RIGHT || gravity == Gravity.END) {
                     it.setBounds(
-                        (proRect.left - w).toInt(), (proRect.bottom - center - h).toInt(), (proRect.left + w).toInt(), (proRect.bottom - center + h).toInt()
+                        (proRect.left - w).toInt(),
+                        (proRect.bottom - center - h).toInt(),
+                        (proRect.left + w).toInt(),
+                        (proRect.bottom - center + h).toInt()
                     )
                 } else {
                     it.setBounds(
-                        (proRect.right - w).toInt(), (proRect.bottom - center - h).toInt(), (proRect.right + w).toInt(), (proRect.bottom - center + h).toInt()
+                        (proRect.right - w).toInt(),
+                        (proRect.bottom - center - h).toInt(),
+                        (proRect.right + w).toInt(),
+                        (proRect.bottom - center + h).toInt()
                     )
                 }
             } else {
                 //竖向
                 if (gravity == Gravity.BOTTOM) {
                     it.setBounds(
-                        (proRect.right - center - w).toInt(), (proRect.top - h).toInt(), (proRect.right - center + w).toInt(), (proRect.top + h).toInt()
+                        (proRect.right - center - w).toInt(),
+                        (proRect.top - h).toInt(),
+                        (proRect.right - center + w).toInt(),
+                        (proRect.top + h).toInt()
                     )
                 } else {
                     it.setBounds(
-                        (proRect.right - center - w).toInt(), (proRect.bottom - h).toInt(), (proRect.right - center + w).toInt(), (proRect.bottom + h).toInt()
+                        (proRect.right - center - w).toInt(),
+                        (proRect.bottom - h).toInt(),
+                        (proRect.right - center + w).toInt(),
+                        (proRect.bottom + h).toInt()
                     )
                 }
             }
@@ -325,5 +377,10 @@ class ProgressView @JvmOverloads constructor(
     ) {
         mSlideStartListener = slideStart
         mSlideStopListener = slideStop
+    }
+
+    /**着色器类型*/
+    enum class ShaderType {
+        CURRENT, FULL
     }
 }

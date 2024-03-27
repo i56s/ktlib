@@ -134,6 +134,10 @@
         <attr name="progressBackgroundColorStart" format="color" />
         <attr name="progressBackgroundColorEnd" format="color" />
         <attr name="progressColor" format="color" />
+        <attr name="progressShaderType" format="enum">
+            <enum name="current" value="0" />
+            <enum name="full" value="1" />
+        </attr>
         <attr name="progressColorStart" format="color" />
         <attr name="progressColorEnd" format="color" />
     </declare-styleable>
