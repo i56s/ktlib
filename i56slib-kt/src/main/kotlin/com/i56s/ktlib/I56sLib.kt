@@ -43,9 +43,9 @@ object I56sLib {
     @JvmStatic
     val activityList: MutableList<Activity> = mutableListOf()
 
-    /**单一点击事件时间*/
+    /**单一点击事件时间间隔*/
     @JvmStatic
-    var singleClickDelayMillis = 5_00
+    var singleClickDelayMillis = 5_00L
 
     /**初始化
      * @param isDebug 是否调试中

@@ -4,13 +4,19 @@ import android.view.View
 import com.i56s.ktlib.I56sLib
 
 /**设置单一点击事件*/
-fun View.setOnSingleClickListener(l: View.OnClickListener) {
-    setOnClickListener(OnSingleClickListener(l))
+fun View.setOnSingleClickListener(
+    intervalTime: Long = I56sLib.singleClickDelayMillis,
+    l: View.OnClickListener
+) {
+    setOnClickListener(OnSingleClickListener(intervalTime, l))
 }
 
 /**设置单一点击事件*/
-fun View.setOnSingleClickListener(l: (View) -> Unit) {
-    setOnClickListener(OnSingleClickListener(l))
+fun View.setOnSingleClickListener(
+    intervalTime: Long = I56sLib.singleClickDelayMillis,
+    l: (View) -> Unit
+) {
+    setOnClickListener(OnSingleClickListener(intervalTime, l))
 }
 
 /**控件显示*/
@@ -30,14 +36,17 @@ fun View.invisible(isInvisible: Boolean = true) {
 
 class OnSingleClickListener : View.OnClickListener {
     private var previousClickTimeMillis = 0L
+    private var intervalTime: Long = 0
 
     private val onClickListener: View.OnClickListener
 
-    constructor(listener: View.OnClickListener) {
+    constructor(intervalTime: Long, listener: View.OnClickListener) {
+        this.intervalTime = intervalTime
         onClickListener = listener
     }
 
-    constructor(listener: (View) -> Unit) {
+    constructor(intervalTime: Long, listener: (View) -> Unit) {
+        this.intervalTime = intervalTime
         onClickListener = View.OnClickListener {
             listener.invoke(it)
         }
@@ -46,7 +55,7 @@ class OnSingleClickListener : View.OnClickListener {
     override fun onClick(v: View) {
         val currentTimeMillis = System.currentTimeMillis()
 
-        if (currentTimeMillis >= previousClickTimeMillis + I56sLib.singleClickDelayMillis) {
+        if (currentTimeMillis >= previousClickTimeMillis + intervalTime) {
             previousClickTimeMillis = currentTimeMillis
             onClickListener.onClick(v)
         }
