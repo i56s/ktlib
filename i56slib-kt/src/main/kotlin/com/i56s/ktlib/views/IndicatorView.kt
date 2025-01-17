@@ -148,7 +148,7 @@ class IndicatorView @JvmOverloads constructor(
         } else setMeasuredDimension(0, 0)
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         mIndicators.forEachIndexed { index, point ->
             if (selectPosition == index) {
                 mCirclePaint.style = Paint.Style.FILL

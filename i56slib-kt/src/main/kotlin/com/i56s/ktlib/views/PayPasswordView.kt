@@ -94,7 +94,7 @@ class PayPasswordView @JvmOverloads constructor(
         setMeasuredDimension(wSize, size.toInt())
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         //下面两行是新加
         val measuredWidth = measuredWidth
         val rectWidth = (measuredWidth - (num + 1) - (num - 1) * borderGap) / num

@@ -250,7 +250,7 @@ class ProgressView @JvmOverloads constructor(
     }
 
     @SuppressLint("DrawAllocation")
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         //进度条高度的一半
         val center = progressWidth / 2f
         //滑块的一半

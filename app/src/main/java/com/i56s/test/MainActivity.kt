@@ -1,51 +1,52 @@
 package com.i56s.test
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.widget.SeekBar
-import com.blankj.utilcode.util.DeviceUtils
-import com.i56s.ktlib.I56sLib
-import com.i56s.ktlib.adapter.TabPagerAdapter
-import com.i56s.ktlib.dialog.ConfirmDialog
+import android.content.ServiceConnection
+import android.os.IBinder
 import com.i56s.ktlib.orders.setOnSingleClickListener
 import com.i56s.ktlib.utils.LogUtils
 import com.i56s.ktlib.utils.ToastUtils
 import com.i56s.test.databinding.ActivityMainBinding
 import com.i56s.test.model.MainViewModel
-import java.io.File
-import java.io.FileInputStream
-import java.io.InputStreamReader
-import java.lang.RuntimeException
 
 class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
 
     override fun getViewBinding(): ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
     override fun getViewModel(): Class<MainViewModel> = MainViewModel::class.java
 
-    override fun initCreate() {
-        val adapter = TestAdapter(mContext, mutableListOf("1", "2", "3", "4"))
-
-        adapter.setOnItemLongClickListener { position, data ->
-            ToastUtils.showToast("长按$data")
-            true
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            LogUtils.d("绑定成功：$service")
         }
-        adapter.setOnItemClickListener { position, data -> ToastUtils.showToast("点击$data") }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            LogUtils.d("断开绑定")
+        }
     }
 
+    override fun initCreate() {
+        LiveDataBus.with<Int>("a").observe(this) {
+            LogUtils.d("首页：$it")
+        }
+    }
+
+    var index = 0
+
     override fun initEvent() {
-        //输出：androidId = 35594a1e26b32611，uid = 2199ff998284f3634ba9d168ba7250996
-        //输出：androidId = 35594a1e26b32611，uid = 2199ff998284f3634ba9d168ba7250996
-        mBinding.mainOpen.setOnSingleClickListener {
-            //LogUtils.i("", isToFile = true)
-           val androidId =  DeviceUtils.getAndroidID()
-            val uid = DeviceUtils.getUniqueDeviceId()
-            LogUtils.e("输出：androidId = $androidId，uid = $uid")
+        mBinding.serviceBind.setOnSingleClickListener {
+            //bindService(Intent(this, MyService::class.java), connection, Context.BIND_AUTO_CREATE)
+            LiveDataBus.with<Int>("a").postValue(index++)
         }
-        //滑动监听
-        mBinding.mainPro.setOnProgressSlideListener({ v ->
-            LogUtils.d("滑动开始")
-        }) { v ->
-            LogUtils.d("滑动结束")
+        mBinding.serviceJump.setOnSingleClickListener {
+            //startActivity(Intent(this, LoadMoreActivity::class.java))
+            ToastUtils.showToast("提示")
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unbindService(connection)
     }
 }

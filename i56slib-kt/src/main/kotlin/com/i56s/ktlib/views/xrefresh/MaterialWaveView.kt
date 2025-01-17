@@ -43,7 +43,7 @@ class MaterialWaveView @JvmOverloads constructor(
         setWillNotDraw(false)
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         path.reset()
         paint.color = color

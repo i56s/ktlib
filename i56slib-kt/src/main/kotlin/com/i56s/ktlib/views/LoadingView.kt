@@ -75,7 +75,7 @@ class LoadingView @JvmOverloads constructor(
         setMeasuredDimension(vWidth, vWidth)
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         if (rect == null) {
             rect = RectF((vWidth - widthRect) / 2f, 0f, (vWidth + widthRect) / 2f, heightRect - 5f)
             round = rect?.right!! - rect?.left!!
@@ -91,8 +91,8 @@ class LoadingView @JvmOverloads constructor(
             } else if (i - pos >= -11 && i - pos < -7) {
                 rectPaint.color = color[12 + i - pos]
             }
-            canvas?.drawRoundRect(rect!!, round, round, rectPaint) //绘制
-            canvas?.rotate(30f, vWidth / 2f, vWidth / 2f) //旋转
+            canvas.drawRoundRect(rect!!, round, round, rectPaint) //绘制
+            canvas.rotate(30f, vWidth / 2f, vWidth / 2f) //旋转
         }
         pos++
         if (pos > 11) pos = 0

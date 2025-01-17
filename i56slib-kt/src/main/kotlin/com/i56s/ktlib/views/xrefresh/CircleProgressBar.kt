@@ -100,11 +100,6 @@ class CircleProgressBar @JvmOverloads constructor(
         if (visibility == VISIBLE) mProgressDrawable.setStartEndTrim(0f, 0.8f)
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        super.onDraw(canvas)
-
-    }
-
     override fun setImageResource(resId: Int) = Unit
 
     override fun setImageURI(uri: Uri?) = Unit

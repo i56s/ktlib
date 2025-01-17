@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#777777"
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
@@ -20,18 +21,14 @@
         app:showBack="true" />
 
     <Button
-        android:id="@+id/mainOpen"
+        android:id="@+id/serviceBind"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="打开弹框" />
+        android:text="绑定" />
 
-    <com.i56s.ktlib.views.ProgressView
-        android:id="@+id/mainPro"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:progress="50"
-        app:progressBackgroundColorEnd="#ff00ff"
-        app:progressBackgroundColorStart="#0000ff"
-        app:progressColorEnd="#f0f000"
-        app:progressColorStart="#00ff00" />
+    <Button
+        android:id="@+id/serviceJump"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="跳转" />
 </LinearLayout>

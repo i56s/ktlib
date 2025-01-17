@@ -48,7 +48,7 @@ class BadgeView @JvmOverloads constructor(
         mTextPaint.typeface = Typeface.DEFAULT_BOLD
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         mCirclePaint.color = circleColor
         mTextPaint.color = textColor
         val vw = width

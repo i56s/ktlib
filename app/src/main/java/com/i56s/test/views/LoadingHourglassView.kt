@@ -194,14 +194,15 @@ class LoadingHourglassView @JvmOverloads constructor(
             .with(mWaveTopAnimator).after(mDropAnimator)
 
         mAnimatorSet.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator?) {
+
+            override fun onAnimationStart(animation: Animator) {
                 mDropPaint.color = mSandColor
                 /*if (mStateListener != null) {
-                    mStateListener.onStart()
-                }*/
+                   mStateListener.onStart()
+               }*/
             }
 
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(animation: Animator) {
                 //防止重绘显示出来
                 mDropPaint.color = Color.TRANSPARENT
                 /*if (mStateListener != null) {
@@ -209,14 +210,11 @@ class LoadingHourglassView @JvmOverloads constructor(
                 }*/
             }
 
-            override fun onAnimationCancel(animation: Animator?) {
-
+            override fun onAnimationCancel(animation: Animator) {
             }
 
-            override fun onAnimationRepeat(animation: Animator?) {
-
+            override fun onAnimationRepeat(animation: Animator) {
             }
-
         })
 
         if (mAuto) start()
@@ -349,7 +347,7 @@ class LoadingHourglassView @JvmOverloads constructor(
         initAnimator()
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         //画边框
         drawFrame(canvas)
         //画上边沙子

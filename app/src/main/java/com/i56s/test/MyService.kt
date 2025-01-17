@@ -2,6 +2,7 @@ package com.i56s.test
 
 import android.app.Service
 import android.content.Intent
+import android.os.Binder
 import android.os.IBinder
 import com.i56s.ktlib.utils.LogUtils
 
@@ -13,7 +14,10 @@ import com.i56s.ktlib.utils.LogUtils
 class MyService : Service() {
 
     private val TAG = "服务"
-    override fun onBind(intent: Intent?): IBinder? = null
+    override fun onBind(intent: Intent?): IBinder = myBinder
+
+    private val myBinder = MyBinder()
+
     override fun onCreate() {
         super.onCreate()
         LogUtils.d(TAG, "创建了")
@@ -27,5 +31,9 @@ class MyService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         LogUtils.d(TAG, "停止了")
+    }
+
+    class MyBinder :Binder(){
+
     }
 }

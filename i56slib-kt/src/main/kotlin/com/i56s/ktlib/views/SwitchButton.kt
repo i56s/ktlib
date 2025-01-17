@@ -328,7 +328,7 @@ class SwitchButton @JvmOverloads constructor(
         return result - mOffLeftX
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         if (!mCanVisibleDrawing) {
             return
         }
@@ -340,7 +340,7 @@ class SwitchButton @JvmOverloads constructor(
         // Draw background
         mPaint.style = Paint.Style.FILL
         mPaint.color = if (isOn) openColor else closeStrokeColor
-        canvas?.drawPath(mBackgroundPath, mPaint)
+        canvas.drawPath(mBackgroundPath, mPaint)
 
         mAnim1 = if (mAnim1 - mAnimationSpeed > 0) mAnim1 - mAnimationSpeed else 0f
         mAnim2 = if (mAnim2 - mAnimationSpeed > 0) mAnim2 - mAnimationSpeed else 0f
@@ -350,39 +350,39 @@ class SwitchButton @JvmOverloads constructor(
         // Draw background animation
         val scale = mScale * (if (isOn) dsAnim else 1 - dsAnim)
         val scaleOffset = (mRight - mCenterX - mRadius) * (if (isOn) 1 - dsAnim else dsAnim)
-        canvas?.save()
-        canvas?.scale(scale, scale, mCenterX + scaleOffset, mCenterY)
+        canvas.save()
+        canvas.scale(scale, scale, mCenterX + scaleOffset, mCenterY)
         if (isEnabled) {
             mPaint.color = closeColor
         } else {
             mPaint.color = disableColor
         }
-        canvas?.drawPath(mBackgroundPath, mPaint)
-        canvas?.restore()
+        canvas.drawPath(mBackgroundPath, mPaint)
+        canvas.restore()
         // To prepare center bar path
-        canvas?.save()
-        canvas?.translate(calcBTranslate(dbAnim), mShadowReservedHeight)
+        canvas.save()
+        canvas.translate(calcBTranslate(dbAnim), mShadowReservedHeight)
         val isState2 = (mCheckedState == STATE_SWITCH_ON2 || mCheckedState == STATE_SWITCH_OFF2)
         calcBPath(if (isState2) 1 - dbAnim else dbAnim)
         // 绘制阴影
         if (isOpenShadow) {
             mPaint.style = Paint.Style.FILL
             mPaint.shader = mShadowGradient
-            canvas?.drawPath(mBarPath, mPaint)
+            canvas.drawPath(mBarPath, mPaint)
             mPaint.shader = null
         }
-        canvas?.translate(0f, -mShadowReservedHeight)
+        canvas.translate(0f, -mShadowReservedHeight)
         // 画圆
-        canvas?.scale(0.98f, 0.98f, mWidth / 2, mWidth / 2)
+        canvas.scale(0.98f, 0.98f, mWidth / 2, mWidth / 2)
         mPaint.style = Paint.Style.FILL
         mPaint.color =
             if (!isEnabled) disableCircleColor else if (isOn) openCircleColor else closeCircleColor
-        canvas?.drawPath(mBarPath, mPaint)
+        canvas.drawPath(mBarPath, mPaint)
         mPaint.style = Paint.Style.STROKE
         mPaint.strokeWidth = mStrokeWidth * 0.5f
         mPaint.color = if (isOn) openCircleStrokeColor else closeCircleStrokeColor
-        canvas?.drawPath(mBarPath, mPaint)
-        canvas?.restore()
+        canvas.drawPath(mBarPath, mPaint)
+        canvas.restore()
 
         mPaint.reset()
         if (mAnim1 > 0 || mAnim2 > 0) {
@@ -439,9 +439,9 @@ class SwitchButton @JvmOverloads constructor(
             checked = 1 == inP.readInt()
         }
 
-        override fun writeToParcel(out: Parcel?, flags: Int) {
+        override fun writeToParcel(out: Parcel, flags: Int) {
             super.writeToParcel(out, flags)
-            out?.writeInt(if (checked) 1 else 0)
+            out.writeInt(if (checked) 1 else 0)
         }
 
         override fun describeContents(): Int = 0
