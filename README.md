@@ -1,3 +1,10 @@
+## 更新说明
+### v1.1.6
+- 1.删除控件判断显示方法
+- 2.控件单一点击事件函数增加间隔时间参数
+- 3.增加 [SettingItemView](./doc/SettingItemView.md) 设置条纹栏控件
+- 4.优化 SizeUtils 工具类
+
 ## 一、集成步骤
 
 ### 引入方式
@@ -94,6 +101,7 @@ IndicatorView | 指示器控件
 [TitleView](./doc/TitleView.md) | 标题控件
 [SwitchButton](./doc/SwitchButton.md) | 高仿ios开关按钮
 [ProgressView](./doc/ProgressView.md) | 进度条
+[SettingItemView](./doc/SettingItemView.md) | 设置条纹栏
 
 ## 三、其他
 - ### [ASCII对照表（strings.xml 特殊字符）](./doc/SpecialChar.md)

@@ -147,4 +147,45 @@
         <!--是否显示编辑中的状态布局-->
         <attr name="showEditStatusLayout" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="SettingItemView">
+        <attr name="sName" format="string" />
+        <attr name="sNameColor" format="color" />
+        <attr name="sNameSize" format="dimension" />
+        <attr name="sNameMargin" format="dimension" />
+        <attr name="sNameMarginStart" format="dimension" />
+        <attr name="sNameMarginEnd" format="dimension" />
+        <attr name="sNameMarginTop" format="dimension" />
+        <attr name="sNameMarginBottom" format="dimension" />
+
+        <attr name="sContent" format="string" />
+        <attr name="sContentColor" format="color" />
+        <attr name="sContentSize" format="dimension" />
+        <attr name="sContentMargin" format="dimension" />
+        <attr name="sContentMarginStart" format="dimension" />
+        <attr name="sContentMarginEnd" format="dimension" />
+        <attr name="sContentMarginTop" format="dimension" />
+        <attr name="sContentMarginBottom" format="dimension" />
+
+        <attr name="sImgLeftVisibility">
+            <enum name="visible" value="0" />
+            <enum name="invisible" value="1" />
+            <enum name="gone" value="2" />
+        </attr>
+        <attr name="sImgLeftSrc" format="reference" />
+
+        <attr name="sImgRightVisibility">
+            <enum name="visible" value="0" />
+            <enum name="invisible" value="1" />
+            <enum name="gone" value="2" />
+        </attr>
+        <attr name="sImgRightSrc" format="reference" />
+
+        <attr name="sLineShow" format="boolean" />
+        <attr name="sLineColor" format="color" />
+        <attr name="sLineWidth" format="dimension" />
+        <attr name="sLineMarginStart" format="dimension" />
+        <attr name="sLineMarginEnd" format="dimension" />
+        <attr name="sLineMarginBottom" format="dimension" />
+    </declare-styleable>
 </resources>

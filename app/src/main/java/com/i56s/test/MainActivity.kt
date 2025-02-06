@@ -1,13 +1,10 @@
 package com.i56s.test
 
 import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import com.i56s.ktlib.orders.setOnSingleClickListener
 import com.i56s.ktlib.utils.LogUtils
-import com.i56s.ktlib.utils.ToastUtils
 import com.i56s.test.databinding.ActivityMainBinding
 import com.i56s.test.model.MainViewModel
 
@@ -41,7 +38,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         }
         mBinding.serviceJump.setOnSingleClickListener {
             //startActivity(Intent(this, LoadMoreActivity::class.java))
-            ToastUtils.showToast("提示")
+            //mBinding.mainWeb.loadUrl("file:///android_asset/test.html")
         }
     }
 
