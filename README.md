@@ -4,6 +4,7 @@
 - 2.控件单一点击事件函数增加间隔时间参数
 - 3.增加 [SettingItemView](./doc/SettingItemView.md) 设置条纹栏控件
 - 4.优化 SizeUtils 工具类
+- 5.LibBaseFragment基类删除onCreateAfter方法，修改initData()、initEvent()执行时机
 
 ## 一、集成步骤
 

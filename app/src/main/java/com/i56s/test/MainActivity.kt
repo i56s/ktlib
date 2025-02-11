@@ -27,6 +27,9 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         LiveDataBus.with<Int>("a").observe(this) {
             LogUtils.d("首页：$it")
         }
+        val bt = supportFragmentManager.beginTransaction()
+        bt.replace(R.id.mainFl, TestFragment())
+        bt.commitNow()
     }
 
     var index = 0

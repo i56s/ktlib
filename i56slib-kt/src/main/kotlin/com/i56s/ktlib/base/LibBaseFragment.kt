@@ -16,8 +16,6 @@ import androidx.viewbinding.ViewBinding
  */
 abstract class LibBaseFragment<T : ViewBinding> : Fragment() {
 
-    private val TAG = "fragment基类"
-
     /**视图对象*/
     protected val mBinding: T by lazy { getViewBinding(layoutInflater) }
     protected val mContext: Context by lazy { requireContext() }
@@ -25,7 +23,9 @@ abstract class LibBaseFragment<T : ViewBinding> : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        onCreateAfter()
+        mBinding
+        this.initData()
+        this.initEvent()
     }
 
     override fun onCreateView(
@@ -34,21 +34,11 @@ abstract class LibBaseFragment<T : ViewBinding> : Fragment() {
         return mBinding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        this.initData()
-        this.initEvent()
-    }
-
     /**主线程运行*/
     fun runOnUiThread(run: Runnable) = activity?.runOnUiThread(run)
 
     /**销毁页面*/
     fun finish() = activity?.finish()
-
-    /**在onCreate之后执行*/
-    abstract fun onCreateAfter()
 
     /** 获取视图绑定对象 */
     abstract fun getViewBinding(layoutInflater: LayoutInflater): T

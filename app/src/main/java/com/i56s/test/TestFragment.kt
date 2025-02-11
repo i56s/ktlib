@@ -10,14 +10,12 @@ import com.i56s.test.databinding.FragmentTestBinding
  * 描述：
  */
 class TestFragment : LibBaseFragment<FragmentTestBinding>() {
-    override fun onCreateAfter() {
-
-    }
 
     override fun getViewBinding(layoutInflater: LayoutInflater): FragmentTestBinding =
         FragmentTestBinding.inflate(layoutInflater)
 
     override fun initData() {
+        mBinding.test.text = "测试"
     }
 
     override fun initEvent() {
