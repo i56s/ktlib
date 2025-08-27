@@ -1,5 +1,6 @@
 package com.i56s.ktlib.utils
 
+import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.view.View
@@ -26,7 +27,8 @@ object ToastUtils {
         Snackbar.make(view, msg, duration).show()
 
     /**显示吐司*/
-    private fun showToast2(context: Context, msg: String?, duration: Int) {
+    private fun showToast2(context: Activity, msg: String?, duration: Int) {
+        if (context.isFinishing || context.isDestroyed) return
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) { //判断是否为9.0
             Toast.makeText(context, msg, duration).show()
         } else {
@@ -64,7 +66,7 @@ object ToastUtils {
 
     /** 显示短吐司 */
     @JvmStatic
-    fun showToast(@StringRes resId: Int) = showToast(I56sLib.activity.getString(resId))
+    fun showToast(@StringRes resId: Int) = showToast(I56sLib.context.getString(resId))
 
     /** 显示长吐司 */
     @JvmStatic
@@ -72,7 +74,7 @@ object ToastUtils {
 
     /** 显示长吐司 */
     @JvmStatic
-    fun showToastLong(@StringRes resId: Int) = showToast(I56sLib.activity.getString(resId))
+    fun showToastLong(@StringRes resId: Int) = showToast(I56sLib.context.getString(resId))
 
     /** 显示短吐司 */
     @JvmStatic
@@ -81,7 +83,7 @@ object ToastUtils {
     /** 显示短吐司 */
     @JvmStatic
     fun showToast(view: View, @StringRes resId: Int) =
-        showToast(view, I56sLib.activity.getString(resId))
+        showToast(view, I56sLib.context.getString(resId))
 
     /** 显示长吐司 */
     @JvmStatic
@@ -89,5 +91,5 @@ object ToastUtils {
 
     @JvmStatic
     fun showToastLong(view: View, @StringRes resId: Int) =
-        showToastLong(view, I56sLib.activity.getString(resId))
+        showToastLong(view, I56sLib.context.getString(resId))
 }
